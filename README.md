@@ -137,7 +137,7 @@ Can only be used if there is a data available with MC vertex truth information.
    The script can take 1-5 minutes depending on the size of the input file.
    Once it finish it will give the message "The track data has been created successfully and written to ....' and exit.
 
-2) python3 E2_GenerateEvalSeeds.py --Mode C 
+2) python3 E2_GenerateEvalSeeds.py --Mode R
    
    Purpose: This script selects and prepares 2-track seeds that have a common Mother particle.
    The script will send warning, type Y. The program will send HTCondor jobs and exit. The jobs take about an hour.
