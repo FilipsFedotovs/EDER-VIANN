@@ -34,11 +34,11 @@ SI_7=4000 #This parameter restricts the maximum euclidean distance between the f
 MinHitsTrack=2
 MaxTrainSampleSize=50000
 MaxValSampleSize=100000
-VO_T=3900 #The minimum distance from the reconstructed Vertex Origin to the closest starting hit of any track in the seed
-VO_max_Z=0 #Fidu
+VO_T=3900 #The maximum distance from the reconstructed Vertex Origin to the closest starting hit of any track in the seed
+VO_max_Z=0 #Fiducial cut on vertex origin
 VO_min_Z=-39500
 MaxDoca=200
-acceptance=0.5
+acceptance=0.5 #Threshold of seed rejection from the dataset
 
 
 ##Model parameters
@@ -46,7 +46,7 @@ resolution=100
 MaxX=3500.0
 MaxY=1000.0
 MaxZ=20000.0
-CNN_Model_Name='2T_100_MC_1_model'
+CNN_Model_Name='2T_100_MC_1_model' #two tracks seed (2T) number of microns per one pixel, resolution (100), model trained from Monte Carlo seeds (MC)
 ModelArchitecture=\
     [[4, 4, 1, 2, 2, 2, 2], #Layer 1
         [5, 4, 1, 1, 2, 2, 2], #Layer 2
