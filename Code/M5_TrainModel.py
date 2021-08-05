@@ -134,7 +134,7 @@ if mode=='C':
           UF.SubmitTrainJobCondor(AFS_DIR,EOS_DIR,PreviousJob[0],'Train')
         if CurrentSet>1:
           UF.SubmitTrainJobCondor(AFS_DIR,EOS_DIR,PreviousJob[0],'Train')
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The Training Job for the CurrentSet",CurrentStep,"have been resubmitted"+bcolors.ENDC)
+        print(UF.TimeStamp(), bcolors.OKGREEN+"The Training Job for the CurrentSet",CurrentSet,"have been resubmitted"+bcolors.ENDC)
         print(bcolors.OKGREEN+"Please check it in a few hours"+bcolors.ENDC)
         exit()
    else:
