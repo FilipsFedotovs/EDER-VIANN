@@ -38,7 +38,7 @@ VO_T=3900 #The maximum distance from the reconstructed Vertex Origin to the clos
 VO_max_Z=0 #Fiducial cut on vertex origin
 VO_min_Z=-39500
 MaxDoca=200
-acceptance=0.5 #Threshold of seed rejection from the dataset
+acceptance=0.75 #Threshold of seed rejection from the dataset
 
 
 ##Model parameters
@@ -46,7 +46,7 @@ resolution=100
 MaxX=3500.0
 MaxY=1000.0
 MaxZ=20000.0
-CNN_Model_Name='2T_100_MC_1_model' #two tracks seed (2T) number of microns per one pixel, resolution (100), model trained from Monte Carlo seeds (MC)
+CNN_Model_Name='2T_100_FEDRA_1_model' #two tracks seed (2T) number of microns per one pixel, resolution (100), model trained from Monte Carlo seeds (MC)
 ModelArchitecture=\
     [[4, 4, 1, 2, 2, 2, 2], #Layer 1
         [5, 4, 1, 1, 2, 2, 2], #Layer 2
