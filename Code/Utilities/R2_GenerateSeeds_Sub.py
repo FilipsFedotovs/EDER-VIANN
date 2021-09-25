@@ -34,7 +34,7 @@ parser.add_argument('--MaxTracks',help="A maximum number of track combinations t
 args = parser.parse_args()
 PlateZ=float(args.PlateZ)   #The coordinate of the st plate in the current scope
 Set=args.Set    #This is just used to name the output file
-Subset=int(args.Subset)  #The subset helps to determine what portion of the track list is used to create the Seeds
+Subset=int(args.Subset)+1  #The subset helps to determine what portion of the track list is used to create the Seeds
 SI_1=float(args.SI_1)
 SI_2=float(args.SI_2)
 SI_3=float(args.SI_3)
@@ -124,7 +124,7 @@ for i in range(0,Steps):
   merged_data.drop(merged_data.index[(merged_data['separation'] <= SI_6) & (merged_data['separation'] >= SI_5)], inplace = True) #Interval cuts
   merged_data.drop(merged_data.index[(merged_data['separation'] <= SI_4) & (merged_data['separation'] >= SI_3)], inplace = True) #Interval Cuts
   merged_data.drop(merged_data.index[(merged_data['separation'] <= SI_2) & (merged_data['separation'] >= SI_1)], inplace = True) #Interval Cuts
-  merged_data.drop(['separation'],axis=1,inplace=True) #We don't need thius field anymore
+  merged_data.drop(['separation'],axis=1,inplace=True) #We don't need this field anymore
   merged_data.drop(merged_data.index[merged_data['Track_1'] == merged_data['Track_2']], inplace = True) #Removing the cases where Seed tracks are the same
   merged_list = merged_data.values.tolist() #Convirting the result to List data type
   result_list+=merged_list #Adding the result to the list

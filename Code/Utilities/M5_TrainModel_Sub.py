@@ -53,6 +53,7 @@ parser.add_argument('--LR',help="Please enter the value of learning rate", defau
 parser.add_argument('--Epoch',help="Please enter the epoch number", default='1')
 parser.add_argument('--ModelName',help="Name of the model", default='2T_100_MC_1_model')
 parser.add_argument('--ModelNewName',help="Name of the model", default='2T_100_MC_1_model')
+parser.add_argument('--f',help="Image set location (for test)", default='')
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
 ImageSet=args.ImageSet
@@ -95,7 +96,10 @@ import Utility_Functions as UF
 EOSsubDIR=EOS_DIR+'/'+'EDER-VIANN'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
 flocation=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/'+'M3_TRAIN_SET_'+ImageSet+'.csv'
-vlocation=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_VALIDATION_SET.csv'
+if Mode=='Test':
+   vlocation=args.f
+else:
+   vlocation=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_VALIDATION_SET.csv'
 #train_history = tf.keras.callbacks.CSVLogger(EOSsubModelDIR+'/'+'train_log_'+ImageSet+'.csv', separator=",", append=True)
 
 ##############################################################################################################################
@@ -130,7 +134,7 @@ if Mode=='Train':
            K.set_value(model.optimizer.learning_rate, LR)
            model.summary()
            print(model.optimizer.get_config())
-if Mode!='Train':
+if Mode!='Train' and Mode!='Test':
            try:
              model = Sequential()
              for HL in HiddenLayerDNA:
@@ -160,6 +164,25 @@ if Mode!='Train':
            except:
               print(UF.TimeStamp(), bcolors.FAIL+"Invalid model..."+bcolors.ENDC)
               ValidModel=False
+if Mode=='Test':
+           model_name=EOSsubModelDIR+'/'+args.ModelName
+           model=tf.keras.models.load_model(model_name)
+           K.set_value(model.optimizer.learning_rate, LR)
+           model.summary()
+           print(model.optimizer.get_config())
+           for ib in range(0,NValBatches):
+              StartSeed=(ib*TrainBatchSize)+1
+              EndSeed=StartSeed+TrainBatchSize-1
+              BatchImages=UF.LoadRenderImages(ValImages,resolution,MaxX,MaxY,MaxZ,StartSeed,EndSeed,True)
+              a=model.test_on_batch(BatchImages[0], BatchImages[1], reset_metrics=False)
+              val_loss=a[0]
+              val_acc=a[1]
+              progress=int(round((float(ib)/float(NTrainBatches))*100,0))
+              print("Validation in progress ",progress,' %',"Validation loss is:",val_loss,"Validation accuracy is:",val_acc , end="\r", flush=True)
+           print('Test is finished')
+           print("Final Validation loss is:",val_loss)
+           print("Final Validation accuracy is:",val_acc)
+           exit()
 records=[]
 print(UF.TimeStamp(),'Starting the training process... ')
 for ib in range(0,NTrainBatches):
