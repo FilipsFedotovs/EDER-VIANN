@@ -89,11 +89,13 @@ if Mode=='R':
       UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R4', ['R4_R4','R4_REC'], "SoftUsed == \"EDER-VIANN-R4\"")
       print(UF.TimeStamp(),'Submitting jobs... ',bcolors.ENDC)
       for j in range(0,len(data)):
+            f_counter=0
             for f in range(0,1000):
              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R4_FilteredSeeds_'+str(j+1)+'_'+str(f)+'.csv'
              if os.path.isfile(new_output_file_location):
-              job_details=[(j+1),f,resolution,acceptance,MaxX,MaxY,MaxZ,AFS_DIR,EOS_DIR,ModelName]
-              UF.SubmitVertexSeedsJobsCondor(job_details)
+              f_counter=f
+            job_details=[(j+1),f_counter,resolution,acceptance,MaxX,MaxY,MaxZ,AFS_DIR,EOS_DIR,ModelName]
+            UF.BSubmitVertexSeedsJobsCondor(job_details)
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    print(UF.TimeStamp(),'Checking results... ',bcolors.ENDC)
@@ -160,11 +162,16 @@ if Mode=='C':
        print(UF.TimeStamp(),'Final reconstructed set compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
        base_data.to_csv(output_file_location,index=False)
        print(UF.TimeStamp(),'Cleaning up the work space... ',bcolors.ENDC)
-       UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R4', ['R3_R4','R4_R4'], "SoftUsed == \"EDER-VIANN-R4\"")
-       print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-       print(UF.TimeStamp(), bcolors.OKGREEN+"2-track vertexing is completed"+bcolors.ENDC)
-       print(UF.TimeStamp(), bcolors.OKGREEN+"Result is saved in"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-       print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+       UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R4', ['R4_R4'], "SoftUsed == \"EDER-VIANN-R4\"")
+       print(bcolors.BOLD+'Would you like to delete filtered seeds data?'+bcolors.ENDC)
+       UserAnswer=input(bcolors.BOLD+"Please, enter your option Y/N \n"+bcolors.ENDC)
+       if UserAnswer=='Y':
+           UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R4', ['R3_R4'], "SoftUsed == \"EDER-VIANN-R4\"")
+       else:
+        print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+        print(UF.TimeStamp(), bcolors.OKGREEN+"2-track vertexing is completed"+bcolors.ENDC)
+        print(UF.TimeStamp(), bcolors.OKGREEN+"Result is saved in"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+        print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 #End of the script
 
 

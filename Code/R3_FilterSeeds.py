@@ -89,11 +89,13 @@ if Mode=='R':
       print(UF.TimeStamp(),'Submitting jobs... ',bcolors.ENDC)
       for j in range(0,len(data)):
         for sj in range(0,int(data[j][2])):
+            f_counter=0
             for f in range(0,1000):
              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
              if os.path.isfile(new_output_file_location):
-              job_details=[(j+1),(sj+1),f,VO_T,VO_max_Z,VO_min_Z,MaxDoca,AFS_DIR,EOS_DIR]
-              UF.SubmitFilterSeedsJobsCondor(job_details)
+              f_counter=f
+            job_details=[(j+1),(sj+1),f_counter,VO_T,VO_max_Z,VO_min_Z,MaxDoca,AFS_DIR,EOS_DIR]
+            UF.BSubmitFilterSeedsJobsCondor(job_details)
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    bad_pop=[]

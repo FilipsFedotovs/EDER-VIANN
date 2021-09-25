@@ -90,9 +90,9 @@ if Mode=='R':
       UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R2', ['R2_R2','R2_R3'], "SoftUsed == \"EDER-VIANN-R2\"")
       print(UF.TimeStamp(),'Submitting jobs... ',bcolors.ENDC)
       for j in range(0,len(data)):
-        for sj in range(0,int(data[j][2])):
-           job_details=[(j+1),(sj+1),data[j][0],SI_1,SI_2,SI_3,SI_4,SI_5,SI_6,SI_7,MaxTracksPerJob,AFS_DIR,EOS_DIR]
-           UF.SubmitCreateSeedsJobsCondor(job_details)
+           job_details=[(j+1),int(data[j][2]),data[j][0],SI_1,SI_2,SI_3,SI_4,SI_5,SI_6,SI_7,MaxTracksPerJob,AFS_DIR,EOS_DIR]
+           UF.BSubmitCreateSeedsJobsCondor(job_details)
+
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    bad_pop=[]
@@ -123,7 +123,10 @@ if Mode=='C':
        print(UF.TimeStamp(),'Collating the results...')
        for j in range(0,len(data)): #//Temporarily measure to save space
         for sj in range(0,int(data[j][2])):
-           output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R2_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'.csv'
+          output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R2_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'.csv'
+          if os.path.isfile(output_file_location)==False:
+              continue
+          else:
            result=pd.read_csv(output_file_location,names = ['Track_1','Track_2'])
            Records=len(result.axes[0])
            print(UF.TimeStamp(),'Set',str(j+1),'and subset', str(sj+1), 'contains', Records, 'seeds',bcolors.ENDC)
@@ -141,6 +144,7 @@ if Mode=='C':
            for f in range(0,fractions):
              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
              result[(f*MaxSeedsPerJob):min(Records_After_Compression,((f+1)*MaxSeedsPerJob))].to_csv(new_output_file_location,index=False)
+           os.unlink(output_file_location)
        print(UF.TimeStamp(),'Cleaning up the work space... ',bcolors.ENDC)
        UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R2', ['R2_R2'], "SoftUsed == \"EDER-VIANN-R2\"")
        print(UF.TimeStamp(), bcolors.OKGREEN+"Seed generation is completed"+bcolors.ENDC)

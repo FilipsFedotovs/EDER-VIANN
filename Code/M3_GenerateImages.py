@@ -98,11 +98,13 @@ if Mode=='R':
       print(UF.TimeStamp(),'Submitting jobs... ',bcolors.ENDC)
       for j in range(0,len(data)):
         for sj in range(0,int(data[j][2])):
+            f_count=0
             for f in range(0,1000):
              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
              if os.path.isfile(new_output_file_location):
-              job_details=[(j+1),(sj+1),f,VO_max_Z,VO_min_Z,VO_T,MaxDoca,resolution,MaxX,MaxY,MaxZ,AFS_DIR,EOS_DIR]
-              UF.SubmitImageJobsCondor(job_details)
+                 f_count=f
+            job_details=[(j+1),(sj+1),f_count,VO_max_Z,VO_min_Z,VO_T,MaxDoca,resolution,MaxX,MaxY,MaxZ,AFS_DIR,EOS_DIR]
+            UF.BSubmitImageJobsCondor(job_details)
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    print(UF.TimeStamp(),'Checking results... ',bcolors.ENDC)
@@ -255,11 +257,16 @@ if Mode=='C':
          output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_TRAIN_SET_'+str(SC+1)+'.csv'
          OldExtracted[(SC*PM.MaxTrainSampleSize):min(len(OldExtracted.axes[0]),((SC+1)*PM.MaxTrainSampleSize))].to_csv(output_file_location,index=False,header=False)
          print(UF.TimeStamp(), bcolors.OKGREEN+"Train Set", str(SC+1) ," has been saved at ",bcolors.OKBLUE+output_file_location+bcolors.ENDC,bcolors.OKGREEN+'file...'+bcolors.ENDC)
-       UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'M3', ['M2_M3','M3_M3'], "SoftUsed == \"EDER-VIANN-M3\"")
-       print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-       print(UF.TimeStamp(), bcolors.OKGREEN+"Training and Validation data has been created: you can start working on the model..."+bcolors.ENDC)
-       print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
-       exit()
+       UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'M3', ['M3_M3'], "SoftUsed == \"EDER-VIANN-M3\"")
+       print(bcolors.BOLD+'Would you like to delete filtered seeds data?'+bcolors.ENDC)
+       UserAnswer=input(bcolors.BOLD+"Please, enter your option Y/N \n"+bcolors.ENDC)
+       if UserAnswer=='Y':
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'M3', ['M2_M3'], "SoftUsed == \"EDER-VIANN-M3\"")
+       else:
+        print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+        print(UF.TimeStamp(), bcolors.OKGREEN+"Training and Validation data has been created: you can start working on the model..."+bcolors.ENDC)
+        print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+        exit()
 #End of the script
 
 
