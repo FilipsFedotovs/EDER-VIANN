@@ -2,15 +2,9 @@
 ########################################    Import libraries    #############################################
 #import csv
 import Utility_Functions as UF
+from Utility_Functions import Seed
 import argparse
 import pandas as pd #We use Panda for a routine data processing
-#import math
-#import copy
-#import numpy as np
-#import random
-import tensorflow as tf
-from tensorflow import keras
-
 import os, psutil #helps to monitor the memory
 import gc  #Helps to clear memory
 
@@ -68,24 +62,13 @@ print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prep
 GoodSeeds=[]
 print(UF.TimeStamp(),'Beginning the decorating part...')
 for s in range(0,limit):
-    seed=seeds.pop(0)
-    seed=UF.DecorateSeedTracks(seed,tracks)
-    seed=UF.SortImage(seed)
-    VO=UF.GiveExpressSeedInfo(seed)[0].tolist()
-    seed=UF.PreShiftImage(seed)
-    seed_counter+=1
-    if seed_counter>=1000:
-              progress=int( round( (float(s)/float(limit)*100),0)  )
-              print(UF.TimeStamp(),"Performing seed decoration",s,", progress is ",progress,' % of seeds are decorated')
-              print(UF.TimeStamp(),'Memory usage is',psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
-              seed_counter=0
-
-    seed=UF.LonRotateImage(seed,'x')
-    seed=UF.LonRotateImage(seed,'y')
-    seed=UF.SortImage(seed)
-    seed=UF.PhiRotateImage(seed)
-    SEI=UF.GiveFullSeedInfo(seed)
-    new_seed=[seed[0][0],seed[0][1],VO[0],VO[1],VO[2],SEI[1],SEI[2],SEI[3],SEI[4],SEI[5]]
+    seed=Seed(seeds.pop(0))
+    seed.DecorateTracks(tracks)
+    try:
+       seed.DecorateSeedGeoInfo()
+       new_seed=[seed.TrackHeader[0],seed.TrackHeader[1],seed.Vx,seed.Vy,seed.Vz,seed.DOCA,seed.V_Tr[0],seed.V_Tr[1],seed.Tr_Tr,seed.angle]
+    except:
+       new_seed=[seed.TrackHeader[0],seed.TrackHeader[1],'Fail','Fail','Fail','Fail','Fail','Fail','Fail','Fail']
     GoodSeeds.append(new_seed)
 print(UF.TimeStamp(),bcolors.OKGREEN+'The evaluation seed decoration has been completed..'+bcolors.ENDC)
 del tracks

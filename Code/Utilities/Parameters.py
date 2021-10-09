@@ -22,6 +22,7 @@ MaxTracksPerJob=20000 #This parameter imposes the limit on the number of the tra
 MaxEvalTracksPerJob=20000 #This parameter imposes the limit on the number of the tracks form the Start plate when forming the Seeds.
 MaxSeedsPerJob=40000
 MaxVxPerJob=10000
+MaxSeedsPerVxPool=20000
 
 ######List of geometrical constain parameters
 SI_1=1200

@@ -2,14 +2,9 @@
 ########################################    Import libraries    #############################################
 #import csv
 import Utility_Functions as UF
+from Utility_Functions import Seed
 import argparse
 import pandas as pd #We use Panda for a routine data processing
-#import math
-#import copy
-#import numpy as np
-#import random
-#import tensorflow as tf
-#from tensorflow import keras
 
 import os, psutil #helps to monitor the memory
 import gc  #Helps to clear memory
@@ -70,30 +65,13 @@ Header=['Track_1','Track_2','VX_X','VX_Y','VX_Z','DOCA','Tr1-VO','Tr2-VO','Tr1-T
 GoodSeeds.append(Header)
 print(UF.TimeStamp(),'Beginning the vertexing part...')
 for s in range(0,limit):
-    seed=seeds.pop(0)
-    seed=UF.DecorateSeedTracks(seed,tracks)
-    seed=UF.SortImage(seed)
+    seed=Seed(seeds.pop(0))
+    seed.DecorateTracks(tracks)
     try:
-     VO=UF.GiveExpressSeedInfo(seed)[0].tolist()
+      seed.DecorateSeedGeoInfo()
+      new_seed=[seed.TrackHeader[0],seed.TrackHeader[1],seed.Vx,seed.Vy,seed.Vz,seed.DOCA,seed.V_Tr[0],seed.V_Tr[1],seed.Tr_Tr,seed.angle]
     except:
-     VO=['Fail','Fail','Fail']
-    seed=UF.PreShiftImage(seed)
-    seed_counter+=1
-    if seed_counter>=1000:
-              progress=int( round( (float(s)/float(limit)*100),0)  )
-              print(UF.TimeStamp(),"Performing fake seed decoration",s,", progress is ",progress,' % of seeds are decorated')
-              print(UF.TimeStamp(),'Memory usage is',psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
-              seed_counter=0
-
-    seed=UF.LonRotateImage(seed,'x')
-    seed=UF.LonRotateImage(seed,'y')
-    seed=UF.SortImage(seed)
-    seed=UF.PhiRotateImage(seed)
-    try:
-      SEI=UF.GiveFullSeedInfo(seed)
-    except:
-      SEI=[['Fail','Fail','Fail'],'Fail','Fail','Fail','Fail','Fail']
-    new_seed=[seed[0][0],seed[0][1],VO[0],VO[1],VO[2],SEI[1],SEI[2],SEI[3],SEI[4],SEI[5]]
+      new_seed=[seed.TrackHeader[0],seed.TrackHeader[1],'Fail','Fail','Fail','Fail','Fail','Fail','Fail','Fail']
     GoodSeeds.append(new_seed)
 print(UF.TimeStamp(),bcolors.OKGREEN+'The fake seed decoration has been completed..'+bcolors.ENDC)
 del tracks

@@ -6,7 +6,8 @@ import argparse
 import pandas as pd #We use Panda for a routine data processing
 import os, psutil #helps to monitor the memory
 import gc  #Helps to clear memory
-
+from Utility_Functions import Seed
+import pickle
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -56,7 +57,7 @@ EOS_DIR=args.EOS
 
 input_track_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M1_TRACKS.csv'
 input_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M3_RawSeeds_'+Set+'_'+SubSet+'_'+fraction+'.csv'
-output_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_Images_'+Set+'_'+SubSet+'_'+fraction+'.csv'
+output_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_RawImages_'+Set+'_'+SubSet+'_'+fraction+'.pkl'
 print(UF.TimeStamp(),'Loading the data')
 seeds=pd.read_csv(input_seed_file_location)
 seeds_1=seeds.drop(['Track_2'],axis=1)
@@ -87,47 +88,29 @@ print(UF.TimeStamp(),'Beginning the image generation part...')
 for s in range(0,limit):
     seed=seeds.pop(0)
     label=seed[2]
-    true_vx=0
-    fake_vx=0
-    if label==False:
-        num_label = 0
-        fake_vx+=1
-    elif label ==True:
+    seed=Seed(seed[:2])
+    if label:
         num_label = 1
-        true_vx+=1
-    seed=seed[:2]
-    seed=UF.DecorateSeedTracks(seed,tracks)
-    seed=UF.SortImage(seed)
+    else:
+        num_label = 0
+    seed.MCtruthClassifySeed(num_label)
+    seed.DecorateTracks(tracks)
     try:
-      VO=UF.GiveExpressSeedInfo(seed)[0].tolist()
+      seed.DecorateSeedGeoInfo()
     except:
       continue
-    seed=UF.PreShiftImage(seed)
-
-    if VO[2]<VO_min_Z:
-        continue
-    if VO[2]>VO_max_Z:
-        continue
-    if UF.SeedQualityCheck(seed,MaxDoca,VO_T):
-           seed_counter+=1
-           if seed_counter>=100:
-              progress=int( round( (float(s)/float(limit)*100),0)  )
-
-              print(UF.TimeStamp(),"Generating seed image",s,", progress is ",progress,' % of seeds generated')
-              print(UF.TimeStamp(),'Memory usage is',psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
-              seed_counter=0
-           seed=UF.LonRotateImage(seed,'x')
-           seed=UF.LonRotateImage(seed,'y')
-           seed=UF.SortImage(seed)
-           seed=UF.PhiRotateImage(seed)
-           seed=UF.AfterShiftImage(seed,resolution)
-           seed=UF.RescaleImage(seed,MaxX,MaxY,MaxZ,resolution)
-           seed.append([num_label])
+    seed.SeedQualityCheck(VO_min_Z,VO_max_Z,MaxDoca,VO_T)
+    if seed.GeoFit:
            GoodSeeds.append(seed)
-print(UF.TimeStamp(),bcolors.OKGREEN+'The image generation has been completed..'+bcolors.ENDC)
+    else:
+        del seed
+        continue
+print(UF.TimeStamp(),bcolors.OKGREEN+'The raw image generation has been completed..'+bcolors.ENDC)
 del tracks
 del seeds
 gc.collect()
 print(UF.TimeStamp(),'Saving the results..')
-UF.LogOperations(output_seed_file_location,'StartLog',GoodSeeds)
+open_file = open(output_seed_file_location, "wb")
+pickle.dump(GoodSeeds, open_file)
+open_file.close()
 exit()
