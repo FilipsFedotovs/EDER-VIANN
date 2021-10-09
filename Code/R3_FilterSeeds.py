@@ -8,9 +8,9 @@ import csv
 import argparse
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
-import gc  #Helps to clear memory
 import numpy as np
 import os
+import pickle
 
 
 class bcolors:   #We use it for the interface
@@ -44,6 +44,8 @@ for c in config:
         EOS_DIR=c[1]
 csv_reader.close()
 import sys
+
+
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import Utility_Functions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
@@ -104,7 +106,7 @@ if Mode=='C':
        for sj in range(0,int(data[j][2])):
            for f in range(0,1000):
               new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
-              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R3_FilteredSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
+              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R3_FilteredSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.pkl'
               job_details=[(j+1),(sj+1),f,VO_T,VO_max_Z,VO_min_Z,MaxDoca,AFS_DIR,EOS_DIR]
               if os.path.isfile(required_output_file_location)!=True  and os.path.isfile(new_output_file_location):
                  bad_pop.append(job_details)
@@ -129,29 +131,30 @@ if Mode=='C':
         for sj in range(0,int(data[j][2])):
            for f in range(0,1000):
               new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
-              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R3_FilteredSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
+              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R3_FilteredSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.pkl'
               if os.path.isfile(required_output_file_location)!=True and os.path.isfile(new_output_file_location):
                  print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",required_output_file_location,'is missing, please restart the script with the option "--Mode R"'+bcolors.ENDC)
               elif os.path.isfile(required_output_file_location):
                  if (sj+1)==(f+1)==1:
-                    base_data=pd.read_csv(required_output_file_location,names=['Track_1','Track_2','VX_X','VX_Y','VX_Z'])
+                    base_data_file=open(required_output_file_location,'rb')
+                    base_data=pickle.load(base_data_file)
+                    base_data_file.close()
                  else:
-                    new_data=pd.read_csv(required_output_file_location,names=['Track_1','Track_2','VX_X','VX_Y','VX_Z'])
-                    frames=[base_data,new_data]
-                    base_data=pd.concat(frames)
-        Records=len(base_data.axes[0])
+                    new_data_file=open(required_output_file_location,'rb')
+                    new_data=pickle.load(new_data_file)
+                    new_data_file.close()
+                    base_data+=new_data
+        Records=len(base_data)
         print(UF.TimeStamp(),'Set',str(j+1),'contains', Records, '2-track vertices',bcolors.ENDC)
 
-
-        base_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(base_data['Track_1'], base_data['Track_2'])]
-        base_data.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
-        base_data.drop(base_data.index[base_data['Track_1'] == base_data['Track_2']], inplace = True)
-        base_data.drop(["Seed_ID"],axis=1,inplace=True)
-        Records_After_Compression=len(base_data.axes[0])
+        base_data=list(set(base_data))
+        Records_After_Compression=len(base_data)
         fractions=int(math.ceil(Records_After_Compression/MaxVxPerJob))
         for f in range(0,fractions):
-             output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R4_FilteredSeeds_'+str(j+1)+'_'+str(f+1)+'.csv'
-             base_data[(f*MaxVxPerJob):min(Records_After_Compression,((f+1)*MaxVxPerJob))].to_csv(output_file_location,index=False)
+             output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R4_FilteredSeeds_'+str(j+1)+'_'+str(f+1)+'.pkl'
+             open_file = open(output_file_location, "wb")
+             pickle.dump(base_data[(f*MaxVxPerJob):min(Records_After_Compression,((f+1)*MaxVxPerJob))], open_file)
+             open_file.close()
         if Records>0:
               Compression_Ratio=int((Records_After_Compression/Records)*100)
         else:

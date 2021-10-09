@@ -77,9 +77,9 @@ if mode=='R' and args.ModelName=='N':
      job.append(args.ModelNewName)
  print(UF.TimeStamp(),bcolors.OKGREEN+'Job description has been created'+bcolors.ENDC)
  PerformanceHeader=[['Epochs','Set','Training Samples','Train Loss','Train Accuracy','Validation Loss','Validation Accuracy']]
- UF.LogOperations(EOSsubModelDIR+'/M5_PERFORMANCE_'+job[9]+'.csv','StartLog',PerformanceHeader)
+ UF.LogOperations(EOSsubModelDIR+'/M5_PERFORMANCE_'+job[5]+'.csv','StartLog',PerformanceHeader)
  UF.SubmitTrainJobCondor(AFS_DIR,EOS_DIR,job,'New')
- job[8]=job[9]
+ job[4]=job[5]
  UF.LogOperations(EOSsubModelDIR+'/M5_M5_JobTask.csv','StartLog',[job])
  print(bcolors.BOLD+"Please the job completion in few hours by running this script with the option C"+bcolors.ENDC)
 elif mode=='R':
@@ -88,10 +88,6 @@ elif mode=='R':
  job.append(1)
  job.append(1)
  job.append(PM.ModelArchitecture)
- job.append(PM.resolution)
- job.append(PM.MaxX)
- job.append(PM.MaxY)
- job.append(PM.MaxZ)
  job.append(args.LR)
  job.append(ModelName)
  if args.ModelNewName=='Default':
@@ -100,9 +96,9 @@ elif mode=='R':
      job.append(args.ModelNewName)
  print(UF.TimeStamp(),bcolors.OKGREEN+'Job description has been created'+bcolors.ENDC)
  PerformanceHeader=[['Epochs','Set','Training Samples','Train Loss','Train Accuracy','Validation Loss','Validation Accuracy']]
- UF.LogOperations(EOSsubModelDIR+'/M5_PERFORMANCE_'+job[9]+'.csv','StartLog',PerformanceHeader)
+ UF.LogOperations(EOSsubModelDIR+'/M5_PERFORMANCE_'+job[5]+'.csv','StartLog',PerformanceHeader)
  UF.SubmitTrainJobCondor(AFS_DIR,EOS_DIR,job,'Train')
- job[8]=job[9]
+ job[4]=job[5]
  UF.LogOperations(EOSsubModelDIR+'/M5_M5_JobTask.csv','StartLog',[job])
  print(bcolors.BOLD+"Please the job completion in few hours by running this script with the option C"+bcolors.ENDC)
 if mode=='C':
@@ -112,7 +108,7 @@ if mode=='C':
    csv_reader=open(EOSsubModelDIR+'/M5_M5_JobTask.csv',"r")
    PreviousJob = list(csv.reader(csv_reader))
    if args.LR!='Default':
-       PreviousJob[0][7]=args.LR
+       PreviousJob[0][3]=args.LR
    #if os.path.isfile(EOSsubModelDIR+'/'+PreviousJob[0][9])==False:
    #    print(UF.TimeStamp(),bcolors.FAIL+'Model',EOSsubModelDIR+ModelName,'has not been found '+bcolors.ENDC)
    #    print(bcolors.BOLD+"Please restart this script with the option R"+bcolors.ENDC)
@@ -142,12 +138,12 @@ if mode=='C':
    else:
       csv_reader=open(required_file_name,"r")
       PreviousHeader = list(csv.reader(csv_reader))
-      UF.LogOperations(EOSsubModelDIR+'/M5_PERFORMANCE_'+PreviousJob[0][9]+'.csv','UpdateLog',PreviousHeader)
+      UF.LogOperations(EOSsubModelDIR+'/M5_PERFORMANCE_'+PreviousJob[0][5]+'.csv','UpdateLog',PreviousHeader)
       os.unlink(required_file_name)
       print(UF.TimeStamp(),bcolors.OKGREEN+'The training of the model by using image set',CurrentSet,'has been completed'+bcolors.ENDC)
       print(UF.TimeStamp(),'Creating next batch',CurrentSet+1)
       print(bcolors.BOLD+'Image Set',CurrentSet,' is completed'+bcolors.ENDC)
-      if os.path.isfile(EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/'+'M3_TRAIN_SET_'+str(CurrentSet+1)+'.csv')==False:
+      if os.path.isfile(EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/'+'M3_TRAIN_SET_'+str(CurrentSet+1)+'.pkl')==False:
           print(bcolors.WARNING+'No more training files left, restarting the new epoch...'+bcolors.ENDC)
           CurrentSet=1
           CurrentEpoch+=1
