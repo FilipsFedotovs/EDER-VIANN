@@ -57,7 +57,7 @@ if args.Mode=='R':
     Acceptance=float(args.Acceptance)
 if args.Mode=='R':
     print(UF.TimeStamp(), "Starting the script from the scratch")
-    input_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R4_R5_Rec_Seeds.pkl'
+    input_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R4_R5_Fit_Seeds.pkl'
     print(UF.TimeStamp(), "Loading vertexed seeds from the file",bcolors.OKBLUE+input_file_location+bcolors.ENDC)
     data_file=open(input_file_location,'rb')
     base_data=pickle.load(data_file)
@@ -66,206 +66,111 @@ if args.Mode=='R':
     print(UF.TimeStamp(), "Stripping off the seeds with low acceptance...")
     base_data=[sd for sd in base_data if sd.Seed_CNN_Fit >= Acceptance]
     print(UF.TimeStamp(), bcolors.OKGREEN+"The refining was successful, "+str(len(base_data))+" seeds remain..."+bcolors.ENDC)
-    output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Rec_Seeds_Refined.pkl'
+    output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Fit_Seeds_Refined.pkl'
     open_file = open(output_file_location, "wb")
     pickle.dump(base_data, open_file)
     open_file.close()
-    no_iter=int(math.ceil(float(len(base_data)/float(MaxSeedsPerVxPool))))
-    print(no_itr)
-#     for i in range(0,int(args.DataCut)):
-#                   output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Merged_Seeds_'+str(i)+'.pkl'
-#                   if os.path.isfile(output_file_location)==False:
-#                       print(UF.TimeStamp(), "Analysing set",i+1)
-#                       length=len(RefinedData)
-#                       segment=int(round(math.ceil(length/int(args.DataCut)),0))
-#                       NewData=RefinedData[(i*segment):((i+1)*segment)]
-#                       print(UF.TimeStamp(), "Initiating the seed merging...")
-#                       InitialDataLength=len(NewData)
-#                       SeedCounter=0
-#                       SeedCounterContinue=True
-#                       while SeedCounterContinue:
-#                           if SeedCounter>=len(NewData):
-#                               SeedCounterContinue=False
-#                               break
-#                           progress=round(float(SeedCounter)/float(len(NewData))*100,0)
-#                           print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
-#                           SubjectSeed=NewData[SeedCounter]
-#                           for ObjectSeed in NewData[SeedCounter+1:]:
-#                               if SubjectSeed.InjectSeed(ObjectSeed):
-#                                    NewData.pop(NewData.index(ObjectSeed))
-#                           SeedCounter+=1
-#                       print(str(InitialDataLength), "2-track vertices were merged into", str(len(NewData)), 'vertices with higher multiplicity...')
-#
-#                       open_file = open(output_file_location, "wb")
-#                       pickle.dump(NewData, open_file)
-#                       open_file.close()
-#
-#     del RefinedData
-#     gc.collect()
-#     status=1
-#
-# if status==1:
-#     print(UF.TimeStamp(),'Current stage is no:', status)
-#     VertexPool=[]
-#     for i in range(0,int(args.DataCut)):
-#                   output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Merged_Seeds_'+str(i)+'.pkl'
-#                   data_file=open(output_file_location,'rb')
-#                   NewData=pickle.load(data_file)
-#                   data_file.close()
-#                   VertexPool+=NewData
-#                   random.shuffle(VertexPool)
-#     for i in range(0,int(round(float(args.DataCut)*0.6,0))):
-#                   output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Merged_Seeds2_'+str(i)+'.pkl'
-#                   if os.path.isfile(output_file_location)==False:
-#                       print(UF.TimeStamp(), "Analysing set",i+1)
-#                       length=len(VertexPool)
-#                       segment=int(round(math.ceil(length/int(round(float(args.DataCut)*0.6,0))),0))
-#                       NewData=VertexPool[(i*segment):((i+1)*segment)]
-#                       print(UF.TimeStamp(), "Initiating the seed merging...")
-#                       InitialDataLength=len(NewData)
-#                       SeedCounter=0
-#                       SeedCounterContinue=True
-#                       while SeedCounterContinue:
-#                           if SeedCounter>=len(NewData):
-#                               SeedCounterContinue=False
-#                               break
-#                           progress=round(float(SeedCounter)/float(len(NewData))*100,0)
-#                           print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
-#                           SubjectSeed=NewData[SeedCounter]
-#                           for ObjectSeed in NewData[SeedCounter+1:]:
-#                               if SubjectSeed.InjectSeed(ObjectSeed):
-#                                    NewData.pop(NewData.index(ObjectSeed))
-#                           SeedCounter+=1
-#                       print(str(InitialDataLength), "2-track vertices were merged into", str(len(NewData)), 'vertices with higher multiplicity...')
-#
-#                       open_file = open(output_file_location, "wb")
-#                       pickle.dump(NewData, open_file)
-#                       open_file.close()
-#     print(UF.TimeStamp(), "Initiating the global vertex merging...")
-#     del VertexPool
-#     gc.collect()
-#     status=2
-#
-# if status==2:
-#     print(UF.TimeStamp(),'Current stage is no:', status)
-#     VertexPool=[]
-#     for i in range(0,int(round(float(args.DataCut)*0.6,0))):
-#                   output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Merged_Seeds2_'+str(i)+'.pkl'
-#                   data_file=open(output_file_location,'rb')
-#                   NewData=pickle.load(data_file)
-#                   data_file.close()
-#                   VertexPool+=NewData
-#                   random.shuffle(VertexPool)
-#
-#     for i in range(0,int(round(float(args.DataCut)*0.6*0.6,0))):
-#                   output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Merged_Seeds3_'+str(i)+'.pkl'
-#                   if os.path.isfile(output_file_location)==False:
-#                       print(UF.TimeStamp(), "Analysing set",i+1)
-#                       length=len(VertexPool)
-#                       segment=int(round(math.ceil(length/int(round(float(args.DataCut)*0.6*0.6,0))),0))
-#                       NewData=VertexPool[(i*segment):((i+1)*segment)]
-#                       print(UF.TimeStamp(), "Initiating the seed merging...")
-#                       InitialDataLength=len(NewData)
-#                       SeedCounter=0
-#                       SeedCounterContinue=True
-#                       while SeedCounterContinue:
-#                           if SeedCounter>=len(NewData):
-#                               SeedCounterContinue=False
-#                               break
-#                           progress=round(float(SeedCounter)/float(len(NewData))*100,0)
-#                           print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
-#                           SubjectSeed=NewData[SeedCounter]
-#                           for ObjectSeed in NewData[SeedCounter+1:]:
-#                               if SubjectSeed.InjectSeed(ObjectSeed):
-#                                    NewData.pop(NewData.index(ObjectSeed))
-#                           SeedCounter+=1
-#                       print(str(InitialDataLength), "2-track vertices were merged into", str(len(NewData)), 'vertices with higher multiplicity...')
-#
-#                       open_file = open(output_file_location, "wb")
-#                       pickle.dump(NewData, open_file)
-#                       open_file.close()
-#     del VertexPool
-#     gc.collect()
-#     status=3
-#
-# if status==3:
-#     print(UF.TimeStamp(),'Current stage is no:', status)
-#     VertexPool=[]
-#     for i in range(0,int(round(float(args.DataCut)*0.6*0.6,0))):
-#                   output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Merged_Seeds3_'+str(i)+'.pkl'
-#                   data_file=open(output_file_location,'rb')
-#                   NewData=pickle.load(data_file)
-#                   data_file.close()
-#                   VertexPool+=NewData
-#                   random.shuffle(VertexPool)
-#
-#     for i in range(0,int(round(float(args.DataCut)*0.6*0.6*0.6,0))):
-#                   output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Merged_Seeds4_'+str(i)+'.pkl'
-#                   if os.path.isfile(output_file_location)==False:
-#                       print(UF.TimeStamp(), "Analysing set",i+1)
-#                       length=len(VertexPool)
-#                       segment=int(round(math.ceil(length/int(round(float(args.DataCut)*0.6*0.6*0.6,0))),0))
-#                       NewData=VertexPool[(i*segment):((i+1)*segment)]
-#                       print(UF.TimeStamp(), "Initiating the seed merging...")
-#                       InitialDataLength=len(NewData)
-#                       SeedCounter=0
-#                       SeedCounterContinue=True
-#                       while SeedCounterContinue:
-#                           if SeedCounter>=len(NewData):
-#                               SeedCounterContinue=False
-#                               break
-#                           progress=round(float(SeedCounter)/float(len(NewData))*100,0)
-#                           print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
-#                           SubjectSeed=NewData[SeedCounter]
-#                           for ObjectSeed in NewData[SeedCounter+1:]:
-#                               if SubjectSeed.InjectSeed(ObjectSeed):
-#                                    NewData.pop(NewData.index(ObjectSeed))
-#                           SeedCounter+=1
-#                       print(str(InitialDataLength), "2-track vertices were merged into", str(len(NewData)), 'vertices with higher multiplicity...')
-#
-#                       open_file = open(output_file_location, "wb")
-#                       pickle.dump(NewData, open_file)
-#                       open_file.close()
-#     del VertexPool
-#     gc.collect()
-#     status=4
-#
-#
-#
-# if status==4:
-#     print(UF.TimeStamp(),'Current stage is no:', status)
-#     VertexPool=[]
-#     for i in range(0,int(round(float(args.DataCut)*0.6*0.6*0.6,0))):
-#                   output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Merged_Seeds4_'+str(i)+'.pkl'
-#                   data_file=open(output_file_location,'rb')
-#                   NewData=pickle.load(data_file)
-#                   data_file.close()
-#                   VertexPool+=NewData
-#     InitialDataLength=len(VertexPool)
-#     SeedCounter=0
-#     SeedCounterContinue=True
-#     while SeedCounterContinue:
-#         if SeedCounter==len(VertexPool):
-#                           SeedCounterContinue=False
-#                           break
-#         progress=round((float(SeedCounter)/float(len(VertexPool)))*100,0)
-#         print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
-#         SubjectSeed=VertexPool[SeedCounter]
-#         for ObjectSeed in VertexPool[SeedCounter+1:]:
-#                     if SubjectSeed.InjectSeed(ObjectSeed):
-#                                 VertexPool.pop(VertexPool.index(ObjectSeed))
-#         SeedCounter+=1
-#     print(str(InitialDataLength), "vertices from different files were merged into", str(len(VertexPool)), 'vertices with higher multiplicity...')
-#     for v in range(0,len(VertexPool)):
-#         VertexPool[v].AssignCNNVxId(v)
-#     output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_REC_VERTICES.pkl'
-#
-#     print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-#     print(UF.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_file_location+bcolors.ENDC)
-#     open_file = open(output_file_location, "wb")
-#     pickle.dump(VertexPool, open_file)
-#     open_file.close()
-#     #UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R5', ['R5_R5'], "SoftUsed == \"EDER-VIANN-R5\"")
-#     print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-#     print(UF.TimeStamp(),bcolors.OKGREEN+'The vertex merging has been completed..'+bcolors.ENDC)
-#     print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+    no_iter=int(math.ceil(float(len(base_data)/float(PM.MaxSeedsPerVxPool))))
+    print(UF.TimeStamp(), "Submitting jobs to HTCondor...")
+    job=[AFS_DIR,EOS_DIR,output_file_location,no_iter,PM.MaxSeedsPerVxPool]
+    UF.BSubmitBuildVertexJobsCondor(job)
+    print(UF.TimeStamp(), bcolors.OKGREEN + "All ",no_iter," jobs have been submitted to HTCondor successfully..." + bcolors.ENDC)
+if args.Mode=='C':
+    print(UF.TimeStamp(), "Continuing the seed merging into multi-track vertices")
+    input_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Fit_Seeds_Temp.pkl'
+    if os.path.isfile(input_file_location)==False:
+        input_file_location = EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Fit_Seeds_Refined.pkl'
+    if os.path.isfile(input_file_location) == False:
+        print(UF.TimeStamp(), bcolors.FAIL + "Critical fail, no",input_file_location,"file is present, please restart with the option --Mode R" + bcolors.ENDC)
+        exit()
+    print(UF.TimeStamp(), "Checking jobs")
+    data_file = open(input_file_location, 'rb')
+    base_data = pickle.load(data_file)
+    data_file.close()
+    original_data_seeds=len(base_data)
+    del base_data
+    no_iter = int(math.ceil(float(original_data_seeds / float(PM.MaxSeedsPerVxPool))))
+    print(UF.TimeStamp(), "Submitting jobs to HTCondor...")
+    bad_pop=[]
+    for i in range(no_iter):
+        required_file_location = EOS_DIR + '/EDER-VIANN/Data/REC_SET/R5_R5_Merged_Seeds_Temp_' + str(i) + '.pkl'
+        if os.path.isfile(required_file_location) == False:
+            bad_pop.append([AFS_DIR, EOS_DIR, input_file_location, i, PM.MaxSeedsPerVxPool])
+    if len(bad_pop)>0:
+        print(UF.TimeStamp(), bcolors.WARNING + 'Warning, there are still', len(bad_pop),
+              'HTCondor jobs remaining' + bcolors.ENDC)
+        print(bcolors.BOLD + 'If you would like to wait and try again later please enter W' + bcolors.ENDC)
+        print(bcolors.BOLD + 'If you would like to resubmit please enter R' + bcolors.ENDC)
+        UserAnswer = input(bcolors.BOLD + "Please, enter your option\n" + bcolors.ENDC)
+        if UserAnswer == 'W':
+            print(UF.TimeStamp(), 'OK, exiting now then')
+            exit()
+        if UserAnswer == 'R':
+            for bp in bad_pop:
+                UF.SubmitBuildVertexJobsCondor(bp)
+            print(UF.TimeStamp(), bcolors.OKGREEN + "All jobs have been resubmitted" + bcolors.ENDC)
+            print(bcolors.BOLD + "Please check them in few hours" + bcolors.ENDC)
+            exit()
+    else:
+        print(UF.TimeStamp(), bcolors.OKGREEN + 'All HTCondor Seed Creation jobs have finished' + bcolors.ENDC)
+        print(UF.TimeStamp(), 'Collating the results...')
+        VertexPool=[]
+        for i in range(no_iter):
+            progress = round((float(i) / float(no_iter)) * 100, 2)
+            print(UF.TimeStamp(), 'progress is ', progress, ' %', end="\r", flush=True)
+            required_file_location = EOS_DIR + '/EDER-VIANN/Data/REC_SET/R5_R5_Merged_Seeds_Temp_' + str(i) + '.pkl'
+            data_file = open(required_file_location, 'rb')
+            NewData=pickle.load(data_file)
+            data_file.close()
+            VertexPool+=NewData
+        print(UF.TimeStamp(), 'As a result of the previous operation',str(original_data_seeds),'seeds were merged into',str(len(VertexPool)),'vertices...')
+        comp_ratio = round((float(len(VertexPool)) / float(original_data_seeds)) * 100, 2)
+        print(UF.TimeStamp(), 'The compression ratio is',comp_ratio, '%...')
+        print(bcolors.BOLD + 'If you would like to reiterate the merging operation one more time please enter C' + bcolors.ENDC)
+        print(bcolors.BOLD + 'If you would like to merge all remaining vertices then enter F' + bcolors.ENDC)
+        UserAnswer = input(bcolors.BOLD + "Please, enter your option\n" + bcolors.ENDC)
+        if UserAnswer == 'C':
+            print(UF.TimeStamp(), 'OK, shuffling and preparing the set...')
+            random.shuffle(VertexPool)
+            output_file_location = EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Fit_Seeds_Temp.pkl'
+            open_file = open(output_file_location, "wb")
+            pickle.dump(VertexPool, open_file)
+            open_file.close()
+            print(UF.TimeStamp(), "Saving the temporarily file into", bcolors.OKBLUE + output_file_location + bcolors.ENDC)
+            UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R5', ['R5_R5_Merged'], "SoftUsed == \"EDER-VIANN-R5\"")
+            no_iter = int(math.ceil(float(len(VertexPool) / float(PM.MaxSeedsPerVxPool))))
+            print(UF.TimeStamp(), "Submitting jobs to HTCondor...")
+            job = [AFS_DIR, EOS_DIR, output_file_location, no_iter, PM.MaxSeedsPerVxPool]
+            UF.BSubmitBuildVertexJobsCondor(job)
+            print(UF.TimeStamp(), bcolors.OKGREEN + "All ", no_iter,
+                  " jobs have been submitted to HTCondor successfully..." + bcolors.ENDC)
+            exit()
+        if UserAnswer == 'F':
+                 print(UF.TimeStamp(), 'Current stage is no:', status)
+                 InitialDataLength=len(VertexPool)
+                 SeedCounter=0
+                 SeedCounterContinue=True
+                 while SeedCounterContinue:
+                     if SeedCounter==len(VertexPool):
+                                       SeedCounterContinue=False
+                                       break
+                     progress=round((float(SeedCounter)/float(len(VertexPool)))*100,0)
+                     print(UF.TimeStamp(),'progress is ',progress,' %', end="\r", flush=True) #Progress display
+                     SubjectSeed=VertexPool[SeedCounter]
+                     for ObjectSeed in VertexPool[SeedCounter+1:]:
+                                 if SubjectSeed.InjectSeed(ObjectSeed):
+                                             VertexPool.pop(VertexPool.index(ObjectSeed))
+                     SeedCounter+=1
+                 print(str(InitialDataLength), "vertices from different files were merged into", str(len(VertexPool)), 'vertices with higher multiplicity...')
+                 for v in range(0,len(VertexPool)):
+                     VertexPool[v].AssignCNNVxId(v)
+                 output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_REC_VERTICES.pkl'
+                 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+                 print(UF.TimeStamp(), "Saving the results into the file",bcolors.OKBLUE+output_file_location+bcolors.ENDC)
+                 open_file = open(output_file_location, "wb")
+                 pickle.dump(VertexPool, open_file)
+                 open_file.close()
+                 #UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R5', ['R5_R5'], "SoftUsed == \"EDER-VIANN-R5\"")
+                 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+                 print(UF.TimeStamp(),bcolors.OKGREEN+'The vertex merging has been completed..'+bcolors.ENDC)
+                 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)

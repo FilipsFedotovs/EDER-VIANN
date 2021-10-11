@@ -220,7 +220,7 @@ if Mode=='C':
               req_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_SamplesCondensedImages_'+str(j+1)+'.pkl'
               if os.path.isfile(req_file)==False:
                   progress=int( round( (float(j)/float(len(data))*100),0)  )
-                  print(UF.TimeStamp(),"Sampling progress is ",progress,' %')
+                  print(UF.TimeStamp(),"Sampling image from the collated data, progress is ",progress,' % of seeds generated')
                   output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_CondensedImages_'+str(j+1)+'.pkl'
                   base_data_file=open(output_file_location,'rb')
                   base_data=pickle.load(base_data_file)
@@ -247,7 +247,7 @@ if Mode=='C':
            TotalData=[]
            for j in range(0,len(data)):
                   progress=int( round( (float(j)/float(len(data))*100),0)  )
-                  print(UF.TimeStamp(),"Preparing data for the final output, progress is ",progress,' %')
+                  print(UF.TimeStamp(),"Sampling image from the collated data, progress is ",progress,' % of seeds generated')
                   output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_SamplesCondensedImages_'+str(j+1)+'.pkl'
                   base_data_file=open(output_file_location,'rb')
                   base_data=pickle.load(base_data_file)
