@@ -906,6 +906,98 @@ def SubmitVertexSeedsJobsCondor(job):
             f.close()
             subprocess.call(['condor_submit',SUBName])
             print(TotalLine," has been successfully submitted")
+
+
+def BSubmitBuildVertexJobsCondor(job):
+    SHName = job[0] + '/HTCondor/SH/SH_R5_BV.sh'
+    SUBName = job[0] + '/HTCondor/SUB/SUB_R5_BV.sub'
+    # MSGName='MSG_M4_val_'
+    OptionLine = (" --Set $1")
+    OptionLine += (" --EOS " + str(job[1]))
+    OptionLine += (" --f " + str(job[2]))
+    OptionLine += (" --AFS " + str(job[0]))
+    OptionLine += (" --MaxPoolSeeds " + str(job[4]))
+    # MSGName+=str(job[0])
+    # MSGName+='_'
+    # MSGName+=str(job[1])
+    f = open(SUBName, "w")
+    f.write("executable = " + SHName)
+    f.write("\n")
+    # f.write("output ="+job[7]+"/HTCondor/MSG/"+MSGName+".out")
+    # f.write("\n")
+    # f.write("error ="+job[7]+"/HTCondor/MSG/"+MSGName+".err")
+    # f.write("\n")
+    # f.write("log ="+job[7]+"/HTCondor/MSG/"+MSGName+".log")
+    # f.write("\n")
+    f.write('requirements = (CERNEnvironment =!= "qa")')
+    f.write("\n")
+    f.write('arguments = $(Process)')
+    f.write("\n")
+    f.write('+SoftUsed = "EDER-VIANN-R5"')
+    f.write("\n")
+    f.write('transfer_output_files = ""')
+    f.write("\n")
+    f.write('+JobFlavour = "workday"')
+    f.write("\n")
+    f.write('queue ' + str(job[3]))
+    f.write("\n")
+    f.close()
+    TotalLine = 'python3 ' + job[0] + '/Code/Utilities/R5_BuildVertices_Sub.py ' + OptionLine
+    f = open(SHName, "w")
+    f.write("#!/bin/bash")
+    f.write("\n")
+    f.write("set -ux")
+    f.write("\n")
+    f.write(TotalLine)
+    f.write("\n")
+    f.close()
+    subprocess.call(['condor_submit', SUBName])
+    print(TotalLine, " has been successfully submitted")
+
+def SubmitBuildVertexJobsCondor(job):
+    SHName = job[0] + '/HTCondor/SH/SH_R5_BV_'+ str(job[3])+'.sh'
+    SUBName = job[0] + '/HTCondor/SUB/SUB_R5_BV_'+ str(job[3])+'.sub'
+    # MSGName='MSG_M4_val_'
+    OptionLine = (" --Set "+ str(job[3]))
+    OptionLine += (" --EOS " + str(job[1]))
+    OptionLine += (" --f " + str(job[2]))
+    OptionLine += (" --AFS " + str(job[0]))
+    OptionLine += (" --MaxPoolSeeds " + str(job[4]))
+    # MSGName+=str(job[0])
+    # MSGName+='_'
+    # MSGName+=str(job[1])
+    f = open(SUBName, "w")
+    f.write("executable = " + SHName)
+    f.write("\n")
+    # f.write("output ="+job[7]+"/HTCondor/MSG/"+MSGName+".out")
+    # f.write("\n")
+    # f.write("error ="+job[7]+"/HTCondor/MSG/"+MSGName+".err")
+    # f.write("\n")
+    # f.write("log ="+job[7]+"/HTCondor/MSG/"+MSGName+".log")
+    # f.write("\n")
+    f.write('requirements = (CERNEnvironment =!= "qa")')
+    f.write("\n")
+    f.write('+SoftUsed = "EDER-VIANN-R5"')
+    f.write("\n")
+    f.write('transfer_output_files = ""')
+    f.write("\n")
+    f.write('+JobFlavour = "workday"')
+    f.write("\n")
+    f.write('queue 1')
+    f.write("\n")
+    f.close()
+    TotalLine = 'python3 ' + job[0] + '/Code/Utilities/R5_BuildVertices_Sub.py ' + OptionLine
+    f = open(SHName, "w")
+    f.write("#!/bin/bash")
+    f.write("\n")
+    f.write("set -ux")
+    f.write("\n")
+    f.write(TotalLine)
+    f.write("\n")
+    f.close()
+    subprocess.call(['condor_submit', SUBName])
+    print(TotalLine, " has been successfully submitted")
+
 #Evaluation
 def SubmitCreateEvalSeedsJobsCondor(job):
             SHName=job[2]+'/HTCondor/SH/SH_E2_'+str(job[0])+'.sh'
