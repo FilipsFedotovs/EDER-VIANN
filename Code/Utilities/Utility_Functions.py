@@ -97,54 +97,58 @@ class Seed:
                   self.TrackHeader.append(OtherSeed.TrackHeader[t2])
                   if hasattr(self,'TrackHits') and hasattr(OtherSeed,'TrackHits'):
                           self.TrackHits.append(OtherSeed.TrackHits[t2])
-                  if hasattr(self,'MC_truth_label') and hasattr(OtherSeed,'MC_truth_label'):
+              if hasattr(self,'MC_truth_label') and hasattr(OtherSeed,'MC_truth_label'):
                          self.MC_truth_label=(self.MC_truth_label and OtherSeed.MC_truth_label)
-                  if hasattr(self,'VX_CNN_Fit') and hasattr(OtherSeed,'VX_CNN_Fit'):
+              if hasattr(self,'VX_CNN_Fit') and hasattr(OtherSeed,'VX_CNN_Fit'):
                         self.VX_CNN_Fit+=OtherSeed.VX_CNN_Fit
-                  elif hasattr(self,'VX_CNN_Fit'):
+              elif hasattr(self,'VX_CNN_Fit'):
                        self.VX_CNN_Fit.append(OtherSeed.Seed_CNN_Fit)
-                  elif hasattr(OtherSeed,'VX_CNN_Fit'):
+              elif hasattr(OtherSeed,'VX_CNN_Fit'):
                        self.VX_CNN_Fit=[self.Seed_CNN_Fit]
                        self.VX_CNN_Fit+=OtherSeed.VX_CNN_Fit
-                  else:
+              else:
                       self.VX_CNN_Fit=[]
                       self.VX_CNN_Fit.append(self.Seed_CNN_Fit)
                       self.VX_CNN_Fit.append(OtherSeed.Seed_CNN_Fit)
-                  if hasattr(self,'VX_x') and hasattr(OtherSeed,'VX_x'):
+              if hasattr(self,'VX_x') and hasattr(OtherSeed,'VX_x'):
                       self.VX_x+=OtherSeed.VX_x
-                  elif hasattr(self,'VX_x'):
+              elif hasattr(self,'VX_x'):
                        self.VX_x.append(OtherSeed.Vx)
-                  elif hasattr(OtherSeed,'VX_x'):
+              elif hasattr(OtherSeed,'VX_x'):
                        self.VX_x=[self.Vx]
                        self.VX_x+=OtherSeed.VX_x
-                  else:
+              else:
                       self.VX_x=[]
                       self.VX_x.append(self.Vx)
                       self.VX_x.append(OtherSeed.Vx)
                           
-                  if hasattr(self,'VX_y') and hasattr(OtherSeed,'VX_y'):
+              if hasattr(self,'VX_y') and hasattr(OtherSeed,'VX_y'):
                       self.VX_y+=OtherSeed.VX_y
-                  elif hasattr(self,'VX_y'):
+              elif hasattr(self,'VX_y'):
                        self.VX_y.append(OtherSeed.Vy)
-                  elif hasattr(OtherSeed,'VX_y'):
+              elif hasattr(OtherSeed,'VX_y'):
                        self.VX_y=[self.Vy]
                        self.VX_y+=OtherSeed.VX_y
-                  else:
+              else:
                       self.VX_y=[]
                       self.VX_y.append(self.Vy)
                       self.VX_y.append(OtherSeed.Vy)
                   
-                  if hasattr(self,'VX_z') and hasattr(OtherSeed,'VX_z'):
+              if hasattr(self,'VX_z') and hasattr(OtherSeed,'VX_z'):
                       self.VX_z+=OtherSeed.VX_z
-                  elif hasattr(self,'VX_z'):
+              elif hasattr(self,'VX_z'):
                        self.VX_z.append(OtherSeed.Vz)
-                  elif hasattr(OtherSeed,'VX_z'):
+              elif hasattr(OtherSeed,'VX_z'):
                        self.VX_z=[self.Vz]
                        self.VX_z+=OtherSeed.VX_z
-                  else:
+              else:
                       self.VX_z=[]
                       self.VX_z.append(self.Vz)
                       self.VX_z.append(OtherSeed.Vz)
+              self.VX_z=list(set(self.VX_z))
+              self.VX_x=list(set(self.VX_x))
+              self.VX_y=list(set(self.VX_y))
+              self.VX_CNN_Fit=list(set(self.VX_CNN_Fit))
               self.Multiplicity=len(self.TrackHeader)
               self.Seed_CNN_Fit=sum(self.VX_CNN_Fit)/len(self.VX_CNN_Fit)
               self.Vx=sum(self.VX_x)/len(self.VX_x)
@@ -372,7 +376,7 @@ class Seed:
 
 
       def Plot(self,PlotType):
-        if PlotType=='XZ':
+        if PlotType=='XZ' or PlotType=='ZX':
           __InitialData=[]
           __Index=-1
           for x in range(-self.bX,self.bX):
@@ -392,26 +396,49 @@ class Seed:
           __image=plt.imshow(__Matrix,cmap='gray_r',extent=[0,self.bZ,self.bX,-self.bX])
           plt.gca().invert_yaxis()
           plt.show()
-
-        if PlotType=='YZ':
-           __InitialData=[]
-           __Index=-1
-           for y in range(-__bY,__bY):
-               for z in range(0,__bZ):
+        elif PlotType=='YZ' or PlotType=='ZY':
+          __InitialData=[]
+          __Index=-1
+          for y in range(-self.bY,self.bY):
+             for z in range(0,self.bZ):
                  __InitialData.append(0.0)
+          __Matrix = np.array(__InitialData)
+          __Matrix=np.reshape(__Matrix,(self.W,self.L))
+          for __Hits in self.TrackPrint:
+                if abs(int(__Hits[1]))<self.bY and abs(int(__Hits[2]))<self.bZ:
+                   __Matrix[int(__Hits[1])+self.bY][int(__Hits[2])]=1
+          import matplotlib as plt
+          from matplotlib.colors import LogNorm
+          from matplotlib import pyplot as plt
+          plt.title('Seed '+':'.join(self.TrackHeader))
+          plt.xlabel('Z [microns /'+str(int(self.Resolution))+']')
+          plt.ylabel('Y [microns /'+str(int(self.Resolution))+']')
+          __image=plt.imshow(__Matrix,cmap='gray_r',extent=[0,self.bZ,self.bY,-self.bY])
+          plt.gca().invert_yaxis()
+          plt.show()
+        elif PlotType=='XY' or PlotType=='YX':
+          __InitialData=[]
+          __Index=-1
+          for x in range(-self.bX,self.bX):
+             for y in range(-self.bY,self.bY):
+                 __InitialData.append(0.0)
+          __Matrix = np.array(__InitialData)
+          __Matrix=np.reshape(__Matrix,(self.H,self.W))
+          for __Hits in self.TrackPrint:
+                if abs(int(__Hits[0]))<self.bX and abs(int(__Hits[1]))<self.bY:
+                   __Matrix[int(__Hits[0])+self.bX][int(__Hits[1]+self.bY)]=1
+          import matplotlib as plt
+          from matplotlib.colors import LogNorm
+          from matplotlib import pyplot as plt
+          plt.title('Seed '+':'.join(self.TrackHeader))
+          plt.xlabel('Y [microns /'+str(int(self.Resolution))+']')
+          plt.ylabel('X [microns /'+str(int(self.Resolution))+']')
+          __image=plt.imshow(__Matrix,cmap='gray_r',extent=[-self.bY,self.bY,self.bX,-self.bX])
+          plt.gca().invert_yaxis()
+          plt.show()
+        else:
+          print('Invalid plot type input value! Should be XZ, YZ or XY')
 
-           __Matrix = np.array(__InitialData)
-           __Matrix=np.reshape(__Matrix,(__W,__L))
-        if PlotType=='XY':
-           __InitialData=[]
-           __Index=-1
-           for x in range(-__bX,__bX):
-                 for y in range(-__bY,__bY):
-                     __InitialData.append(0.0)
-           __Matrix = np.array(__InitialData)
-           __Matrix=np.reshape(__Matrix,(__H,__W))
-
-        #if PlotType=='XZ':
 
       @staticmethod
       def unit_vector(vector):

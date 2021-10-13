@@ -46,7 +46,7 @@ data_file=open(input_file_location,'rb')
 base_data=pickle.load(data_file)
 data_file.close()
 print(UF.TimeStamp(), bcolors.OKGREEN+"Loading is successful, there are total of "+str(len(base_data))+" vertexed seeds..."+bcolors.ENDC)
-base_data=base_data[((Set-1)*MaxPoolSeeds):min(((Set)*MaxPoolSeeds),len(base_data))]
+base_data=base_data[(Set*MaxPoolSeeds):min(((Set+1)*MaxPoolSeeds),len(base_data))]
 print(UF.TimeStamp(), bcolors.OKGREEN+"Out of these only "+str(len(base_data))+" vertexed seeds will be considered here..."+bcolors.ENDC)
 output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_R5_Merged_Seeds_Temp_'+str(Set)+'.pkl'
 print(UF.TimeStamp(), "Initiating the seed merging...")

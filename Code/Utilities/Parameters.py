@@ -43,7 +43,7 @@ acceptance=0.5
 
 
 ##Model parameters
-resolution=100
+resolution=60
 MaxX=3500.0
 MaxY=1000.0
 MaxZ=20000.0
@@ -52,11 +52,11 @@ ModelArchitecture=\
     [[4, 4, 1, 2, 2, 2, 2], #Layer 1
         [5, 4, 1, 1, 2, 2, 2], #Layer 2
         [5, 4, 2, 2, 2, 2, 2], #Layer 3
-        [], #Layer 4
+        [5, 4, 2, 1, 2, 2, 2], #Layer 4
         [], #Layer 5
-        [6, 4, 2], #Dense Layer 1
-        [5, 4, 2], #Dense Layer 2
-        [4, 4, 2], #Dense Layer 3
+        [5, 4, 2], #Dense Layer 1
+        [4, 4, 2], #Dense Layer 2
+        [3, 4, 2], #Dense Layer 3
         [], #Dense Layer 4
         [], #Dense Layer 5
         [7, 1, 1, 4]] #Output Layer
