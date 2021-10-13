@@ -146,7 +146,7 @@ if args.Mode=='C':
                   " jobs have been submitted to HTCondor successfully..." + bcolors.ENDC)
             exit()
         if UserAnswer == 'F':
-                 print(UF.TimeStamp(), 'Current stage is no:', status)
+                 print(UF.TimeStamp(), 'Ok starting the final merging of the remained vertices')
                  InitialDataLength=len(VertexPool)
                  SeedCounter=0
                  SeedCounterContinue=True
@@ -170,7 +170,7 @@ if args.Mode=='C':
                  open_file = open(output_file_location, "wb")
                  pickle.dump(VertexPool, open_file)
                  open_file.close()
-                 #UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R5', ['R5_R5'], "SoftUsed == \"EDER-VIANN-R5\"")
+                 UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R5', ['R5_R5'], "SoftUsed == \"EDER-VIANN-R5\"")
                  print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
                  print(UF.TimeStamp(),bcolors.OKGREEN+'The vertex merging has been completed..'+bcolors.ENDC)
                  print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)

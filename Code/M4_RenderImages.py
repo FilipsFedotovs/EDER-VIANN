@@ -71,7 +71,7 @@ if Mode=='R':
 
    if UserAnswer=='Y':
       print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-      UF.RecCleanUp(AFS_DIR, EOS_DIR, 'M4', ['M4_M5'], "SoftUsed == \"EDER-VIANN-M4\"")
+      UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'M4', ['M4_M5'], "SoftUsed == \"EDER-VIANN-M4\"")
       print(UF.TimeStamp(),'Submitting jobs... ',bcolors.ENDC)
       val_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M4_Validation_Set.pkl'
       if os.path.isfile(val_file)==False:
@@ -123,7 +123,7 @@ if Mode=='C':
        print(bcolors.BOLD+'Would you like to delete un-rendered images?'+bcolors.ENDC)
        UserAnswer=input(bcolors.BOLD+"Please, enter your option Y/N \n"+bcolors.ENDC)
        if UserAnswer=='Y':
-           UF.RecCleanUp(AFS_DIR, EOS_DIR, 'M4', ['M3_M4'], "SoftUsed == \"EDER-VIANN-M4\"")
+           UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'M4', ['M3_M4'], "SoftUsed == \"EDER-VIANN-M4\"")
        else:
         print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
         print(UF.TimeStamp(), bcolors.OKGREEN+"Image rendering is completed"+bcolors.ENDC)
