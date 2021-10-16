@@ -69,8 +69,8 @@ class Seed:
           else:
                 raise ValueError("Method 'DecorateSeedGeoInfo' works only if 'DecorateTracks' method has been acted upon the seed before")
 
-      def SeedQualityCheck(self,VO_min_Z,VO_max_Z,MaxDoca,TV_Min_Dist):
-                    self.GeoFit = (self.DOCA<=MaxDoca and min(self.V_Tr)<=TV_Min_Dist and self.Vz>=VO_min_Z and self.Vz<=VO_max_Z)
+      def SeedQualityCheck(self,VO_min_Z,VO_max_Z,MaxDoca,TV_Min_Dist, min_angle, max_angle):
+                    self.GeoFit = (self.DOCA<=MaxDoca and min(self.V_Tr)<=TV_Min_Dist and self.Vz>=VO_min_Z and self.Vz<=VO_max_Z and abs(self.angle)>=min_angle and abs(self.angle)<=max_angle)
 
       def CNNFitSeed(self,Prediction):
           self.Seed_CNN_Fit=Prediction
@@ -360,7 +360,7 @@ class Seed:
           self.TrackPrint=list(set(self.TrackPrint))
           for p in range(len(self.TrackPrint)):
               self.TrackPrint[p]=ast.literal_eval(self.TrackPrint[p])
-
+          self.TrackPrint=[p for p in self.TrackPrint if (abs(p[0])<self.bX and abs(p[1])<self.bY and abs(p[2])<self.bZ)]
           del __TempEnchTrack
           del __TempTrack
 
@@ -385,7 +385,6 @@ class Seed:
           __Matrix = np.array(__InitialData)
           __Matrix=np.reshape(__Matrix,(self.H,self.L))
           for __Hits in self.TrackPrint:
-                if abs(int(__Hits[0]))<self.bX and abs(int(__Hits[2]))<self.bZ:
                    __Matrix[int(__Hits[0])+self.bX][int(__Hits[2])]=1
           import matplotlib as plt
           from matplotlib.colors import LogNorm
@@ -405,7 +404,6 @@ class Seed:
           __Matrix = np.array(__InitialData)
           __Matrix=np.reshape(__Matrix,(self.W,self.L))
           for __Hits in self.TrackPrint:
-                if abs(int(__Hits[1]))<self.bY and abs(int(__Hits[2]))<self.bZ:
                    __Matrix[int(__Hits[1])+self.bY][int(__Hits[2])]=1
           import matplotlib as plt
           from matplotlib.colors import LogNorm
@@ -425,7 +423,6 @@ class Seed:
           __Matrix = np.array(__InitialData)
           __Matrix=np.reshape(__Matrix,(self.H,self.W))
           for __Hits in self.TrackPrint:
-                if abs(int(__Hits[0]))<self.bX and abs(int(__Hits[1]))<self.bY:
                    __Matrix[int(__Hits[0])+self.bX][int(__Hits[1]+self.bY)]=1
           import matplotlib as plt
           from matplotlib.colors import LogNorm
@@ -568,25 +565,6 @@ class Seed:
 
 
 
- #if args.PlotType=='YZ':
-
- # for Tracks in data[1]:
- #        for Hits in Tracks:
-  #               if abs(Hits[1])<boundsY and abs(Hits[2])<boundsZ:
-  #                 Matrix[Hits[1]+boundsY][Hits[2]]+=1
- # for Tracks in additional_data[1]:
- #     for Hits in Tracks:
- #        if abs(Hits[1])<boundsY and abs(Hits[2])<boundsZ:
- #         Matrix[Hits[1]+boundsY][Hits[2]]+=1
- #if args.PlotType=='XY':
- # for Tracks in data[1]:
- #    for Hits in Tracks:
- #      if abs(Hits[0])<boundsX and abs(Hits[1])<boundsY:
- #        Matrix[Hits[0]+boundsX][Hits[1]+boundsY]+=1
-  #for Tracks in additional_data[1]:
- #     for Hits in Tracks:
-  #       if abs(Hits[0])<boundsX and abs(Hits[1])<boundsY:
-   #       Matrix[Hits[0]+boundsX][Hits[1]+boundsY]+=1
 def CleanFolder(folder,key):
     if key=='':
       for the_file in os.listdir(folder):
@@ -746,6 +724,8 @@ def BSubmitFilterSeedsJobsCondor(job):
             OptionLine+=(" --VO_max_Z "+str(job[4]))
             OptionLine+=(" --VO_min_Z "+str(job[5]))
             OptionLine+=(" --MaxDoca "+str(job[6]))
+            OptionLine+=(" --MinAngle "+str(job[9]))
+            OptionLine+=(" --MaxAngle "+str(job[10]))
             #MSGName+=str(job[0])
             #MSGName+='_'
             #MSGName+=str(job[1])
@@ -798,6 +778,8 @@ def SubmitFilterSeedsJobsCondor(job):
             OptionLine+=(" --VO_max_Z "+str(job[4]))
             OptionLine+=(" --VO_min_Z "+str(job[5]))
             OptionLine+=(" --MaxDoca "+str(job[6]))
+            OptionLine+=(" --MinAngle "+str(job[9]))
+            OptionLine+=(" --MaxAngle "+str(job[10]))
             #MSGName+=str(job[0])
             #MSGName+='_'
             #MSGName+=str(job[1])
@@ -1452,6 +1434,8 @@ def BSubmitImageJobsCondor(job):
             OptionLine+=(" --VO_min_Z "+str(job[4]))
             OptionLine+=(" --VO_T "+str(job[5]))
             OptionLine+=(" --MaxDoca "+str(job[6]))
+            OptionLine+=(" --MinAngle "+str(job[9]))
+            OptionLine+=(" --MaxAngle "+str(job[10]))
             #MSGName+=str(job[0])
             #MSGName+='_'
             #MSGName+=str(job[1])
@@ -1503,6 +1487,8 @@ def SubmitImageJobsCondor(job):
             OptionLine+=(" --VO_min_Z "+str(job[4]))
             OptionLine+=(" --VO_T "+str(job[5]))
             OptionLine+=(" --MaxDoca "+str(job[6]))
+            OptionLine+=(" --MinAngle "+str(job[9]))
+            OptionLine+=(" --MaxAngle "+str(job[10]))
             #MSGName+=str(job[0])
             #MSGName+='_'
             #MSGName+=str(job[1])
@@ -1697,7 +1683,7 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed):
     from tensorflow import keras
     NewSeeds=Seeds[StartSeed-1:min(EndSeed,len(Seeds))]
     ImagesY=np.empty([len(NewSeeds),1])
-    ImagesX=np.empty([len(NewSeeds),NewSeeds[0].H,NewSeeds[0].W,NewSeeds[0].L],dtype=np.float16)
+    ImagesX=np.empty([len(NewSeeds),NewSeeds[0].H,NewSeeds[0].W,NewSeeds[0].L],dtype=np.bool)
     for im in range(len(NewSeeds)):
         if hasattr(NewSeeds[im],'MC_truth_label'):
            ImagesY[im]=int(float(NewSeeds[im].MC_truth_label))
@@ -1707,12 +1693,11 @@ def LoadRenderImages(Seeds,StartSeed,EndSeed):
         for x in range(-NewSeeds[im].bX,NewSeeds[im].bX):
           for y in range(-NewSeeds[im].bY,NewSeeds[im].bY):
             for z in range(0,NewSeeds[im].bZ):
-             BlankRenderedImage.append(0.0)
+             BlankRenderedImage.append(0)
         RenderedImage = np.array(BlankRenderedImage)
         RenderedImage = np.reshape(RenderedImage,(NewSeeds[im].H,NewSeeds[im].W,NewSeeds[im].L))
         for Hits in NewSeeds[im].TrackPrint:
-                if abs(Hits[0])<NewSeeds[im].bX and abs(Hits[1])<NewSeeds[im].bY and abs(Hits[2])<NewSeeds[im].bZ:
-                   RenderedImage[Hits[0]+NewSeeds[im].bX][Hits[1]+NewSeeds[im].bY][Hits[2]]=1.0
+                   RenderedImage[Hits[0]+NewSeeds[im].bX][Hits[1]+NewSeeds[im].bY][Hits[2]]=1
         ImagesX[im]=RenderedImage
     ImagesX= ImagesX[..., np.newaxis]
     ImagesY=tf.keras.utils.to_categorical(ImagesY,2)

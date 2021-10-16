@@ -39,11 +39,14 @@ VO_T=3900 #The minimum distance from the reconstructed Vertex Origin to the clos
 VO_max_Z=0 #Fidu
 VO_min_Z=-39500
 MaxDoca=200
-acceptance=0.5
+MinAngle=0 #Seed Opening Angle (Magnitude) in radians
+MaxAngle=2.000 #Seed Opening Angle (Magnitude) in radians
+
 
 
 ##Model parameters
-resolution=60
+acceptance=0.5
+resolution=100
 MaxX=3500.0
 MaxY=1000.0
 MaxZ=20000.0
@@ -52,11 +55,11 @@ ModelArchitecture=\
     [[4, 4, 1, 2, 2, 2, 2], #Layer 1
         [5, 4, 1, 1, 2, 2, 2], #Layer 2
         [5, 4, 2, 2, 2, 2, 2], #Layer 3
-        [5, 4, 2, 1, 2, 2, 2], #Layer 4
+        [], #Layer 4
         [], #Layer 5
-        [5, 4, 2], #Dense Layer 1
-        [4, 4, 2], #Dense Layer 2
-        [3, 4, 2], #Dense Layer 3
+        [6, 4, 2], #Dense Layer 1
+        [5, 4, 2], #Dense Layer 2
+        [4, 4, 2], #Dense Layer 3
         [], #Dense Layer 4
         [], #Dense Layer 5
         [7, 1, 1, 4]] #Output Layer

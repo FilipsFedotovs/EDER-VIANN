@@ -42,7 +42,7 @@ class bcolors:
 parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--Mode',help="Please enter the mode: Create/Test/Train", default='Test')
 parser.add_argument('--ImageSet',help="Please enter the image set", default='1')
-parser.add_argument('--DNA',help="Please enter the model dna", default='[[4, 4, 1, 2, 2, 2, 2], [5, 4, 1, 1, 2, 2, 2], [5, 4, 2, 2, 2, 2, 2], [5, 4, 2, 1, 2, 2, 2], [], [5, 4, 2], [4, 4, 2], [3, 4, 2], [], [], [7, 1, 1, 4]]')
+parser.add_argument('--DNA',help="Please enter the model dna", default='[[4, 4, 1, 2, 2, 2, 2], [5, 4, 1, 1, 2, 2, 2], [5, 4, 2, 1, 2, 2, 2], [5, 4, 2, 1, 2, 2, 2], [], [3, 4, 2], [3, 4, 2], [2, 4, 2], [], [], [7, 1, 1, 4]]')
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--LR',help="Please enter the value of learning rate", default='Default')
@@ -101,6 +101,9 @@ if Mode!='Test':
     print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
     train_file=open(flocation,'rb')
     TrainImages=pickle.load(train_file)
+
+#    TrainImages=TrainImages[:25000]
+
     train_file.close()
     NTrainBatches=math.ceil(float(len(TrainImages))/float(TrainBatchSize))
     print(UF.TimeStamp(),'This iteration will be split in',bcolors.BOLD+str(NTrainBatches)+bcolors.ENDC,str(TrainBatchSize),'-size batches')

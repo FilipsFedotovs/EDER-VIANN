@@ -27,10 +27,8 @@ parser.add_argument('--VO_T',help="The maximum distance between vertex reconstru
 parser.add_argument('--VO_min_Z',help="Minimal Z coordinate of the reconstructed vertex origin", default='-39500')
 parser.add_argument('--VO_max_Z',help="Maximum Z coordinate of the reconstructed vertex origin", default='0')
 parser.add_argument('--MaxDoca',help="Doca cut in microns", default='200')
-parser.add_argument('--resolution',help="Resolution in picrons per pixel", default='100')
-parser.add_argument('--MaxX',help="Image size in microns along the x-axis", default='3500.0')
-parser.add_argument('--MaxY',help="Image size in microns along the y-axis", default='1000.0')
-parser.add_argument('--MaxZ',help="Image size in microns along the z-axis", default='20000.0')
+parser.add_argument('--MinAngle',help="Minimal angle in radians", default='0.0')
+parser.add_argument('--MaxAngle',help="Maximum angle in radians", default='2.0')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 Set=args.Set
@@ -40,11 +38,9 @@ MaxDoca=float(args.MaxDoca)
 VO_min_Z=float(args.VO_min_Z)
 VO_max_Z=float(args.VO_max_Z)
 VO_T=float(args.VO_T)
-resolution=float(args.resolution)
-#Maximum bounds on the image size in microns
-MaxX=float(args.MaxX)
-MaxY=float(args.MaxY)
-MaxZ=float(args.MaxZ)
+MinAngle=float(args.MinAngle)
+MaxAngle=float(args.MaxAngle)
+
 #Converting image size bounds in line with resolution settings
 boundsX=int(round(MaxX/resolution,0))
 boundsY=int(round(MaxY/resolution,0))
@@ -99,7 +95,7 @@ for s in range(0,limit):
       seed.DecorateSeedGeoInfo()
     except:
       continue
-    seed.SeedQualityCheck(VO_min_Z,VO_max_Z,MaxDoca,VO_T)
+    seed.SeedQualityCheck(VO_min_Z,VO_max_Z,MaxDoca,VO_T,MinAngle,MaxAngle)
     if seed.GeoFit:
            GoodSeeds.append(seed)
     else:

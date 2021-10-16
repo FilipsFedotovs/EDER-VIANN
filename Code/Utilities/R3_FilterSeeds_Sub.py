@@ -27,6 +27,8 @@ parser.add_argument('--AFS',help="AFS location", default='')
 parser.add_argument('--VO_T',help="The maximum distance between vertex reconstructed origin and the start hit of either tracks", default='3900')
 parser.add_argument('--VO_min_Z',help="Minimal Z coordinate of the reconstructed vertex origin", default='-39500')
 parser.add_argument('--VO_max_Z',help="Maximum Z coordinate of the reconstructed vertex origin", default='0')
+parser.add_argument('--MinAngle',help="Minimal angle in radians", default='0.0')
+parser.add_argument('--MaxAngle',help="Maximum angle in radians", default='2.0')
 parser.add_argument('--MaxDoca',help="Doca cut in microns", default='200')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
@@ -36,6 +38,8 @@ fraction=args.Fraction
 MaxDoca=float(args.MaxDoca)
 VO_min_Z=float(args.VO_min_Z)
 VO_max_Z=float(args.VO_max_Z)
+MinAngle=float(args.MinAngle)
+MaxAngle=float(args.MaxAngle)
 VO_T=float(args.VO_T)
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
@@ -77,7 +81,7 @@ for s in range(0,limit):
      seed.DecorateSeedGeoInfo()
     except:
       continue
-    seed.SeedQualityCheck(VO_min_Z,VO_max_Z,MaxDoca,VO_T)
+    seed.SeedQualityCheck(VO_min_Z,VO_max_Z,MaxDoca,VO_T,MinAngle,MaxAngle)
     if seed.GeoFit:
            GoodSeeds.append(seed)
     else:
