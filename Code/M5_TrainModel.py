@@ -65,10 +65,6 @@ if mode=='R' and args.ModelName=='N':
  job.append(1)
  job.append(1)
  job.append(PM.ModelArchitecture)
- job.append(PM.resolution)
- job.append(PM.MaxX)
- job.append(PM.MaxY)
- job.append(PM.MaxZ)
  job.append(args.LR)
  job.append(ModelName)
  if args.ModelNewName=='Default':
@@ -129,7 +125,7 @@ if mode=='C':
          exit()
      if UserAnswer=='R':
         if CurrentSet==1:
-          UF.SubmitTrainJobCondor(AFS_DIR,EOS_DIR,PreviousJob[0],'Train')
+          UF.SubmitTrainJobCondor(AFS_DIR,EOS_DIR,PreviousJob[0],'Create')
         if CurrentSet>1:
           UF.SubmitTrainJobCondor(AFS_DIR,EOS_DIR,PreviousJob[0],'Train')
         print(UF.TimeStamp(), bcolors.OKGREEN+"The Training Job for the CurrentSet",CurrentSet,"have been resubmitted"+bcolors.ENDC)
