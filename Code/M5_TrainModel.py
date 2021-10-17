@@ -139,7 +139,7 @@ if mode=='C':
       print(UF.TimeStamp(),bcolors.OKGREEN+'The training of the model by using image set',CurrentSet,'has been completed'+bcolors.ENDC)
       print(UF.TimeStamp(),'Creating next batch',CurrentSet+1)
       print(bcolors.BOLD+'Image Set',CurrentSet,' is completed'+bcolors.ENDC)
-      if os.path.isfile(EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/'+'M3_TRAIN_SET_'+str(CurrentSet+1)+'.pkl')==False:
+      if os.path.isfile(EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/'+'M4_M5_TRAIN_SET_'+str(CurrentSet+1)+'.pkl')==False:
           print(bcolors.WARNING+'No more training files left, restarting the new epoch...'+bcolors.ENDC)
           CurrentSet=1
           CurrentEpoch+=1
