@@ -53,8 +53,6 @@ import Parameters as PM #This is where we keep framework global parameters
 VO_T=PM.VO_T
 VO_max_Z=PM.VO_max_Z
 VO_min_Z=PM.VO_min_Z
-MinAngle=PM.MinAngle
-MaxAngle=PM.MaxAngle
 MaxDoca=PM.MaxDoca
  #The Separation bound is the maximum Euclidean distance that is allowed between hits in the beggining of Seed tracks.
 MaxTracksPerJob = PM.MaxTracksPerJob
@@ -98,7 +96,7 @@ if Mode=='R':
              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
              if os.path.isfile(new_output_file_location):
               f_counter=f
-            job_details=[(j+1),(sj+1),f_counter,VO_T,VO_max_Z,VO_min_Z,MaxDoca,AFS_DIR,EOS_DIR,MinAngle,MaxAngle]
+            job_details=[(j+1),(sj+1),f_counter,VO_T,VO_max_Z,VO_min_Z,MaxDoca,AFS_DIR,EOS_DIR]
             UF.BSubmitFilterSeedsJobsCondor(job_details)
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
@@ -109,7 +107,7 @@ if Mode=='C':
            for f in range(0,1000):
               new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
               required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R3_FilteredSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.pkl'
-              job_details=[(j+1),(sj+1),f,VO_T,VO_max_Z,VO_min_Z,MaxDoca,AFS_DIR,EOS_DIR,MinAngle,MaxAngle]
+              job_details=[(j+1),(sj+1),f,VO_T,VO_max_Z,VO_min_Z,MaxDoca,AFS_DIR,EOS_DIR]
               if os.path.isfile(required_output_file_location)!=True  and os.path.isfile(new_output_file_location):
                  bad_pop.append(job_details)
    if len(bad_pop)>0:
