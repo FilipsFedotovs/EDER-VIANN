@@ -13,7 +13,7 @@ MC_Track_ID='MCTrack'  #Column name for Track ID for MC Truth reconstruction dat
 MC_Event_ID='MCEvent' #Column name for Event id for MC truth reconstruction data (If absent please enter the MCTrack as for above)
 MC_VX_ID='MotherID'   #Column name for Track mother id (For MC truth only)
 FEDRA_VX_ID='VertexS' #Column name for the reconstructed Vertex id
-MC_NV_VX_ID='-1'
+MC_NV_VX_ID='-2'
 FEDRA_NV_VX_ID='-1.0'
 
 
@@ -25,22 +25,22 @@ MaxVxPerJob=10000
 MaxSeedsPerVxPool=20000
 
 ######List of geometrical constain parameters
-SI_1=1200
-SI_2=1310
-SI_3=1600
-SI_4=2620
-SI_5=3120
-SI_6=3940
+SI_1=50000
+SI_2=50000
+SI_3=50000
+SI_4=50000
+SI_5=50000
+SI_6=50000
 SI_7=4000 #This parameter restricts the maximum euclidean distance between the first hits of the 2-track seeds that are subject to the Vertex Fit.
 MinHitsTrack=2
 MaxTrainSampleSize=50000
 MaxValSampleSize=100000
-VO_T=3900 #The minimum distance from the reconstructed Vertex Origin to the closest starting hit of any track in the seed
-VO_max_Z=0 #Fidu
-VO_min_Z=-39500
-MaxDoca=200
+VO_T=6000 #The minimum distance from the reconstructed Vertex Origin to the closest starting hit of any track in the seed
+VO_max_Z=-3700 #Fidu
+VO_min_Z=-76000
+MaxDoca=100
 MinAngle=0 #Seed Opening Angle (Magnitude) in radians
-MaxAngle=2.000 #Seed Opening Angle (Magnitude) in radians
+MaxAngle=1.222 #Seed Opening Angle (Magnitude) in radians
 
 
 
@@ -50,7 +50,7 @@ resolution=100
 MaxX=3500.0
 MaxY=1000.0
 MaxZ=20000.0
-CNN_Model_Name='2T_100_FEDRA_2_model'
+CNN_Model_Name='2T_100_FEDRA_SNDmodel'
 ModelArchitecture=\
     [[4, 4, 1, 2, 2, 2, 2], #Layer 1
         [5, 4, 1, 1, 2, 2, 2], #Layer 2

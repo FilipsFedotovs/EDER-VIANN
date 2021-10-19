@@ -820,7 +820,7 @@ def SubmitFilterSeedsJobsCondor(job):
 def BSubmitVertexSeedsJobsCondor(job):
             SHName=job[7]+'/HTCondor/SH/SH_R4_'+str(job[0])+'_'+str(job[1])+'.sh'
             SUBName=job[7]+'/HTCondor/SUB/SUB_R4_'+str(job[0])+'_'+str(job[1])+'.sub'
-            #MSGName='MSG_R4_'
+            MSGName='MSG_R4_'
             OptionLine=(' --Set '+str(job[0]))
             OptionLine+=(" --Fraction $1")
             OptionLine+=(" --EOS "+str(job[8]))
@@ -837,12 +837,12 @@ def BSubmitVertexSeedsJobsCondor(job):
             f = open(SUBName, "w")
             f.write("executable = "+SHName)
             f.write("\n")
-            #f.write("output ="+job[7]+"/HTCondor/MSG/"+MSGName+".out")
-            #f.write("\n")
-            #f.write("error ="+job[7]+"/HTCondor/MSG/"+MSGName+".err")
-            #f.write("\n")
-            #f.write("log ="+job[7]+"/HTCondor/MSG/"+MSGName+".log")
-            #f.write("\n")
+            f.write("output ="+job[7]+"/HTCondor/MSG/"+MSGName+".out")
+            f.write("\n")
+            f.write("error ="+job[7]+"/HTCondor/MSG/"+MSGName+".err")
+            f.write("\n")
+            f.write("log ="+job[7]+"/HTCondor/MSG/"+MSGName+".log")
+            f.write("\n")
             f.write('requirements = (CERNEnvironment =!= "qa")')
             f.write("\n")
             f.write('arguments = $(Process)')
@@ -1477,7 +1477,7 @@ def BSubmitImageJobsCondor(job):
 def SubmitImageJobsCondor(job):
             SHName=job[7]+'/HTCondor/SH/SH_M3_'+str(job[0])+'_'+str(job[1])+'_'+str(job[2])+'.sh'
             SUBName=job[7]+'/HTCondor/SUB/SUB_M3_'+str(job[0])+'_'+str(job[1])+'_'+str(job[2])+'.sub'
-            #MSGName='MSG_M3_'
+#            MSGName='MSG_M3_'
             OptionLine=(' --Set '+str(job[0]))
             OptionLine+=(" --SubSet "+str(job[1]))
             OptionLine+=(" --Fraction "+str(job[2]))
@@ -1489,20 +1489,20 @@ def SubmitImageJobsCondor(job):
             OptionLine+=(" --MaxDoca "+str(job[6]))
             OptionLine+=(" --MinAngle "+str(job[9]))
             OptionLine+=(" --MaxAngle "+str(job[10]))
-            #MSGName+=str(job[0])
-            #MSGName+='_'
-            #MSGName+=str(job[1])
-            #MSGName+='_'
-            #MSGName+=str(job[2])
+#            MSGName+=str(job[0])
+#            MSGName+='_'
+#            MSGName+=str(job[1])
+#            MSGName+='_'
+#            MSGName+=str(job[2])
             f = open(SUBName, "w")
             f.write("executable = "+SHName)
             f.write("\n")
-            #f.write("output ="+job[7]+"/HTCondor/MSG/"+MSGName+".out")
-            #f.write("\n")
-            #f.write("error ="+job[7]+"/HTCondor/MSG/"+MSGName+".err")
-            #f.write("\n")
-            #f.write("log ="+job[7]+"/HTCondor/MSG/"+MSGName+".log")
-            #f.write("\n")
+#            f.write("output ="+job[7]+"/HTCondor/MSG/"+MSGName+".out")
+#            f.write("\n")
+#            f.write("error ="+job[7]+"/HTCondor/MSG/"+MSGName+".err")
+#            f.write("\n")
+#            f.write("log ="+job[7]+"/HTCondor/MSG/"+MSGName+".log")
+#            f.write("\n")
             f.write('requirements = (CERNEnvironment =!= "qa")')
             f.write("\n")
             f.write('+SoftUsed = "EDER-VIANN-M3"')

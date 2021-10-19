@@ -34,7 +34,7 @@ parser.add_argument('--ModelName',help="Name of the CNN model", default='2T_100_
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 Set=args.Set
-fraction=args.Fraction
+fraction=str(int(args.Fraction)+1)
 resolution=float(args.resolution)
 acceptance=float(args.acceptance)
 #Maximum bounds on the image size in microns

@@ -41,13 +41,6 @@ VO_T=float(args.VO_T)
 MinAngle=float(args.MinAngle)
 MaxAngle=float(args.MaxAngle)
 
-#Converting image size bounds in line with resolution settings
-boundsX=int(round(MaxX/resolution,0))
-boundsY=int(round(MaxY/resolution,0))
-boundsZ=int(round(MaxZ/resolution,0))
-H=boundsX*2
-W=boundsY*2
-L=boundsZ
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 
