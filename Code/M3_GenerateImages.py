@@ -57,11 +57,8 @@ VO_max_Z=PM.VO_max_Z
 VO_min_Z=PM.VO_min_Z
 VO_T=PM.VO_T
 MaxDoca=PM.MaxDoca
-resolution=PM.resolution
-acceptance=PM.acceptance
-MaxX=PM.MaxX
-MaxY=PM.MaxY
-MaxZ=PM.MaxZ
+MinAngle=PM.MinAngle
+MaxAngle=PM.MaxAngle
  #The Separation bound is the maximum Euclidean distance that is allowed between hits in the beggining of Seed tracks.
 MaxTracksPerJob = PM.MaxTracksPerJob
 MaxSeedsPerJob = PM.MaxSeedsPerJob
@@ -103,7 +100,7 @@ if Mode=='R':
              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
              if os.path.isfile(new_output_file_location):
                  f_count=f
-            job_details=[(j+1),(sj+1),f_count,VO_max_Z,VO_min_Z,VO_T,MaxDoca,AFS_DIR,EOS_DIR]
+            job_details=[(j+1),(sj+1),f_count,VO_max_Z,VO_min_Z,VO_T,MaxDoca,AFS_DIR,EOS_DIR,MinAngle,MaxAngle]
             UF.BSubmitImageJobsCondor(job_details)
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
@@ -126,8 +123,8 @@ if Mode=='C':
            for f in range(0,1000):
               new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
               required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_RawImages_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.pkl'
-              job_details=[(j+1),(sj+1),f,VO_max_Z,VO_min_Z,VO_T,MaxDoca,AFS_DIR,EOS_DIR]
-              if os.path.isfile(required_output_file_location)!=True  and os.path.isfile(new_output_file_location):
+              job_details=[(j+1),(sj+1),f,VO_max_Z,VO_min_Z,VO_T,MaxDoca,AFS_DIR,EOS_DIR,MinAngle,MaxAngle]
+              if os.path.isfile(required_output_file_location)!=True and os.path.isfile(new_output_file_location):
                  bad_pop.append(job_details)
    if len(bad_pop)>0:
      print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
@@ -188,7 +185,7 @@ if Mode=='C':
                  open_file.close()
                 except:
                     continue
-                del new_data
+#                del new_data
                 UF.LogOperations(EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_Temp_Stats.csv','StartLog', [[TotalImages,TrueSeeds]])
            ProcessStatus=2
 
