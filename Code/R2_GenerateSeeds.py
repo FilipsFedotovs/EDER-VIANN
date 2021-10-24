@@ -61,7 +61,7 @@ MaxSeedsPerJob = PM.MaxSeedsPerJob
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R1_TRACKS.csv'
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"####################     Initialising EDER-VIANN Seed Creation module                ###################"+bcolors.ENDC)
+print(bcolors.HEADER+"####################     Initialising EDER-VIANN Seed Generation module              ###################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -90,9 +90,13 @@ if Mode=='R':
       UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R2', ['R2_R2','R2_R3'], "SoftUsed == \"EDER-VIANN-R2\"")
       print(UF.TimeStamp(),'Submitting jobs... ',bcolors.ENDC)
       for j in range(0,len(data)):
-           job_details=[(j+1),int(data[j][2]),data[j][0],SI_1,SI_2,SI_3,SI_4,SI_5,SI_6,SI_7,MaxTracksPerJob,AFS_DIR,EOS_DIR]
-           UF.BSubmitCreateSeedsJobsCondor(job_details)
-
+           OptionHeader=[' --Set ',' --Subset ',' --EOS ', " --AFS ", " --PlateZ ", " --MaxTracks ", " --SI_1 ", " --SI_2 ", " --SI_3 ", " --SI_4 ", " --SI_5 ", " --SI_6 ", " --SI_7 "]
+           OptionLine=[(j+1),'$1',EOS_DIR,AFS_DIR,int(data[j][0]),MaxTracksPerJob,SI_1,SI_2,SI_3,SI_4,SI_5,SI_6,SI_7]
+           SHName = AFS_DIR + '/HTCondor/SH/SH_R2_' + str(j+1) + '.sh'
+           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_R2_' + str(j+1) + '.sub'
+           MSGName= AFS_DIR + '/HTCondor/MSG/MSG_R2_' + str(j+1)
+           ScriptName=AFS_DIR+'/Code/Utilities/R2_GenerateSeeds_Sub.py '
+           UF.SubmitJobs2Condor([OptionHeader,OptionLine,SHName,SUBName,MSGName,ScriptName,int(data[j][2]), 'EDER-VIANN-R2' ,False,False])
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    bad_pop=[]
@@ -100,6 +104,14 @@ if Mode=='C':
    for j in range(0,len(data)):
        for sj in range(0,int(data[j][2])):
            job_details=[(j+1),(sj+1),data[j][0],SI_1,SI_2,SI_3,SI_4,SI_5,SI_6,SI_7,MaxTracksPerJob,AFS_DIR,EOS_DIR]
+
+           OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxTracks ", " --SI_1 "," --SI_2 ", " --SI_3 ", " --SI_4 ", " --SI_5 ", " --SI_6 ", " --SI_7 "]
+           OptionLine = [(j + 1), (sj), EOS_DIR, AFS_DIR, int(data[j][0]), MaxTracksPerJob, SI_1, SI_2, SI_3, SI_4,SI_5, SI_6, SI_7]
+           SHName = AFS_DIR + '/HTCondor/SH/SH_R2_' + str(j + 1) +'_'+ str(j + 1) + '.sh'
+           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_R2_' + str(j + 1) +'_'+ str(j + 1) + '.sub'
+           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_R2_' + str(j + 1) +'_'+ str(j + 1)
+           ScriptName = AFS_DIR + '/Code/Utilities/R2_GenerateSeeds_Sub.py '
+           job_details = [OptionHeader,OptionLine,SHName,SUBName,MSGName,ScriptName,1, 'EDER-VIANN-R2' ,False,False]
            output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R2_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'.csv'
            output_result_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R2_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_RES.csv'
            if os.path.isfile(output_result_location)==False:
@@ -114,7 +126,7 @@ if Mode=='C':
          exit()
      if UserAnswer=='R':
         for bp in bad_pop:
-             UF.SubmitCreateSeedsJobsCondor(bp)
+             UF.SubmitJobs2Condor(bp)
         print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
         print(bcolors.BOLD+"Please check them in few hours"+bcolors.ENDC)
         exit()
