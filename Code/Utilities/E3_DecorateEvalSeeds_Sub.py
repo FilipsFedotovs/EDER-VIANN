@@ -1,12 +1,9 @@
 #This simple script prepares data for CNN
 ########################################    Import libraries    #############################################
-#import csv
 import Utility_Functions as UF
 from Utility_Functions import Seed
 import argparse
 import pandas as pd #We use Panda for a routine data processing
-
-import os, psutil #helps to monitor the memory
 import gc  #Helps to clear memory
 
 class bcolors:
@@ -27,11 +24,8 @@ parser.add_argument('--AFS',help="AFS location", default='')
 args = parser.parse_args()
 SubSet=args.SubSet
 fraction=args.Fraction
-
-
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
-
 input_track_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E1_TRACKS.csv'
 input_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E3_RawSeeds_'+SubSet+'_'+fraction+'.csv'
 output_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E3_E3_DecoratedSeeds_'+SubSet+'_'+fraction+'.csv'
