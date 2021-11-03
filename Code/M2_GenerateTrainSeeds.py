@@ -91,17 +91,35 @@ if Mode=='R':
       UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'M2', ['M2_M2','M2_M3'], "SoftUsed == \"EDER-VIANN-M2\"")
       print(UF.TimeStamp(),'Submitting jobs... ',bcolors.ENDC)
       for j in range(0,len(data)):
-           job_details=[(j+1),int(data[j][2]),data[j][0],SI_1,SI_2,SI_3,SI_4,SI_5,SI_6,SI_7,MaxTracksPerJob,AFS_DIR,EOS_DIR,NV]
-           UF.BSubmitCreateTrainSeedsJobsCondor(job_details)
+           OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxTracks ", " --SI_1 ",
+                           " --SI_2 ", " --SI_3 ", " --SI_4 ", " --SI_5 ", " --SI_6 ", " --SI_7 ", " --NV "]
+           OptionLine = [j, '$1', EOS_DIR, AFS_DIR, int(data[j][0]), MaxTracksPerJob, SI_1, SI_2, SI_3, SI_4, SI_5,
+                         SI_6, SI_7, NV]
+           SHName = AFS_DIR + '/HTCondor/SH/SH_M2_' + str(j) + '.sh'
+           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_M2_' + str(j) + '.sub'
+           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_M2_' + str(j)
+           ScriptName = AFS_DIR + '/Code/Utilities/M2_GenerateTrainSeeds_Sub.py '
+           UF.SubmitJobs2Condor(
+               [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, int(data[j][2]), 'EDER-VIANN-M2', False,
+                False])
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    bad_pop=[]
    print(UF.TimeStamp(),'Checking jobs... ',bcolors.ENDC)
    for j in range(0,len(data)):
        for sj in range(0,int(data[j][2])):
-           job_details=[(j+1),(sj+1),data[j][0],SI_1,SI_2,SI_3,SI_4,SI_5,SI_6,SI_7,MaxTracksPerJob,AFS_DIR,EOS_DIR,NV]
-           output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M2_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'.csv'
-           output_result_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M2_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_RES.csv'
+           OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxTracks ", " --SI_1 ",
+                           " --SI_2 ", " --SI_3 ", " --SI_4 ", " --SI_5 ", " --SI_6 ", " --SI_7 ",  " --NV "]
+           OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(data[j][0]), MaxTracksPerJob, SI_1, SI_2, SI_3, SI_4,
+                         SI_5, SI_6, SI_7,NV]
+           SHName = AFS_DIR + '/HTCondor/SH/SH_M2_' + str(j) + '_' + str(sj) + '.sh'
+           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_M2_' + str(j) + '_' + str(sj) + '.sub'
+           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_M2_' + str(j) + '_' + str(sj)
+           ScriptName = AFS_DIR + '/Code/Utilities/M2_GenerateTrainSeeds_Sub.py '
+           job_details = [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-M2', False,
+                          False]
+           output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M2_RawSeeds_'+str(j)+'_'+str(sj)+'.csv'
+           output_result_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M2_RawSeeds_'+str(j)+'_'+str(sj)+'_RES.csv'
            if os.path.isfile(output_result_location)==False:
               bad_pop.append(job_details)
    if len(bad_pop)>0:
@@ -114,7 +132,7 @@ if Mode=='C':
          exit()
      if UserAnswer=='R':
         for bp in bad_pop:
-             UF.SubmitCreateTrainSeedsJobsCondor(bp)
+             UF.SubmitJobs2Condor(bp)
         print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
         print(bcolors.BOLD+"Please check them in few hours"+bcolors.ENDC)
         exit()
@@ -124,14 +142,14 @@ if Mode=='C':
        for j in range(0,len(data)): #//Temporarily measure to save space
         for sj in range(0,int(data[j][2])):
 
-           output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M2_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'.csv'
+           output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M2_RawSeeds_'+str(j)+'_'+str(sj)+'.csv'
            if os.path.isfile(output_file_location)==False:
               continue
            else:
 
             result=pd.read_csv(output_file_location,names = ['Track_1','Track_2', 'Seed_Type'])
             Records=len(result.axes[0])
-            print(UF.TimeStamp(),'Set',str(j+1),'and subset', str(sj+1), 'contains', Records, 'seeds',bcolors.ENDC)
+            print(UF.TimeStamp(),'Set',str(j),'and subset', str(sj), 'contains', Records, 'seeds',bcolors.ENDC)
             result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Track_1'], result['Track_2'])]
             result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
             result.drop(result.index[result['Track_1'] == result['Track_2']], inplace = True)
@@ -141,10 +159,10 @@ if Mode=='C':
               Compression_Ratio=int((Records_After_Compression/Records)*100)
             else:
               CompressionRatio=0
-            print(UF.TimeStamp(),'Set',str(j+1),'and subset', str(sj+1), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+            print(UF.TimeStamp(),'Set',str(j),'and subset', str(sj), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
             fractions=int(math.ceil(Records_After_Compression/MaxSeedsPerJob))
             for f in range(0,fractions):
-             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
+             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M3_RawSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
              result[(f*MaxSeedsPerJob):min(Records_After_Compression,((f+1)*MaxSeedsPerJob))].to_csv(new_output_file_location,index=False)
             os.unlink(output_file_location)
        print(UF.TimeStamp(),'Cleaning up the work space... ',bcolors.ENDC)

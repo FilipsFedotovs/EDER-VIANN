@@ -97,11 +97,19 @@ if Mode=='R':
         for sj in range(0,int(data[j][2])):
             f_count=0
             for f in range(0,1000):
-             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
+             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M3_RawSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
              if os.path.isfile(new_output_file_location):
                  f_count=f
-            job_details=[(j+1),(sj+1),f_count,VO_max_Z,VO_min_Z,VO_T,MaxDoca,AFS_DIR,EOS_DIR,MinAngle,MaxAngle]
-            UF.BSubmitImageJobsCondor(job_details)
+            OptionHeader = [' --Set ', ' --SubSet ', ' --Fraction ', ' --EOS ', " --AFS ", " --VO_T ", " --VO_max_Z ",
+                            " --VO_min_Z ", " --MaxDoca ", " --MinAngle ", " --MaxAngle "]
+            OptionLine = [j, sj, '$1', EOS_DIR, AFS_DIR, VO_T, VO_max_Z, VO_min_Z, MaxDoca, MinAngle, MaxAngle]
+            SHName = AFS_DIR + '/HTCondor/SH/SH_M3_' + str(j) + '_' + str(sj) + '.sh'
+            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_M3_' + str(j) + '_' + str(sj) + '.sub'
+            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_M3_' + str(j) + '_' + str(sj)
+            ScriptName = AFS_DIR + '/Code/Utilities/M3_GenerateImages_Sub.py '
+            UF.SubmitJobs2Condor(
+                [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, f_count + 1, 'EDER-VIANN-M3', False,
+                 False])
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    print(UF.TimeStamp(),'Checking results... ',bcolors.ENDC)
@@ -121,9 +129,18 @@ if Mode=='C':
    for j in range(0,len(data)):
        for sj in range(0,int(data[j][2])):
            for f in range(0,1000):
-              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
-              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_RawImages_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.pkl'
-              job_details=[(j+1),(sj+1),f,VO_max_Z,VO_min_Z,VO_T,MaxDoca,AFS_DIR,EOS_DIR,MinAngle,MaxAngle]
+              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M3_RawSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
+              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_RawImages_'+str(j)+'_'+str(sj)+'_'+str(f)+'.pkl'
+              OptionHeader = [' --Set ', ' --SubSet ', ' --Fraction ', ' --EOS ', " --AFS ", " --VO_T ", " --VO_max_Z ",
+                              " --VO_min_Z ", " --MaxDoca ", " --MinAngle ", " --MaxAngle "]
+              OptionLine = [j, sj, f, EOS_DIR, AFS_DIR, VO_T, VO_max_Z, VO_min_Z, MaxDoca, MinAngle,
+                            MaxAngle]
+              SHName = AFS_DIR + '/HTCondor/SH/SH_M3_' + str(j) + '_' + str(sj) + '_' + str(f) + '.sh'
+              SUBName = AFS_DIR + '/HTCondor/SUB/SUB_M3_' + str(j) + '_' + str(sj) + '_' + str(f) + '.sub'
+              MSGName = AFS_DIR + '/HTCondor/MSG/MSG_M3_' + str(j) + '_' + str(sj) + '_' + str(f)
+              ScriptName = AFS_DIR + '/Code/Utilities/M3_GenerateImages_Sub.py '
+              job_details = [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-M3', False,
+                             False]
               if os.path.isfile(required_output_file_location)!=True and os.path.isfile(new_output_file_location):
                  bad_pop.append(job_details)
    if len(bad_pop)>0:
@@ -136,7 +153,7 @@ if Mode=='C':
          exit()
      if UserAnswer=='R':
         for bp in bad_pop:
-             UF.SubmitImageJobsCondor(bp)
+             UF.SubmitJobs2Condor(bp)
         print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
         print(bcolors.BOLD+"Please check them in few hours"+bcolors.ENDC)
         exit()
@@ -146,19 +163,19 @@ if Mode=='C':
            print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
            print(UF.TimeStamp(),'Collating the results...')
            for j in range(0,len(data)):
-             output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_CondensedImages_'+str(j+1)+'.pkl'
+             output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_CondensedImages_'+str(j)+'.pkl'
              if os.path.isfile(output_file_location)==False:
                 Temp_Stats=UF.LogOperations(EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_Temp_Stats.csv','ReadLog', '_')
                 TotalImages=int(Temp_Stats[0][0])
                 TrueSeeds=int(Temp_Stats[0][1])
                 for sj in range(0,int(data[j][2])):
                    for f in range(0,1000):
-                      new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
-                      required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_RawImages_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.pkl'
+                      new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M3_RawSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
+                      required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_RawImages_'+str(j)+'_'+str(sj)+'_'+str(f)+'.pkl'
                       if os.path.isfile(required_output_file_location)!=True and os.path.isfile(new_output_file_location):
                          print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",required_output_file_location,'is missing, please restart the script with the option "--Mode R"'+bcolors.ENDC)
                       elif os.path.isfile(required_output_file_location):
-                         if (sj+1)==(f+1)==1:
+                         if (sj)==(f)==0:
                             base_data_file=open(required_output_file_location,'rb')
                             base_data=pickle.load(base_data_file)
                             base_data_file.close()
@@ -169,7 +186,7 @@ if Mode=='C':
                             base_data+=new_data
                 try:
                  Records=len(base_data)
-                 print(UF.TimeStamp(),'Set',str(j+1),'contains', Records, 'raw images',bcolors.ENDC)
+                 print(UF.TimeStamp(),'Set',str(j),'contains', Records, 'raw images',bcolors.ENDC)
 
                  base_data=list(set(base_data))
                  Records_After_Compression=len(base_data)
@@ -179,7 +196,7 @@ if Mode=='C':
                       CompressionRatio=0
                  TotalImages+=Records_After_Compression
                  TrueSeeds+=sum(1 for im in base_data if im.MC_truth_label == 1)
-                 print(UF.TimeStamp(),'Set',str(j+1),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+                 print(UF.TimeStamp(),'Set',str(j),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
                  open_file = open(output_file_location, "wb")
                  pickle.dump(base_data, open_file)
                  open_file.close()
@@ -211,14 +228,17 @@ if Mode=='C':
                else:
                    RequiredFakeSeeds=NormalisedTotSamples*(1.0-float(args.LabelMix))
                    RequiredTrueSeeds=int(round((RequiredFakeSeeds/(1.0-float(args.LabelMix)))-RequiredFakeSeeds,0))
-           TrueSeedCorrection=RequiredTrueSeeds/TrueSeeds
+           if TrueSeeds==0:
+               TrueSeedCorrection=0
+           else:
+              TrueSeedCorrection=RequiredTrueSeeds/TrueSeeds
            FakeSeedCorrection=RequiredFakeSeeds/(TotalImages-TrueSeeds)
            for j in range(0,len(data)):
-              req_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_SamplesCondensedImages_'+str(j+1)+'.pkl'
+              req_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_SamplesCondensedImages_'+str(j)+'.pkl'
               if os.path.isfile(req_file)==False:
                   progress=int( round( (float(j)/float(len(data))*100),0)  )
                   print(UF.TimeStamp(),"Sampling image from the collated data, progress is ",progress,' % of seeds generated')
-                  output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_CondensedImages_'+str(j+1)+'.pkl'
+                  output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_CondensedImages_'+str(j)+'.pkl'
                   base_data_file=open(output_file_location,'rb')
                   base_data=pickle.load(base_data_file)
                   base_data_file.close()
@@ -245,7 +265,7 @@ if Mode=='C':
            for j in range(0,len(data)):
                   progress=int( round( (float(j)/float(len(data))*100),0)  )
                   print(UF.TimeStamp(),"Sampling image from the collated data, progress is ",progress,' % of seeds generated')
-                  output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_SamplesCondensedImages_'+str(j+1)+'.pkl'
+                  output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_SamplesCondensedImages_'+str(j)+'.pkl'
                   base_data_file=open(output_file_location,'rb')
                   base_data=pickle.load(base_data_file)
                   base_data_file.close()

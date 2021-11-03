@@ -95,11 +95,18 @@ if Mode=='R':
         for sj in range(0,int(data[j][2])):
             f_counter=0
             for f in range(0,1000):
-             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
+             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R3_RawSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
              if os.path.isfile(new_output_file_location):
               f_counter=f
-            job_details=[(j+1),(sj+1),f_counter,VO_T,VO_max_Z,VO_min_Z,MaxDoca,AFS_DIR,EOS_DIR,MinAngle,MaxAngle]
-            UF.BSubmitFilterSeedsJobsCondor(job_details)
+            #print('f_counter:',f_counter)
+            #exit()
+            OptionHeader = [' --Set ', ' --SubSet ',' --Fraction ', ' --EOS ', " --AFS ", " --VO_T ", " --VO_max_Z ", " --VO_min_Z "," --MaxDoca ", " --MinAngle ", " --MaxAngle "]
+            OptionLine = [(j), (sj), '$1', EOS_DIR, AFS_DIR, VO_T, VO_max_Z, VO_min_Z, MaxDoca, MinAngle, MaxAngle]
+            SHName = AFS_DIR + '/HTCondor/SH/SH_R3_' + str(j) + '_'+ str(sj) +'.sh'
+            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_R3_' + str(j) + '_'+ str(sj) +'.sub'
+            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_R3_' + str(j) + '_'+ str(sj)
+            ScriptName = AFS_DIR + '/Code/Utilities/R3_FilterSeeds_Sub.py '
+            UF.SubmitJobs2Condor([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, f_counter+1, 'EDER-VIANN-R3', False,False])
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    bad_pop=[]
@@ -107,9 +114,18 @@ if Mode=='C':
    for j in range(0,len(data)):
        for sj in range(0,int(data[j][2])):
            for f in range(0,1000):
-              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
-              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R3_FilteredSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.pkl'
-              job_details=[(j+1),(sj+1),f,VO_T,VO_max_Z,VO_min_Z,MaxDoca,AFS_DIR,EOS_DIR,MinAngle,MaxAngle]
+              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R3_RawSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
+              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R3_FilteredSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.pkl'
+              OptionHeader = [' --Set ', ' --SubSet ', ' --Fraction ', ' --EOS ', " --AFS ", " --VO_T ", " --VO_max_Z ",
+                              " --VO_min_Z ", " --MaxDoca ", " --MinAngle ", " --MaxAngle "]
+              OptionLine = [(j), (sj), f, EOS_DIR, AFS_DIR, VO_T, VO_max_Z, VO_min_Z, MaxDoca, MinAngle,
+                            MaxAngle]
+              SHName = AFS_DIR +'/HTCondor/SH/SH_R3_'+str(j)+'_'+str(sj) + '_'+ str(f) +'.sh'
+              SUBName = AFS_DIR + '/HTCondor/SUB/SUB_R3_' + str(j) + '_' + str(sj) + '_'+ str(f) + '.sub'
+              MSGName = AFS_DIR + '/HTCondor/MSG/MSG_R3_' + str(j) + '_' + str(sj) + '_'+ str(f)
+              ScriptName = AFS_DIR + '/Code/Utilities/R3_FilterSeeds_Sub.py '
+              job_details=[OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-R3', False,
+                 False]
               if os.path.isfile(required_output_file_location)!=True  and os.path.isfile(new_output_file_location):
                  bad_pop.append(job_details)
    if len(bad_pop)>0:
@@ -122,7 +138,7 @@ if Mode=='C':
          exit()
      if UserAnswer=='R':
         for bp in bad_pop:
-             UF.SubmitFilterSeedsJobsCondor(bp)
+            UF.SubmitJobs2Condor(bp)
         print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
         print(bcolors.BOLD+"Please check them in few hours"+bcolors.ENDC)
         exit()
@@ -132,12 +148,12 @@ if Mode=='C':
        for j in range(0,len(data)):
         for sj in range(0,int(data[j][2])):
            for f in range(0,1000):
-              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R3_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
-              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R3_FilteredSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.pkl'
+              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R3_RawSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
+              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R3_FilteredSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.pkl'
               if os.path.isfile(required_output_file_location)!=True and os.path.isfile(new_output_file_location):
                  print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",required_output_file_location,'is missing, please restart the script with the option "--Mode R"'+bcolors.ENDC)
               elif os.path.isfile(required_output_file_location):
-                 if (sj+1)==(f+1)==1:
+                 if sj==f==0:
                     base_data_file=open(required_output_file_location,'rb')
                     base_data=pickle.load(base_data_file)
                     base_data_file.close()
@@ -147,13 +163,13 @@ if Mode=='C':
                     new_data_file.close()
                     base_data+=new_data
         Records=len(base_data)
-        print(UF.TimeStamp(),'Set',str(j+1),'contains', Records, '2-track vertices',bcolors.ENDC)
+        print(UF.TimeStamp(),'Set',str(j),'contains', Records, 'selected seed candidates for further vertexing...',bcolors.ENDC)
 
         base_data=list(set(base_data))
         Records_After_Compression=len(base_data)
         fractions=int(math.ceil(Records_After_Compression/MaxVxPerJob))
         for f in range(0,fractions):
-             output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R4_FilteredSeeds_'+str(j+1)+'_'+str(f+1)+'.pkl'
+             output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R4_FilteredSeeds_'+str(j)+'_'+str(f)+'.pkl'
              open_file = open(output_file_location, "wb")
              pickle.dump(base_data[(f*MaxVxPerJob):min(Records_After_Compression,((f+1)*MaxVxPerJob))], open_file)
              open_file.close()
@@ -164,7 +180,7 @@ if Mode=='C':
         print(UF.TimeStamp(),'Set',str(j+1),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
        print(UF.TimeStamp(),'Cleaning up the work space... ',bcolors.ENDC)
        UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R3', ['R2_R3','R3_R3'], "SoftUsed == \"EDER-VIANN-R3\"")
-       print(UF.TimeStamp(), bcolors.OKGREEN+"Seed filtering is completed, you can vertex them now"+bcolors.ENDC)
+       print(UF.TimeStamp(), bcolors.OKGREEN+"Seed filtering is completed, you can vertex them now..."+bcolors.ENDC)
        print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 #End of the script
 

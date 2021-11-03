@@ -78,15 +78,31 @@ if Mode=='R':
           print(UF.TimeStamp(),bcolors.FAIL+'Critical fail!', val_file, 'is missing. Please make sure that the previous script M3_GenerateImages.py has finished correctly '+bcolors.ENDC)
           exit()
       else:
-          job_details=['Val',1,resolution,MaxX,MaxY,MaxZ,AFS_DIR,EOS_DIR]
-          UF.BSubmitRenderImageJobsCondor(job_details)
+          OptionHeader = [' --SetType ', ' --Fraction ', ' --EOS ', " --AFS ", " --resolution ",
+                          " --MaxX ", " --MaxY ", " --MaxZ "]
+          OptionLine = ['Val', 0, EOS_DIR, AFS_DIR, resolution, MaxX, MaxY, MaxZ]
+          SHName = AFS_DIR + '/HTCondor/SH/SH_M4_Val.sh'
+          SUBName = AFS_DIR + '/HTCondor/SUB/SUB_M4_Val.sub'
+          MSGName = AFS_DIR + '/HTCondor/MSG/MSG_M4_Val'
+          ScriptName = AFS_DIR + '/Code/Utilities/M4_RenderImages_Sub.py '
+          UF.SubmitJobs2Condor(
+              [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-M4', False,
+               False])
           f_counter=0
           for f in range(1,100):
              train_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M4_Train_Set_'+str(f)+'.pkl'
              if os.path.isfile(train_file):
               f_counter=f
-          job_details=['Train',f_counter,resolution,MaxX,MaxY,MaxZ,AFS_DIR,EOS_DIR]
-          UF.BSubmitRenderImageJobsCondor(job_details)
+          OptionHeader = [' --SetType ', ' --Fraction ', ' --EOS ', " --AFS ", " --resolution ",
+                          " --MaxX ", " --MaxY ", " --MaxZ "]
+          OptionLine = ['Train', '$1', EOS_DIR, AFS_DIR, resolution, MaxX, MaxY, MaxZ]
+          SHName = AFS_DIR + '/HTCondor/SH/SH_M4.sh'
+          SUBName = AFS_DIR + '/HTCondor/SUB/SUB_M4.sub'
+          MSGName = AFS_DIR + '/HTCondor/MSG/MSG_M4'
+          ScriptName = AFS_DIR + '/Code/Utilities/M4_RenderImages_Sub.py '
+          UF.SubmitJobs2Condor(
+              [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, f_counter, 'EDER-VIANN-M4', False,
+               False])
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    print(UF.TimeStamp(),'Checking results... ',bcolors.ENDC)
@@ -94,14 +110,28 @@ if Mode=='C':
    print(UF.TimeStamp(),'Checking jobs... ',bcolors.ENDC)
    val_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M4_M5_VALIDATION_SET.pkl'
    if os.path.isfile(val_file)==False:
-         job_details=['Val',1,resolution,MaxX,MaxY,MaxZ,AFS_DIR,EOS_DIR]
-         bad_pop.append(job_details)
+           OptionHeader = [' --SetType ', ' --Fraction ', ' --EOS ', " --AFS ", " --resolution ",
+                           " --MaxX ", " --MaxY ", " --MaxZ "]
+           OptionLine = ['Val', 0, EOS_DIR, AFS_DIR, resolution, MaxX, MaxY, MaxZ]
+           SHName = AFS_DIR + '/HTCondor/SH/SH_M4.sh_Val'
+           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_M4_Val.sub'
+           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_M4_Val'
+           ScriptName = AFS_DIR + '/Code/Utilities/M4_RenderImages_Sub.py '
+           bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-M4', False,
+               False])
    for f in range(1,100):
               train_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M4_Train_Set_'+str(f)+'.pkl'
               req_train_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M4_M5_TRAIN_SET_'+str(f)+'.pkl'
-              job_details=['Train',f,resolution,MaxX,MaxY,MaxZ,AFS_DIR,EOS_DIR]
+              OptionHeader = [' --SetType ', ' --Fraction ', ' --EOS ', " --AFS ", " --resolution ",
+                              " --MaxX ", " --MaxY ", " --MaxZ "]
+              OptionLine = ['Train', f-1, EOS_DIR, AFS_DIR, resolution, MaxX, MaxY, MaxZ]
+              SHName = AFS_DIR + '/HTCondor/SH/SH_M4_'+str(f-1)+'.sh'
+              SUBName = AFS_DIR + '/HTCondor/SUB/SUB_M4_'+str(f-1)+'.sub'
+              MSGName = AFS_DIR + '/HTCondor/MSG/MSG_M4'+str(f-1)
+              ScriptName = AFS_DIR + '/Code/Utilities/M4_RenderImages_Sub.py '
               if os.path.isfile(req_train_file)!=True  and os.path.isfile(train_file):
-                 bad_pop.append(job_details)
+                 bad_pop.append([OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-M4', False,
+                   False])
    if len(bad_pop)>0:
      print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
      print(bcolors.BOLD+'If you would like to wait and try again later please enter W'+bcolors.ENDC)
@@ -112,7 +142,7 @@ if Mode=='C':
          exit()
      if UserAnswer=='R':
         for bp in bad_pop:
-             UF.SubmitRenderImageJobsCondor(bp)
+            UF.SubmitJobs2Condor(bp)
         print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
         print(bcolors.BOLD+"Please check them in few hours"+bcolors.ENDC)
         exit()

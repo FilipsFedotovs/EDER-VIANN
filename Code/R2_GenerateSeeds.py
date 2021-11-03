@@ -104,7 +104,7 @@ if Mode=='C':
    for j in range(0,len(data)):
        for sj in range(0,int(data[j][2])):
            OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxTracks ", " --SI_1 "," --SI_2 ", " --SI_3 ", " --SI_4 ", " --SI_5 ", " --SI_6 ", " --SI_7 "]
-           OptionLine = [(j + 1), (sj), EOS_DIR, AFS_DIR, int(data[j][0]), MaxTracksPerJob, SI_1, SI_2, SI_3, SI_4,SI_5, SI_6, SI_7]
+           OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(data[j][0]), MaxTracksPerJob, SI_1, SI_2, SI_3, SI_4,SI_5, SI_6, SI_7]
            SHName = AFS_DIR + '/HTCondor/SH/SH_R2_' + str(j) +'_'+ str(sj) + '.sh'
            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_R2_' + str(j) +'_'+ str(sj) + '.sub'
            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_R2_' + str(j) +'_'+ str(sj)

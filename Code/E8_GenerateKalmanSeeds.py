@@ -74,17 +74,30 @@ if Mode=='R':
       print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
       UF.EvalCleanUp(AFS_DIR, EOS_DIR, 'E8', ['E8_E8','E8_E9'], "SoftUsed == \"EDER-VIANN-E8\"")
       print(UF.TimeStamp(),'Submitting jobs... ',bcolors.ENDC)
-      for sj in range(0,int(SubSets)):
-           job_details=[(sj+1),MaxTracksPerJob,AFS_DIR,EOS_DIR]
-           UF.SubmitCreateKalmanSeedsJobsCondor(job_details)
+      OptionHeader = [' --Subset ', ' --EOS ', " --AFS ", " --MaxTracks "]
+      OptionLine = ['$1', EOS_DIR, AFS_DIR, MaxTracksPerJob]
+      SHName = AFS_DIR + '/HTCondor/SH/SH_E8.sh'
+      SUBName = AFS_DIR + '/HTCondor/SUB/SUB_E8.sub'
+      MSGName = AFS_DIR + '/HTCondor/MSG/MSG_E8'
+      ScriptName = AFS_DIR + '/Code/Utilities/E8_GenerateKalmanSeeds_Sub.py '
+      UF.SubmitJobs2Condor(
+          [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, int(SubSets), 'EDER-VIANN-E8', False,
+           False])
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    bad_pop=[]
    print(UF.TimeStamp(),'Checking jobs... ',bcolors.ENDC)
    for sj in range(0,int(SubSets)):
-           job_details=[(sj+1),MaxTracksPerJob,AFS_DIR,EOS_DIR]
-           output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E8_RawSeeds_'+str(sj+1)+'.csv'
-           output_result_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E8_RawSeeds_'+str(sj+1)+'_RES.csv'
+           output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E8_RawSeeds_'+str(sj)+'.csv'
+           output_result_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E8_RawSeeds_'+str(sj)+'_RES.csv'
+           OptionHeader = [' --Subset ', ' --EOS ', " --AFS ", " --MaxTracks "]
+           OptionLine = [sj, EOS_DIR, AFS_DIR, MaxTracksPerJob]
+           SHName = AFS_DIR + '/HTCondor/SH/SH_E8_' + str(sj) + '.sh'
+           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_E8_' + str(sj) +'.sub'
+           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_E8_' + str(sj)
+           ScriptName = AFS_DIR + '/Code/Utilities/E8_GenerateKalmanSeeds_Sub.py '
+           job_details = [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-E8', False,
+                          False]
            if os.path.isfile(output_result_location)==False:
               bad_pop.append(job_details)
    if len(bad_pop)>0:
@@ -97,7 +110,7 @@ if Mode=='C':
          exit()
      if UserAnswer=='R':
         for bp in bad_pop:
-             UF.SubmitCreateKalmanSeedsJobsCondor(bp)
+             UF.SubmitJobs2Condor(bp)
         print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
         print(bcolors.BOLD+"Please check them in few hours"+bcolors.ENDC)
         exit()
@@ -105,10 +118,10 @@ if Mode=='C':
        print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
        print(UF.TimeStamp(),'Collating the results...')
        for sj in range(0,int(SubSets)):
-           output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E8_RawSeeds_'+str(sj+1)+'.csv'
+           output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E8_RawSeeds_'+str(sj)+'.csv'
            result=pd.read_csv(output_file_location,names = ['Track_1','Track_2'])
            Records=len(result.axes[0])
-           print(UF.TimeStamp(),'Subset', str(sj+1), 'contains', Records, 'seeds',bcolors.ENDC)
+           print(UF.TimeStamp(),'Subset', str(sj), 'contains', Records, 'seeds',bcolors.ENDC)
            result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Track_1'], result['Track_2'])]
            result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
            result.drop(result.index[result['Track_1'] == result['Track_2']], inplace = True)
@@ -118,10 +131,10 @@ if Mode=='C':
               Compression_Ratio=int((Records_After_Compression/Records)*100)
            else:
               CompressionRatio=0
-           print(UF.TimeStamp(),'Subset', str(sj+1), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+           print(UF.TimeStamp(),'Subset', str(sj), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
            fractions=int(math.ceil(Records_After_Compression/MaxSeedsPerJob))
            for f in range(0,fractions):
-             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E9_RawSeeds_'+str(sj+1)+'_'+str(f)+'.csv'
+             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E9_RawSeeds_'+str(sj)+'_'+str(f)+'.csv'
              result[(f*MaxSeedsPerJob):min(Records_After_Compression,((f+1)*MaxSeedsPerJob))].to_csv(new_output_file_location,index=False)
 
        print(UF.TimeStamp(),'Cleaning up the work space... ',bcolors.ENDC)

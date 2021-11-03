@@ -67,14 +67,25 @@ if mode=='R' and args.ModelName=='N':
  job.append(PM.ModelArchitecture)
  job.append(args.LR)
  job.append(ModelName)
+ DNA='"'+str(PM.ModelArchitecture)+'"'
  if args.ModelNewName=='Default':
      job.append(ModelName)
+     OptionLine = ['Create', 1, EOS_DIR, AFS_DIR, DNA, args.LR, 1, ModelName, ModelName]
  else:
      job.append(args.ModelNewName)
+     OptionLine = ['Create', 1, EOS_DIR, AFS_DIR, DNA, args.LR, 1, ModelName, args.ModelNewName]
  print(UF.TimeStamp(),bcolors.OKGREEN+'Job description has been created'+bcolors.ENDC)
  PerformanceHeader=[['Epochs','Set','Training Samples','Train Loss','Train Accuracy','Validation Loss','Validation Accuracy']]
  UF.LogOperations(EOSsubModelDIR+'/M5_PERFORMANCE_'+job[5]+'.csv','StartLog',PerformanceHeader)
- UF.SubmitTrainJobCondor(AFS_DIR,EOS_DIR,job,'New')
+ OptionHeader = [' --Mode ', ' --ImageSet ', ' --EOS ', " --AFS ", " --DNA ",
+                 " --LR ", " --Epoch ", " --ModelName ", " --ModelNewName "]
+ SHName = AFS_DIR + '/HTCondor/SH/SH_M5.sh'
+ SUBName = AFS_DIR + '/HTCondor/SUB/SUB_M5.sub'
+ MSGName = AFS_DIR + '/HTCondor/MSG/MSG_M5'
+ ScriptName = AFS_DIR + '/Code/Utilities/M5_TrainModel_Sub.py '
+ UF.SubmitJobs2Condor(
+     [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-M5', True,
+      True])
  job[4]=job[5]
  UF.LogOperations(EOSsubModelDIR+'/M5_M5_JobTask.csv','StartLog',[job])
  print(bcolors.BOLD+"Please the job completion in few hours by running this script with the option C"+bcolors.ENDC)
@@ -86,14 +97,25 @@ elif mode=='R':
  job.append(PM.ModelArchitecture)
  job.append(args.LR)
  job.append(ModelName)
+ DNA = '"' + str(PM.ModelArchitecture) + '"'
  if args.ModelNewName=='Default':
      job.append(ModelName)
+     OptionLine = ['Train', 1, EOS_DIR, AFS_DIR, DNA, args.LR, 1,  ModelName, ModelName]
  else:
      job.append(args.ModelNewName)
+     OptionLine = ['Train', 1, EOS_DIR, AFS_DIR, DNA, args.LR, 1, ModelName, args.ModelNewName]
  print(UF.TimeStamp(),bcolors.OKGREEN+'Job description has been created'+bcolors.ENDC)
  PerformanceHeader=[['Epochs','Set','Training Samples','Train Loss','Train Accuracy','Validation Loss','Validation Accuracy']]
  UF.LogOperations(EOSsubModelDIR+'/M5_PERFORMANCE_'+job[5]+'.csv','StartLog',PerformanceHeader)
- UF.SubmitTrainJobCondor(AFS_DIR,EOS_DIR,job,'Train')
+ OptionHeader = [' --Mode ', ' --ImageSet ', ' --EOS ', " --AFS ", " --DNA ",
+                 " --LR ", " --Epoch ", " --ModelName ", " --ModelNewName "]
+ SHName = AFS_DIR + '/HTCondor/SH/SH_M5.sh'
+ SUBName = AFS_DIR + '/HTCondor/SUB/SUB_M5.sub'
+ MSGName = AFS_DIR + '/HTCondor/MSG/MSG_M5'
+ ScriptName = AFS_DIR + '/Code/Utilities/M5_TrainModel_Sub.py '
+ UF.SubmitJobs2Condor(
+     [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-M5', True,
+      True])
  job[4]=job[5]
  UF.LogOperations(EOSsubModelDIR+'/M5_M5_JobTask.csv','StartLog',[job])
  print(bcolors.BOLD+"Please the job completion in few hours by running this script with the option C"+bcolors.ENDC)
@@ -125,9 +147,18 @@ if mode=='C':
          exit()
      if UserAnswer=='R':
         if CurrentSet==1:
-          UF.SubmitTrainJobCondor(AFS_DIR,EOS_DIR,PreviousJob[0],'Create')
+          OptionLine = ['Create', PreviousJob[0][0], EOS_DIR, AFS_DIR, '"'+str(PreviousJob[0][2])+'"', PreviousJob[0][3], PreviousJob[0][1], PreviousJob[0][4], PreviousJob[0][5]]
         if CurrentSet>1:
-          UF.SubmitTrainJobCondor(AFS_DIR,EOS_DIR,PreviousJob[0],'Train')
+          OptionLine = ['Train', PreviousJob[0][0], EOS_DIR, AFS_DIR, '"'+str(PreviousJob[0][2])+'"', PreviousJob[0][3], PreviousJob[0][1], PreviousJob[0][4], PreviousJob[0][5]]
+        OptionHeader = [' --Mode ', ' --ImageSet ', ' --EOS ', " --AFS ", " --DNA ",
+                        " --LR ", " --Epoch ", " --ModelName ", " --ModelNewName "]
+        SHName = AFS_DIR + '/HTCondor/SH/SH_M5.sh'
+        SUBName = AFS_DIR + '/HTCondor/SUB/SUB_M5.sub'
+        MSGName = AFS_DIR + '/HTCondor/MSG/MSG_M5'
+        ScriptName = AFS_DIR + '/Code/Utilities/M5_TrainModel_Sub.py '
+        UF.SubmitJobs2Condor(
+            [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-M5', True,
+             True])
         print(UF.TimeStamp(), bcolors.OKGREEN+"The Training Job for the CurrentSet",CurrentSet,"have been resubmitted"+bcolors.ENDC)
         print(bcolors.OKGREEN+"Please check it in a few hours"+bcolors.ENDC)
         exit()
@@ -145,7 +176,16 @@ if mode=='C':
           CurrentEpoch+=1
           PreviousJob[0][0]=str(CurrentSet)
           PreviousJob[0][1]=str(CurrentEpoch)
-          UF.SubmitTrainJobCondor(AFS_DIR,EOS_DIR,PreviousJob[0],'Train')
+          OptionLine = ['Train', PreviousJob[0][0], EOS_DIR, AFS_DIR, '"'+str(PreviousJob[0][2])+'"', PreviousJob[0][3], PreviousJob[0][1], PreviousJob[0][4], PreviousJob[0][5]]
+          OptionHeader = [' --Mode ', ' --ImageSet ', ' --EOS ', " --AFS ", " --DNA ",
+                          " --LR ", " --Epoch ", " --ModelName ", " --ModelNewName "]
+          SHName = AFS_DIR + '/HTCondor/SH/SH_M5.sh'
+          SUBName = AFS_DIR + '/HTCondor/SUB/SUB_M5.sub'
+          MSGName = AFS_DIR + '/HTCondor/MSG/MSG_M5'
+          ScriptName = AFS_DIR + '/Code/Utilities/M5_TrainModel_Sub.py '
+          UF.SubmitJobs2Condor(
+              [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-M5', True,
+               True])
           print(UF.TimeStamp(),bcolors.OKGREEN+'The Image Set',CurrentSet,'has been submitted to HTCondor'+bcolors.ENDC)
           exit()
       print(bcolors.BOLD+'Would you like to continue training?'+bcolors.ENDC)
@@ -154,7 +194,16 @@ if mode=='C':
           CurrentSet+=1
           PreviousJob[0][0]=str(CurrentSet)
           UF.LogOperations(EOSsubModelDIR+'/M5_M5_JobTask.csv','StartLog',PreviousJob)
-          UF.SubmitTrainJobCondor(AFS_DIR,EOS_DIR,PreviousJob[0],'Train')
+          OptionLine = ['Train', PreviousJob[0][0], EOS_DIR, AFS_DIR, '"'+str(PreviousJob[0][2])+'"', PreviousJob[0][3], PreviousJob[0][1], PreviousJob[0][4], PreviousJob[0][5]]
+          OptionHeader = [' --Mode ', ' --ImageSet ', ' --EOS ', " --AFS ", " --DNA ",
+                          " --LR ", " --Epoch ", " --ModelName ", " --ModelNewName "]
+          SHName = AFS_DIR + '/HTCondor/SH/SH_M5.sh'
+          SUBName = AFS_DIR + '/HTCondor/SUB/SUB_M5.sub'
+          MSGName = AFS_DIR + '/HTCondor/MSG/MSG_M5'
+          ScriptName = AFS_DIR + '/Code/Utilities/M5_TrainModel_Sub.py '
+          UF.SubmitJobs2Condor(
+              [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-M5', True,
+               True])
           print(UF.TimeStamp(),bcolors.OKGREEN+'The next Image Set',CurrentSet,'has been submitted to HTCondor'+bcolors.ENDC)
           print(bcolors.BOLD,'Please run the script in few hours with --MODE C setting'+bcolors.ENDC)
           print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
