@@ -34,7 +34,7 @@ parser.add_argument('--ModelName',help="Name of the CNN model", default='2T_100_
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 Set=args.Set
-fraction=str(int(args.Fraction)+1)
+fraction=str(int(args.Fraction))
 resolution=float(args.resolution)
 acceptance=float(args.acceptance)
 #Maximum bounds on the image size in microns
@@ -45,7 +45,7 @@ MaxZ=float(args.MaxZ)
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 input_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R4_FilteredSeeds_'+Set+'_'+fraction+'.pkl'
-output_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R4_R4_RecSeeds_'+Set+'_'+fraction+'.pkl'
+output_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R4_R4_CNN_Fit_Seeds_'+Set+'_'+fraction+'.pkl'
 print(UF.TimeStamp(),'Analysing the data')
 seeds_file=open(input_seed_file_location,'rb')
 seeds=pickle.load(seeds_file)

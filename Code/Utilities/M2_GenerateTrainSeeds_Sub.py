@@ -9,7 +9,6 @@ import argparse
 import pandas as pd #We use Panda for a routine data processing
 from pandas import DataFrame as df
 import math #We use it for data manipulation
-import os, psutil #helps to monitor the memory
 import gc  #Helps to clear memory
 import numpy as np
 
@@ -35,7 +34,7 @@ parser.add_argument('--MaxTracks',help="A maximum number of track combinations t
 args = parser.parse_args()
 PlateZ=float(args.PlateZ)   #The coordinate of the st plate in the current scope
 Set=args.Set    #This is just used to name the output file
-Subset=int(args.Subset)+1  #The subset helps to determine what portion of the track list is used to create the Seeds
+Subset=int(args.Subset)#The subset helps to determine what portion of the track list is used to create the Seeds
 SI_1=float(args.SI_1)
 SI_2=float(args.SI_2)
 SI_3=float(args.SI_3)
@@ -82,8 +81,8 @@ Steps=math.ceil(MaxTracks/Cut)  #Calculating number of cuts
 data=pd.merge(data, data_header, how="inner", on=["Track_ID","z"]) #Shrinking the Track data so just a star hit for each track is present.
 
 #What section of data will we cut?
-StartDataCut=(Subset-1)*MaxTracks
-EndDataCut=Subset*MaxTracks
+StartDataCut=Subset*MaxTracks
+EndDataCut=(Subset+1)*MaxTracks
 
 #Specifying the right join
 r_data=data.rename(columns={"x": "r_x"})
@@ -138,15 +137,12 @@ for i in range(0,Steps):
   merged_list = merged_data.values.tolist() #Convirting the result to List data type
   result_list+=merged_list #Adding the result to the list
   if len(result_list)>=2000000: #Once the list gets too big we dump the results into csv to save memory
-      progress=round((float(i)/float(Steps))*100,2)
-      print(UF.TimeStamp(),"progress is ",progress,' %') #Progress display
       UF.LogOperations(output_file_location,'UpdateLog',result_list) #Write to the csv
 
       #Clearing the memory
       del result_list
       result_list=[]
       gc.collect()
-      print(UF.TimeStamp(),'Memory usage is',psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
 
 UF.LogOperations(output_file_location,'UpdateLog',result_list) #Writing the remaining data into the csv
 UF.LogOperations(output_result_location,'StartLog',[])
