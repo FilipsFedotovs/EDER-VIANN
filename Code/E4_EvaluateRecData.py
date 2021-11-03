@@ -45,17 +45,19 @@ import Parameters as PM #This is where we keep framework global parameters
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of EDER-VIANN reconstructed data to calculate reconstruction perfromance.')
 parser.add_argument('--Acceptance',help="What is the mininimum acceptance", default='0.5')
-parser.add_argument('--sf',help="Please choose the input file", default=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R4_REC_SEEDS.csv')
+parser.add_argument('--LinkAcceptance',help="What is the mininimum acceptance", default='N')
+parser.add_argument('--sf',help="Please choose the input file", default=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_E4_LINK_FIT_SEEDS.csv')
 parser.add_argument('--of',help="Please choose the evaluation file (has to match the same geometrical domain and type of the track as the subject", default=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E3_TRUTH_SEEDS.csv')
 
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
 acceptance=float(args.Acceptance)
+if args.LinkAcceptance!='N':
+   link_acceptance=float(args.LinkAcceptance)
 ########################################     Preset framework parameters    #########################################
  #The Separation bound is the maximum Euclidean distance that is allowed between hits in the beggining of Seed tracks.
 MaxTracksPerJob = PM.MaxTracksPerJob
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R1_TRACKS.csv'
 input_eval_file_location=args.of
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
 print(bcolors.HEADER+"######################     Initialising EDER-VIANN Evaluation module             ########################"+bcolors.ENDC)
@@ -63,17 +65,6 @@ print(bcolors.HEADER+"#########################              Written by Filips F
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
-print(UF.TimeStamp(),'Loading preselected data from ',bcolors.OKBLUE+input_file_location+bcolors.ENDC)
-data=pd.read_csv(input_file_location,header=0,usecols=['Track_ID','z'])
-print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
-data = data.groupby('Track_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
-data=data.reset_index()
-data = data.groupby('z')['Track_ID'].count()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
-data=data.reset_index()
-data=data.sort_values(['z'],ascending=True)
-data['Sub_Sets']=np.ceil(data['Track_ID']/MaxTracksPerJob)
-data['Sub_Sets'] = data['Sub_Sets'].astype(int)
-data = data.values.tolist() #Convirting the result to List data type
 print(UF.TimeStamp(),'Analysing evaluation data... ',bcolors.ENDC)
 if os.path.isfile(input_eval_file_location)!=True:
                  print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",input_eval_file_location,'is missing, please restart the evaluation sequence scripts'+bcolors.ENDC)
@@ -91,14 +82,20 @@ print(UF.TimeStamp(),'Evaluating reconstructed set ',bcolors.ENDC)
 test_file_location=args.sf
 if os.path.isfile(test_file_location)!=True:
     print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",test_file_location,'is missing, please restart the reconstruction sequence scripts'+bcolors.ENDC)
-test_data=pd.read_csv(test_file_location,header=0,usecols=['Track_1','Track_2','VX_FIT'])
+if args.LinkAcceptance!='N':
+      test_data=pd.read_csv(test_file_location,header=0,usecols=['Track_1','Track_2','Seed_CNN_Fit', 'Seed_Link_Fit'])
+else:
+    test_data = pd.read_csv(test_file_location, header=0,
+                            usecols=['Track_1', 'Track_2', 'Seed_CNN_Fit'])
 test_data["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(test_data['Track_1'], test_data['Track_2'])]
 test_data.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
 test_data.drop(test_data.index[test_data['Track_1'] == test_data['Track_2']], inplace = True)
 test_data.drop(["Track_1"],axis=1,inplace=True)
 test_data.drop(["Track_2"],axis=1,inplace=True)
-test_data.drop(test_data.index[test_data['VX_FIT']<acceptance], inplace = True)
-test_data.drop(["VX_FIT"],axis=1,inplace=True)
+test_data.drop(test_data.index[test_data['Seed_CNN_Fit']<acceptance], inplace = True)
+if args.LinkAcceptance!='N':
+     test_data.drop(test_data.index[test_data['Seed_Link_Fit']<link_acceptance], inplace = True)
+test_data.drop(["Seed_CNN_Fit"],axis=1,inplace=True)
 CurrentRecVertices=len(test_data.axes[0])
 TotalRecVertices+=CurrentRecVertices
 test_data=pd.merge(test_data, eval_data, how="inner", on=["Seed_ID"])
@@ -107,7 +104,10 @@ MatchedVertices+=RemainingRecVertices
 FakeVertices+=(CurrentRecVertices-RemainingRecVertices)
 Recall=round((float(MatchedVertices)/float(TotalMCVertices))*100,2)
 Precision=round((float(MatchedVertices)/float(TotalRecVertices))*100,2)
-F1_Score=round(2*((Recall*Precision)/(Recall+Precision)),2)
+if (Recall+Precision)==0:
+    F1_Score=0
+else:
+    F1_Score=round(2*((Recall*Precision)/(Recall+Precision)),2)
 print(UF.TimeStamp(), bcolors.OKGREEN+'Evaluation has been finished'+bcolors.ENDC)
 
 print(bcolors.HEADER+"#########################################  Results  #########################################"+bcolors.ENDC)

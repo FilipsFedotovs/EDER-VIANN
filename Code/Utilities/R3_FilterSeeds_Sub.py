@@ -2,6 +2,8 @@
 ########################################    Import libraries    #############################################
 #import csv
 import Utility_Functions as UF
+from Utility_Functions import Seed
+import pickle
 import argparse
 import pandas as pd #We use Panda for a routine data processing
 import os, psutil #helps to monitor the memory
@@ -25,6 +27,8 @@ parser.add_argument('--AFS',help="AFS location", default='')
 parser.add_argument('--VO_T',help="The maximum distance between vertex reconstructed origin and the start hit of either tracks", default='3900')
 parser.add_argument('--VO_min_Z',help="Minimal Z coordinate of the reconstructed vertex origin", default='-39500')
 parser.add_argument('--VO_max_Z',help="Maximum Z coordinate of the reconstructed vertex origin", default='0')
+parser.add_argument('--MinAngle',help="Minimal angle in radians", default='0.0')
+parser.add_argument('--MaxAngle',help="Maximum angle in radians", default='2.0')
 parser.add_argument('--MaxDoca',help="Doca cut in microns", default='200')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
@@ -34,13 +38,15 @@ fraction=args.Fraction
 MaxDoca=float(args.MaxDoca)
 VO_min_Z=float(args.VO_min_Z)
 VO_max_Z=float(args.VO_max_Z)
+MinAngle=float(args.MinAngle)
+MaxAngle=float(args.MaxAngle)
 VO_T=float(args.VO_T)
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 
 input_track_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R1_TRACKS.csv'
 input_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R3_RawSeeds_'+Set+'_'+SubSet+'_'+fraction+'.csv'
-output_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R3_FilteredSeeds_'+Set+'_'+SubSet+'_'+fraction+'.csv'
+output_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R3_R3_FilteredSeeds_'+Set+'_'+SubSet+'_'+fraction+'.pkl'
 print(UF.TimeStamp(),'Loading the data')
 seeds=pd.read_csv(input_seed_file_location)
 seeds_1=seeds.drop(['Track_2'],axis=1)
@@ -69,33 +75,24 @@ print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prep
 GoodSeeds=[]
 print(UF.TimeStamp(),'Beginning the filtering part...')
 for s in range(0,limit):
-    seed=seeds.pop(0)
-    seed=UF.DecorateSeedTracks(seed,tracks)
-    seed=UF.SortImage(seed)
+    seed=Seed(seeds.pop(0))
+    seed.DecorateTracks(tracks)
     try:
-      VO=UF.GiveExpressSeedInfo(seed)[0].tolist()
+     seed.DecorateSeedGeoInfo()
     except:
       continue
-    seed=UF.PreShiftImage(seed)
-    if VO[2]<VO_min_Z:
-        continue
-    if VO[2]>VO_max_Z:
-        continue
-    if UF.SeedQualityCheck(seed,MaxDoca,VO_T):
-           seed_counter+=1
-           if seed_counter>=1000:
-              progress=int( round( (float(s)/float(limit)*100),0)  )
-              print(UF.TimeStamp(),"Filtering the seed",s,", progress is ",progress,' % of seeds analysed')
-              print(UF.TimeStamp(),'Memory usage is',psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
-              seed_counter=0
-           new_seed=[seed[0][0],seed[0][1],VO[0],VO[1],VO[2]]
-           GoodSeeds.append(new_seed)
+    seed.SeedQualityCheck(VO_min_Z,VO_max_Z,MaxDoca,VO_T,MinAngle,MaxAngle)
+    if seed.GeoFit:
+           GoodSeeds.append(seed)
     else:
+        del seed
         continue
 print(UF.TimeStamp(),bcolors.OKGREEN+'The seeds have been refined..'+bcolors.ENDC)
 del tracks
 del seeds
 gc.collect()
 print(UF.TimeStamp(),'Saving the results..')
-UF.LogOperations(output_seed_file_location,'StartLog',GoodSeeds)
+open_file = open(output_seed_file_location, "wb")
+pickle.dump(GoodSeeds, open_file)
+open_file.close()
 exit()

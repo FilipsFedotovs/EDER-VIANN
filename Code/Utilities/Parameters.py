@@ -22,6 +22,7 @@ MaxTracksPerJob=20000 #This parameter imposes the limit on the number of the tra
 MaxEvalTracksPerJob=20000 #This parameter imposes the limit on the number of the tracks form the Start plate when forming the Seeds.
 MaxSeedsPerJob=40000
 MaxVxPerJob=10000
+MaxSeedsPerVxPool=20000
 
 ######List of geometrical constain parameters
 SI_1=1200
@@ -34,19 +35,32 @@ SI_7=4000 #This parameter restricts the maximum euclidean distance between the f
 MinHitsTrack=2
 MaxTrainSampleSize=50000
 MaxValSampleSize=100000
-VO_T=3900 #The maximum distance from the reconstructed Vertex Origin to the closest starting hit of any track in the seed
-VO_max_Z=0 #Fiducial cut on vertex origin
+VO_T=3900 #The minimum distance from the reconstructed Vertex Origin to the closest starting hit of any track in the seed
+VO_max_Z=0 #Fidu
 VO_min_Z=-39500
 MaxDoca=200
-acceptance=0.75 #Threshold of seed rejection from the dataset
+MinAngle=0 #Seed Opening Angle (Magnitude) in radians
+MaxAngle=4 #Seed Opening Angle (Magnitude) in radians
+
 
 
 ##Model parameters
+acceptance=0.5
+pre_vx_acceptance=0.662
+link_acceptance=1.2
 resolution=100
 MaxX=3500.0
 MaxY=1000.0
 MaxZ=20000.0
-CNN_Model_Name='2T_100_FEDRA_1_model' #two tracks seed (2T) number of microns per one pixel, resolution (100), model trained from Monte Carlo seeds (MC)
+CNN_Model_Name='2T_100_FEDRA_2_model'
+
+
+def Seed_Bond_Fit_Acceptance(row):
+    if row['AntiLink_Strenth']>0:
+      return 1.16*(row['Link_Strength']+row['Seed_CNN_Fit'])/row['AntiLink_Strenth']
+    else:
+      return 100
+
 ModelArchitecture=\
     [[4, 4, 1, 2, 2, 2, 2], #Layer 1
         [5, 4, 1, 1, 2, 2, 2], #Layer 2

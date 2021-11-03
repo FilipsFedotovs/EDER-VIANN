@@ -54,7 +54,7 @@ MaxSeedsPerJob = PM.MaxSeedsPerJob
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E7_KALMAN_REC_VERTICES.csv'
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"######################     Initialising EDER-VIANN Vertexing module             ########################"+bcolors.ENDC)
+print(bcolors.HEADER+"######################   Initialising EDER-VIANN Kalman Seed decoration module  ########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -79,11 +79,20 @@ if Mode=='R':
       UF.EvalCleanUp(AFS_DIR, EOS_DIR, 'E9', ['E9_E9','E9_KALMAN_REC_SEEDS'], "SoftUsed == \"EDER-VIANN-E9\"")
       print(UF.TimeStamp(),'Submitting jobs... ',bcolors.ENDC)
       for sj in range(0,int(SubSets)):
-            for f in range(0,10000):
-             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E9_RawSeeds_'+str(sj+1)+'_'+str(f)+'.csv'
+            f_counter=0
+            for f in range(0,1000):
+             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E9_RawSeeds_'+str(sj)+'_'+str(f)+'.csv'
              if os.path.isfile(new_output_file_location):
-               job_details=[(sj+1),f,AFS_DIR,EOS_DIR]
-               UF.SubmitDecorateKalmanSeedsJobsCondor(job_details)
+               f_counter=f
+            OptionHeader = [' --SubSet ', ' --EOS ', " --AFS ", " --Fraction "]
+            OptionLine = [sj, EOS_DIR, AFS_DIR, '$1']
+            SHName = AFS_DIR + '/HTCondor/SH/SH_E9_' + str(sj) + '.sh'
+            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_E9_' + str(sj) + '.sub'
+            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_E9_' + str(sj)
+            ScriptName = AFS_DIR + '/Code/Utilities/E9_DecorateKalmanSeeds_Sub.py '
+            UF.SubmitJobs2Condor(
+                [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, f_counter+1, 'EDER-VIANN-E9', False,
+                 False])
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    print(UF.TimeStamp(),'Checking results... ',bcolors.ENDC)
@@ -97,9 +106,16 @@ if Mode=='C':
 
    for sj in range(0,int(SubSets)):
            for f in range(0,1000):
-              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E9_RawSeeds_'+str(sj+1)+'_'+str(f)+'.csv'
-              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E9_E9_DecoratedSeeds_'+str(sj+1)+'_'+str(f)+'.csv'
-              job_details=[(sj+1),f,AFS_DIR,EOS_DIR]
+              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E9_RawSeeds_'+str(sj)+'_'+str(f)+'.csv'
+              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E9_E9_DecoratedSeeds_'+str(sj)+'_'+str(f)+'.csv'
+              OptionHeader = [' --SubSet ', ' --EOS ', " --AFS ", " --Fraction "]
+              OptionLine = [sj, EOS_DIR, AFS_DIR, f]
+              SHName = AFS_DIR + '/HTCondor/SH/SH_E9_' + str(sj) + '_'+ str(f) +'.sh'
+              SUBName = AFS_DIR + '/HTCondor/SUB/SUB_E9_' + str(sj) + '_'+ str(f) +'.sub'
+              MSGName = AFS_DIR + '/HTCondor/MSG/MSG_E9_' + str(sj)+'_'+ str(f)
+              ScriptName = AFS_DIR + '/Code/Utilities/E9_DecorateKalmanSeeds_Sub.py '
+              job_details=[OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-E9', False,
+                 False]
               if os.path.isfile(required_output_file_location)!=True and os.path.isfile(new_output_file_location):
                  bad_pop.append(job_details)
    if len(bad_pop)>0:
@@ -112,22 +128,23 @@ if Mode=='C':
          exit()
      if UserAnswer=='R':
         for bp in bad_pop:
-             UF.SubmitDecorateKalmanSeedsJobsCondor(bp)
+             UF.SubmitJobs2Condor(bp)
         print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
         print(bcolors.BOLD+"Please check them in few hours"+bcolors.ENDC)
         exit()
    else:
-       print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
+       print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor Kalman seed decoration jobs have finished'+bcolors.ENDC)
        for sj in range(0,int(SubSets)):
-           for f in range(0,10000):
+           for f in range(0,1000):
              progress=int(round((float(sj)/float(int(SubSets)))*100,0))
              print("Collating the results, progress is ",progress,' %', end="\r", flush=True)
-             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E9_RawSeeds_'+str(sj+1)+'_'+str(f)+'.csv'
-             required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E9_E9_DecoratedSeeds_'+str(sj+1)+'_'+str(f)+'.csv'
+             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E8_E9_RawSeeds_'+str(sj)+'_'+str(f)+'.csv'
+             required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E9_E9_DecoratedSeeds_'+str(sj)+'_'+str(f)+'.csv'
              if os.path.isfile(required_output_file_location)!=True and os.path.isfile(new_output_file_location):
                  print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",required_output_file_location,'is missing, please restart the script with the option "--Mode R"'+bcolors.ENDC)
+                 exit()
              elif os.path.isfile(required_output_file_location):
-                 if (sj+1)==(f+1)==1:
+                 if sj==f==0:
                     base_data=pd.read_csv(required_output_file_location,names=['Track_1','Track_2','VX_X','VX_Y','VX_Z','Doca','Track 1 Distance to Vertex','Track 2 Distance to Vertex','Distance between Tracks','Vertex Opening Angle'])
                  else:
                     new_data=pd.read_csv(required_output_file_location,names=['Track_1','Track_2','VX_X','VX_Y','VX_Z','Doca','Track 1 Distance to Vertex','Track 2 Distance to Vertex','Distance between Tracks','Vertex Opening Angle'])
@@ -150,7 +167,7 @@ if Mode=='C':
        print(UF.TimeStamp(),'Cleaning up the work space... ',bcolors.ENDC)
        UF.EvalCleanUp(AFS_DIR, EOS_DIR, 'E9', ['E9_E9','E8_E9'], "SoftUsed == \"EDER-VIANN-E9\"")
        print(bcolors.HEADER+"#################################################################################################################"+bcolors.ENDC)
-       print(UF.TimeStamp(), bcolors.OKGREEN+"2-track vertex evaluation set ",bcolors.OKBLUE+output_file_location+bcolors.ENDC, bcolors.OKGREEN+ 'is ready for the evaluation'+bcolors.ENDC)
+       print(UF.TimeStamp(), bcolors.OKGREEN+"2-track Kalman evaluation set ",bcolors.OKBLUE+output_file_location+bcolors.ENDC, bcolors.OKGREEN+ 'is ready for the evaluation'+bcolors.ENDC)
        print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 #End of the script
 

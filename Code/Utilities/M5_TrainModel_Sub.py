@@ -18,7 +18,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import tensorflow as tf
 import copy
-
+import pickle
 
 from tensorflow import keras
 from keras.models import Sequential
@@ -40,23 +40,19 @@ class bcolors:
 
 ########################## Setting the parser ################################################
 parser = argparse.ArgumentParser(description='select cut parameters')
-parser.add_argument('--Res',help="Please enter the scaling resolution in microns", default='100')
 parser.add_argument('--Mode',help="Please enter the mode: Create/Test/Train", default='Test')
 parser.add_argument('--ImageSet',help="Please enter the image set", default='1')
-parser.add_argument('--DNA',help="Please enter the model dna", default='[[4, 4, 1, 2, 2, 2, 2], [5, 4, 1, 1, 2, 2, 2], [5, 4, 2, 2, 2, 2, 2], [], [], [6, 4, 2], [5, 4, 2], [4, 4, 2], [], [], [7, 1, 1, 4]]')
+parser.add_argument('--DNA',help="Please enter the model dna", default='[[4, 4, 1, 2, 2, 2, 2], [5, 4, 1, 1, 2, 2, 2], [5, 4, 2, 1, 2, 2, 2], [5, 4, 2, 1, 2, 2, 2], [], [3, 4, 2], [3, 4, 2], [2, 4, 2], [], [], [7, 1, 1, 4]]')
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
-parser.add_argument('--MaxX',help="Please enter the value of MaxX", default='3500.0')
-parser.add_argument('--MaxY',help="Please enter the value of MaxY", default='1000.0')
-parser.add_argument('--MaxZ',help="Please enter the value of MaxZ", default='20000.0')
 parser.add_argument('--LR',help="Please enter the value of learning rate", default='Default')
 parser.add_argument('--Epoch',help="Please enter the epoch number", default='1')
 parser.add_argument('--ModelName',help="Name of the model", default='2T_100_MC_1_model')
 parser.add_argument('--ModelNewName',help="Name of the model", default='2T_100_MC_1_model')
+parser.add_argument('--f',help="Image set location (for test)", default='')
 ########################################     Initialising Variables    #########################################
 args = parser.parse_args()
 ImageSet=args.ImageSet
-resolution=float(args.Res)
 Mode=args.Mode
 DNA=ast.literal_eval(args.DNA)
 HiddenLayerDNA=[]
@@ -71,17 +67,6 @@ for gene in DNA:
         OutputDNA.append(gene)
 
 act_fun_list=['N/A','linear','exponential','elu','relu', 'selu','sigmoid','softmax','softplus','softsign','tanh']
-#Maximum bounds on the image size in microns
-MaxX=float(args.MaxX)
-MaxY=float(args.MaxY)
-MaxZ=float(args.MaxZ)
-#Converting image size bounds in line with resolution settings
-boundsX=int(round(MaxX/resolution,0))
-boundsY=int(round(MaxY/resolution,0))
-boundsZ=int(round(MaxZ/resolution,0))
-H=boundsX*2
-W=boundsY*2
-L=boundsZ
 ValidModel=True
 Accuracy=0.0
 Accuracy0=0.0
@@ -94,9 +79,11 @@ import Utility_Functions as UF
 #Load data configuration
 EOSsubDIR=EOS_DIR+'/'+'EDER-VIANN'
 EOSsubModelDIR=EOSsubDIR+'/'+'Models'
-flocation=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/'+'M3_TRAIN_SET_'+ImageSet+'.csv'
-vlocation=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_VALIDATION_SET.csv'
-#train_history = tf.keras.callbacks.CSVLogger(EOSsubModelDIR+'/'+'train_log_'+ImageSet+'.csv', separator=",", append=True)
+flocation=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M4_M5_TRAIN_SET_'+ImageSet+'.pkl'
+if Mode=='Test' and args.f!='':
+   vlocation=args.f
+else:
+   vlocation=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M4_M5_VALIDATION_SET.pkl'
 
 ##############################################################################################################################
 ######################################### Starting the program ################################################################
@@ -106,16 +93,30 @@ print(bcolors.HEADER+"#########################              Written by Filips F
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
-print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
+
 #Estimate number of images in the training file
 #Calculate number of batches used for this job
 TrainBatchSize=(OutputDNA[0][1]*4)
-TrainImages=UF.LoadAllImages(flocation)
-ValImages=UF.LoadAllImages(vlocation)
+if Mode!='Test':
+    print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
+    train_file=open(flocation,'rb')
+    TrainImages=pickle.load(train_file)
+
+#    TrainImages=TrainImages[:25000]
+
+    train_file.close()
+    NTrainBatches=math.ceil(float(len(TrainImages))/float(TrainBatchSize))
+    print(UF.TimeStamp(),'This iteration will be split in',bcolors.BOLD+str(NTrainBatches)+bcolors.ENDC,str(TrainBatchSize),'-size batches')
+
+print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+vlocation+bcolors.ENDC)
+val_file=open(vlocation,'rb')
+ValImages=pickle.load(val_file)
+val_file.close()
+
 print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been loaded successfully..."+bcolors.ENDC)
-NTrainBatches=math.ceil(float(len(TrainImages))/float(TrainBatchSize))
+
 NValBatches=math.ceil(float(len(ValImages))/float(TrainBatchSize))
-print(UF.TimeStamp(),'This iteration will be split in',bcolors.BOLD+str(NTrainBatches)+bcolors.ENDC,str(TrainBatchSize),'-size batches')
+
 print(UF.TimeStamp(),'Loading the model...')
 ##### This but has to be converted to a part that interprets DNA code  ###################################
 if args.LR=='Default':
@@ -130,8 +131,8 @@ if Mode=='Train':
            K.set_value(model.optimizer.learning_rate, LR)
            model.summary()
            print(model.optimizer.get_config())
-if Mode!='Train':
-           try:
+if Mode!='Train' and Mode!='Test':
+           #try:
              model = Sequential()
              for HL in HiddenLayerDNA:
                  Nodes=HL[0]*16
@@ -139,7 +140,7 @@ if Mode!='Train':
                  PS=HL[3]
                  DR=float(HL[6]-1)/10.0
                  if HiddenLayerDNA.index(HL)==0:
-                    model.add(Conv3D(Nodes, activation=act_fun_list[HL[1]],kernel_size=(KS,KS,KS),kernel_initializer='he_uniform', input_shape=(H,W,L,1)))
+                    model.add(Conv3D(Nodes, activation=act_fun_list[HL[1]],kernel_size=(KS,KS,KS),kernel_initializer='he_uniform', input_shape=(TrainImages[0].H,TrainImages[0].W,TrainImages[0].L,1)))
                  else:
                     model.add(Conv3D(Nodes, activation=act_fun_list[HL[1]],kernel_size=(KS,KS,KS),kernel_initializer='he_uniform'))
                  if PS>1:
@@ -157,15 +158,36 @@ if Mode!='Train':
              model.compile(loss='categorical_crossentropy',optimizer=opt,metrics=['accuracy'])
              model.summary()
              print(model.optimizer.get_config())
-           except:
-              print(UF.TimeStamp(), bcolors.FAIL+"Invalid model..."+bcolors.ENDC)
-              ValidModel=False
+           #  exit()
+           #except:
+           #   print(UF.TimeStamp(), bcolors.FAIL+"Invalid model, aborting the training..."+bcolors.ENDC)
+           #   ValidModel=False
+            #  exit()
+if Mode=='Test':
+           model_name=EOSsubModelDIR+'/'+args.ModelName
+           model=tf.keras.models.load_model(model_name)
+           K.set_value(model.optimizer.learning_rate, LR)
+           model.summary()
+           print(model.optimizer.get_config())
+           for ib in range(0,NValBatches):
+              StartSeed=(ib*TrainBatchSize)+1
+              EndSeed=StartSeed+TrainBatchSize-1
+              BatchImages=UF.LoadRenderImages(ValImages,StartSeed,EndSeed)
+              a=model.test_on_batch(BatchImages[0], BatchImages[1], reset_metrics=False)
+              val_loss=a[0]
+              val_acc=a[1]
+              progress=int(round((float(ib)/float(NValBatches))*100,0))
+              print("Validation in progress ",progress,' %',"Validation loss is:",val_loss,"Validation accuracy is:",val_acc , end="\r", flush=True)
+           print('Test is finished')
+           print("Final Validation loss is:",val_loss)
+           print("Final Validation accuracy is:",val_acc)
+           exit()
 records=[]
 print(UF.TimeStamp(),'Starting the training process... ')
 for ib in range(0,NTrainBatches):
     StartSeed=(ib*TrainBatchSize)+1
     EndSeed=StartSeed+TrainBatchSize-1
-    BatchImages=UF.LoadRenderImages(TrainImages,resolution,MaxX,MaxY,MaxZ,StartSeed,EndSeed,True)
+    BatchImages=UF.LoadRenderImages(TrainImages,StartSeed,EndSeed)
     model.train_on_batch(BatchImages[0],BatchImages[1])
     progress=int(round((float(ib)/float(NTrainBatches))*100,0))
     print("Training in progress ",progress,' %', end="\r", flush=True)
@@ -175,7 +197,7 @@ model.reset_metrics()
 for ib in range(0,NTrainBatches):
     StartSeed=(ib*TrainBatchSize)+1
     EndSeed=StartSeed+TrainBatchSize-1
-    BatchImages=UF.LoadRenderImages(TrainImages,resolution,MaxX,MaxY,MaxZ,StartSeed,EndSeed,True)
+    BatchImages=UF.LoadRenderImages(TrainImages,StartSeed,EndSeed)
     t=model.test_on_batch(BatchImages[0], BatchImages[1], reset_metrics=False)
     train_loss=t[0]
     train_acc=t[1]
@@ -183,7 +205,7 @@ model.reset_metrics()
 for ib in range(0,NValBatches):
     StartSeed=(ib*TrainBatchSize)+1
     EndSeed=StartSeed+TrainBatchSize-1
-    BatchImages=UF.LoadRenderImages(ValImages,resolution,MaxX,MaxY,MaxZ,StartSeed,EndSeed,True)
+    BatchImages=UF.LoadRenderImages(ValImages,StartSeed,EndSeed)
     a=model.test_on_batch(BatchImages[0], BatchImages[1], reset_metrics=False)
     val_loss=a[0]
     val_acc=a[1]

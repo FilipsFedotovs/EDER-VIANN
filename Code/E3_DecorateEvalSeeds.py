@@ -8,8 +8,6 @@ import csv
 import argparse
 import pandas as pd #We use Panda for a routine data processing
 import math #We use it for data manipulation
-import gc  #Helps to clear memory
-import numpy as np
 import os
 
 
@@ -24,7 +22,7 @@ class bcolors:   #We use it for the interface
     UNDERLINE = '\033[4m'
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
-parser = argparse.ArgumentParser(description='This script takes preselected 2-track seeds and decorates them with additional information such as DOCA and opening angle.')
+parser = argparse.ArgumentParser(description='This script takes preselected truth 2-track seeds and decorates them with additional information such as DOCA and opening angle.')
 parser.add_argument('--Mode',help="Running Mode: Reset(R)/Continue(C)", default='C')
 
 ######################################## Set variables  #############################################################
@@ -47,15 +45,12 @@ import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import Utility_Functions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
-
- #The Separation bound is the maximum Euclidean distance that is allowed between hits in the beggining of Seed tracks.
 MaxEvalTracksPerJob = PM.MaxEvalTracksPerJob
 MaxSeedsPerJob = PM.MaxSeedsPerJob
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E1_TRACKS.csv'
-#output_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/SEED_SET_'+Set+'_'+str(Subset)+'.csv'
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"######################     Initialising EDER-VIANN Seed Decoration module             ########################"+bcolors.ENDC)
+print(bcolors.HEADER+"####################  Initialising EDER-VIANN MC Evaluation truth seed decoration module ###############"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -80,11 +75,20 @@ if Mode=='R':
       UF.EvalCleanUp(AFS_DIR, EOS_DIR, 'E3', ['E3_E3','E3_TRUTH'], "SoftUsed == \"EDER-VIANN-E3\"")
       print(UF.TimeStamp(),'Submitting jobs... ',bcolors.ENDC)
       for sj in range(0,int(SubSets)):
+            f_counter=0
             for f in range(0,1000):
-             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E3_RawSeeds_'+str(sj+1)+'_'+str(f)+'.csv'
+             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E3_RawSeeds_'+str(sj)+'_'+str(f)+'.csv'
              if os.path.isfile(new_output_file_location):
-               job_details=[(sj+1),f,AFS_DIR,EOS_DIR]
-               UF.SubmitDecorateSeedsJobsCondor(job_details)
+                 f_counter=f
+            OptionHeader = [' --SubSet ', ' --EOS ', " --AFS ", " --Fraction "]
+            OptionLine = [sj, EOS_DIR, AFS_DIR, '$1']
+            SHName = AFS_DIR + '/HTCondor/SH/SH_E3_'+str(sj)+'.sh'
+            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_E3_'+str(sj)+'.sub'
+            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_E3_'+str(sj)
+            ScriptName = AFS_DIR + '/Code/Utilities/E3_DecorateEvalSeeds_Sub.py '
+            UF.SubmitJobs2Condor(
+                [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, f_counter+1, 'EDER-VIANN-E3', False,
+                 False])
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    print(UF.TimeStamp(),'Checking results... ',bcolors.ENDC)
@@ -98,9 +102,16 @@ if Mode=='C':
 
    for sj in range(0,int(SubSets)):
            for f in range(0,1000):
-              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E3_RawSeeds_'+str(sj+1)+'_'+str(f)+'.csv'
-              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E3_E3_DecoratedSeeds_'+str(sj+1)+'_'+str(f)+'.csv'
-              job_details=[(sj+1),f,AFS_DIR,EOS_DIR]
+              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E3_RawSeeds_'+str(sj)+'_'+str(f)+'.csv'
+              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E3_E3_DecoratedSeeds_'+str(sj)+'_'+str(f)+'.csv'
+              OptionHeader = [' --SubSet ', ' --EOS ', " --AFS ", " --Fraction "]
+              OptionLine = [sj, EOS_DIR, AFS_DIR, f]
+              SHName = AFS_DIR + '/HTCondor/SH/SH_E3_' + str(sj) + '_'+str(f)+'.sh'
+              SUBName = AFS_DIR + '/HTCondor/SUB/SUB_E3_' + str(sj) + '_'+str(f)+'.sub'
+              MSGName = AFS_DIR + '/HTCondor/MSG/MSG_E3_' + str(sj)+ '_' +str(f)
+              ScriptName = AFS_DIR + '/Code/Utilities/E3_DecorateEvalSeeds_Sub.py '
+              job_details=[OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-E3', False,
+               False]
               if os.path.isfile(required_output_file_location)!=True and os.path.isfile(new_output_file_location):
                  bad_pop.append(job_details)
    if len(bad_pop)>0:
@@ -113,22 +124,22 @@ if Mode=='C':
          exit()
      if UserAnswer=='R':
         for bp in bad_pop:
-             UF.SubmitDecorateSeedsJobsCondor(bp)
+             UF.SubmitJobs2Condor(bp)
         print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
         print(bcolors.BOLD+"Please check them in few hours"+bcolors.ENDC)
         exit()
    else:
-       print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
+       print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor truth seed decoration jobs have finished'+bcolors.ENDC)
        for sj in range(0,int(SubSets)):
            for f in range(0,1000):
              progress=int(round((float(sj)/float(int(SubSets)))*100,0))
              print("Collating the results, progress is ",progress,' %', end="\r", flush=True)
-             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E3_RawSeeds_'+str(sj+1)+'_'+str(f)+'.csv'
-             required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E3_E3_DecoratedSeeds_'+str(sj+1)+'_'+str(f)+'.csv'
+             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E3_RawSeeds_'+str(sj)+'_'+str(f)+'.csv'
+             required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E3_E3_DecoratedSeeds_'+str(sj)+'_'+str(f)+'.csv'
              if os.path.isfile(required_output_file_location)!=True and os.path.isfile(new_output_file_location):
                  print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",required_output_file_location,'is missing, please restart the script with the option "--Mode R"'+bcolors.ENDC)
              elif os.path.isfile(required_output_file_location):
-                 if (sj+1)==(f+1)==1:
+                 if sj==f==0:
                     base_data=pd.read_csv(required_output_file_location,names=['Track_1','Track_2','VX_X','VX_Y','VX_Z','Doca','Track 1 Distance to Vertex','Track 2 Distance to Vertex','Distance between Tracks','Vertex Opening Angle'])
                  else:
                     new_data=pd.read_csv(required_output_file_location,names=['Track_1','Track_2','VX_X','VX_Y','VX_Z','Doca','Track 1 Distance to Vertex','Track 2 Distance to Vertex','Distance between Tracks','Vertex Opening Angle'])
@@ -151,7 +162,7 @@ if Mode=='C':
        print(UF.TimeStamp(),'Cleaning up the work space... ',bcolors.ENDC)
        UF.EvalCleanUp(AFS_DIR, EOS_DIR, 'E3', ['E3_E3','E2_E3'], "SoftUsed == \"EDER-VIANN-E3\"")
        print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-       print(UF.TimeStamp(), bcolors.OKGREEN+"2-track vertex evaluation set ",bcolors.OKBLUE+output_file_location+bcolors.ENDC," is ready"+bcolors.ENDC)
+       print(UF.TimeStamp(), bcolors.OKGREEN+"2-track MC truth evaluation set ",bcolors.OKBLUE+output_file_location+bcolors.ENDC," is ready"+bcolors.ENDC)
        print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 #End of the script
 

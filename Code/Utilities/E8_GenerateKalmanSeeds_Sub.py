@@ -59,8 +59,8 @@ Steps=math.ceil(MaxTracks/Cut)  #Calculating number of cuts
 data=pd.merge(data, data_header, how="inner", on=["Track_ID","z"]) #Shrinking the Track data so just a star hit for each track is present.
 
 #What section of data will we cut?
-StartDataCut=(Subset-1)*MaxTracks
-EndDataCut=Subset*MaxTracks
+StartDataCut=Subset*MaxTracks
+EndDataCut=(Subset+1)*MaxTracks
 
 #Specifying the right join
 r_data=data.rename(columns={"x": "r_x"})

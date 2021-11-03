@@ -14,7 +14,7 @@ import os
 
 
 
-class bcolors:   #We use it for the interface
+class bcolors:   #We use it for the interface text colouring
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKGREEN = '\033[92m'
@@ -24,8 +24,7 @@ class bcolors:   #We use it for the interface
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-#Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
-parser = argparse.ArgumentParser(description='This script selects and prepares 2-track seeds that have a common Mother particle.')
+parser = argparse.ArgumentParser(description='This script selects and prepares 2-track seeds that have a common Mother particle according to Monte-Carlo.')
 parser.add_argument('--Mode',help="Running Mode: Reset(R)/Continue(C)", default='C')
 
 ######################################## Set variables  #############################################################
@@ -46,12 +45,12 @@ import Utility_Functions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 ########################################
 # Preset framework parameters    #########################################
-MaxTracksPerJob = PM.MaxEvalTracksPerJob
+MaxTracksPerJob = PM.MaxEvalTracksPerJob #These parameteres help to keep each HTCondor job size small enough to be executed ithout crash.
 MaxSeedsPerJob = PM.MaxSeedsPerJob
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E1_TRACKS.csv'
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"####################     Initialising EDER-VIANN Evaluation Seed Creation module     ###################"+bcolors.ENDC)
+print(bcolors.HEADER+"####################     Initialising EDER-VIANN Truth test seed generation module   ###################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -61,7 +60,7 @@ data=pd.read_csv(input_file_location,header=0,usecols=['Track_ID'])
 print(UF.TimeStamp(),'Analysing data... ',bcolors.ENDC)
 data.drop_duplicates(subset="Track_ID",keep='first',inplace=True)  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
 Records=len(data.axes[0])
-SubSets=np.ceil(Records/MaxTracksPerJob)
+SubSets=np.ceil(Records/MaxTracksPerJob) #Splitting jobs into subsets
 if Mode=='R':
    print(UF.TimeStamp(),bcolors.WARNING+'Warning! You are running the script with the "Mode R" option which means that you want to create the seeds from the scratch'+bcolors.ENDC)
    print(UF.TimeStamp(),bcolors.WARNING+'This option will erase all the previous Seed Creation jobs/results'+bcolors.ENDC)
@@ -72,19 +71,35 @@ if Mode=='R':
 
    if UserAnswer=='Y':
       print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
+      #Cleaning-up the folder
       UF.EvalCleanUp(AFS_DIR, EOS_DIR, 'E2', ['E2_E2','E2_E3'], "SoftUsed == \"EDER-VIANN-E2\"")
       print(UF.TimeStamp(),'Submitting jobs... ',bcolors.ENDC)
-      for sj in range(0,int(SubSets)):
-           job_details=[(sj+1),MaxTracksPerJob,AFS_DIR,EOS_DIR]
-           UF.SubmitCreateEvalSeedsJobsCondor(job_details)
+      # Prepare HTCondor job submission parameters
+      OptionHeader = [' --SubSet ', ' --EOS ', " --AFS ", " --MaxTracks "]
+      OptionLine = ['$1', EOS_DIR, AFS_DIR, MaxTracksPerJob]
+      SHName = AFS_DIR + '/HTCondor/SH/SH_E2.sh'
+      SUBName = AFS_DIR + '/HTCondor/SUB/SUB_E2.sub'
+      MSGName = AFS_DIR + '/HTCondor/MSG/MSG_E2'
+      ScriptName = AFS_DIR + '/Code/Utilities/E2_GenerateEvalSeeds_Sub.py '
+      #Submit the HTCondor jobs to HTCondor
+      UF.SubmitJobs2Condor(
+              [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, int(SubSets), 'EDER-VIANN-E2', False,
+               False])
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    bad_pop=[]
    print(UF.TimeStamp(),'Checking jobs... ',bcolors.ENDC)
    for sj in range(0,int(SubSets)):
-           job_details=[(sj+1),MaxTracksPerJob,AFS_DIR,EOS_DIR]
-           output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E2_RawSeeds_'+str(sj+1)+'.csv'
-           output_result_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E2_RawSeeds_'+str(sj+1)+'_RES.csv'
+           #Prepare HTCondor job submission parameters
+           OptionHeader = [' --SubSet ', ' --EOS ', " --AFS ", " --MaxTracks "]
+           OptionLine = [sj, EOS_DIR, AFS_DIR, MaxTracksPerJob]
+           SHName = AFS_DIR + '/HTCondor/SH/SH_E2_'+str(sj)+'.sh'
+           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_E2_'+str(sj)+'.sub'
+           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_E2_'+str(sj)
+           ScriptName = AFS_DIR + '/Code/Utilities/E2_GenerateEvalSeeds_Sub.py '
+           job_details=[OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-E2', False,False]
+           output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E2_RawSeeds_'+str(sj)+'.csv'
+           output_result_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E2_RawSeeds_'+str(sj)+'_RES.csv'
            if os.path.isfile(output_result_location)==False:
               bad_pop.append(job_details)
    if len(bad_pop)>0:
@@ -97,18 +112,20 @@ if Mode=='C':
          exit()
      if UserAnswer=='R':
         for bp in bad_pop:
-             UF.SubmitCreateEvalSeedsJobsCondor(bp)
+             #Resubmit HTCondor jobs that have failed at the first attempt.
+             UF.SubmitJobs2Condor(bp)
         print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
         print(bcolors.BOLD+"Please check them in few hours"+bcolors.ENDC)
         exit()
    else:
-       print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
+       print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor truth seed generation jobs have finished'+bcolors.ENDC)
        print(UF.TimeStamp(),'Collating the results...')
        for sj in range(0,int(SubSets)):
-           output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E2_RawSeeds_'+str(sj+1)+'.csv'
+           output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E2_RawSeeds_'+str(sj)+'.csv'
            result=pd.read_csv(output_file_location,names = ['Track_1','Track_2'])
            Records=len(result.axes[0])
-           print(UF.TimeStamp(),'Subset', str(sj+1), 'contains', Records, 'seeds',bcolors.ENDC)
+           print(UF.TimeStamp(),'Subset', str(sj), 'contains', Records, 'seeds',bcolors.ENDC)
+           #Removing duplicates.
            result["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(result['Track_1'], result['Track_2'])]
            result.drop_duplicates(subset="Seed_ID",keep='first',inplace=True)
            result.drop(result.index[result['Track_1'] == result['Track_2']], inplace = True)
@@ -118,16 +135,16 @@ if Mode=='C':
               Compression_Ratio=int((Records_After_Compression/Records)*100)
            else:
               CompressionRatio=0
-           print(UF.TimeStamp(),'Subset', str(sj+1), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
+           print(UF.TimeStamp(),'Subset', str(sj), 'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC) #Compression ratio = Deduplicated Set/Not deduplicated set
            fractions=int(math.ceil(Records_After_Compression/MaxSeedsPerJob))
            for f in range(0,fractions):
-             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E3_RawSeeds_'+str(sj+1)+'_'+str(f)+'.csv'
-             result[(f*MaxSeedsPerJob):min(Records_After_Compression,((f+1)*MaxSeedsPerJob))].to_csv(new_output_file_location,index=False)
+             new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E3_RawSeeds_'+str(sj)+'_'+str(f)+'.csv'
+             result[(f*MaxSeedsPerJob):min(Records_After_Compression,((f+1)*MaxSeedsPerJob))].to_csv(new_output_file_location,index=False) #Splitting sets for the next script
 
        print(UF.TimeStamp(),'Cleaning up the work space... ',bcolors.ENDC)
-       UF.EvalCleanUp(AFS_DIR, EOS_DIR, 'E2', ['E2_E2'], "SoftUsed == \"EDER-VIANN-E2\"")
+       UF.EvalCleanUp(AFS_DIR, EOS_DIR, 'E2', ['E2_E2'], "SoftUsed == \"EDER-VIANN-E2\"") #Cleaning up the EOS directory and HCondor logs
        print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-       print(UF.TimeStamp(), bcolors.OKGREEN+"Seed generation is completed"+bcolors.ENDC)
+       print(UF.TimeStamp(), bcolors.OKGREEN+"Truth seed generation is completed"+bcolors.ENDC)
        print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 
 #End of the script

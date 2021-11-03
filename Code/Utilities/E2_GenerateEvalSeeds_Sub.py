@@ -1,21 +1,18 @@
-#This simple script prepares 2-Track seeds for the initial CNN vertexing
+#This simple script generates Truth 2-Track seeds for the reconstruction efficiency tests
 # Part of EDER-VIANN package
 #Made by Filips Fedotovs
-#Current version 1.0
+#Current version 2.0
 
 ########################################    Import libraries    #############################################
-import csv
 import argparse
 import pandas as pd #We use Panda for a routine data processing
 from pandas import DataFrame as df
 import math #We use it for data manipulation
-import os, psutil #helps to monitor the memory
 import gc  #Helps to clear memory
-import numpy as np
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
-parser.add_argument('--Subset',help="Subset number", default='1')
+parser.add_argument('--SubSet',help="Subset number", default='1')
 parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--MaxTracks',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
@@ -25,7 +22,7 @@ parser.add_argument('--MaxTracks',help="A maximum number of track combinations t
 args = parser.parse_args()
 
 
-Subset=int(args.Subset)  #The subset helps to determine what portion of the track list is used to create the Seeds
+Subset=int(args.SubSet)  #The subset helps to determine what portion of the track list is used to create the Seeds
 
 ########################################     Preset framework parameters    #########################################
 MaxRecords=10000000 #A set parameter that helps to manage memory load of this script (Please do not exceed 10000000)
@@ -35,8 +32,6 @@ MaxTracks=int(args.MaxTracks)
 EOS_DIR=args.EOS
 AFS_DIR=args.AFS
 
-#import sys
-#sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import Utility_Functions as UF #This is where we keep routine utility functions
 
 #Specifying the full path to input/output files
@@ -59,8 +54,8 @@ Steps=math.ceil(MaxTracks/Cut)  #Calculating number of cuts
 data=pd.merge(data, data_header, how="inner", on=["Track_ID","z"]) #Shrinking the Track data so just a star hit for each track is present.
 
 #What section of data will we cut?
-StartDataCut=(Subset-1)*MaxTracks
-EndDataCut=Subset*MaxTracks
+StartDataCut=Subset*MaxTracks
+EndDataCut=(Subset+1)*MaxTracks
 
 #Specifying the right join
 r_data=data.rename(columns={"x": "r_x"})
@@ -102,15 +97,11 @@ for i in range(0,Steps):
   merged_list = merged_data.values.tolist() #Convirting the result to List data type
   result_list+=merged_list #Adding the result to the list
   if len(result_list)>=2000000: #Once the list gets too big we dump the results into csv to save memory
-      progress=round((float(i)/float(Steps))*100,2)
-      print(UF.TimeStamp(),"progress is ",progress,' %') #Progress display
       UF.LogOperations(output_file_location,'UpdateLog',result_list) #Write to the csv
-
       #Clearing the memory
       del result_list
       result_list=[]
       gc.collect()
-      print(UF.TimeStamp(),'Memory usage is',psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
 
 UF.LogOperations(output_file_location,'UpdateLog',result_list) #Writing the remaining data into the csv
 UF.LogOperations(output_result_location,'StartLog',[])

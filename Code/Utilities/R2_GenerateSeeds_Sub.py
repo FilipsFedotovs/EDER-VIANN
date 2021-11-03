@@ -1,7 +1,7 @@
-#This simple script prepares 2-Track seeds for the initial CNN vertexing
+#This simple script prepares 2-Track seeds for the initial filtering
 # Part of EDER-VIANN package
 #Made by Filips Fedotovs
-#Current version 1.0
+#Current version 2.0
 
 ########################################    Import libraries    #############################################
 import csv
@@ -9,7 +9,6 @@ import argparse
 import pandas as pd #We use Panda for a routine data processing
 from pandas import DataFrame as df
 import math #We use it for data manipulation
-import os, psutil #helps to monitor the memory
 import gc  #Helps to clear memory
 import numpy as np
 
@@ -61,9 +60,6 @@ output_result_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R2_R2_RawSeeds_'+Set+'_
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
 data=pd.read_csv(input_file_location)
-
-
-
 print(UF.TimeStamp(),'Creating seeds... ')
 data_header = data.groupby('Track_ID')['z'].min()  #Keeping only starting hits for the each track record (we do not require the full information about track in this script)
 data_header=data_header.reset_index()
@@ -78,8 +74,8 @@ Steps=math.ceil(MaxTracks/Cut)  #Calculating number of cuts
 data=pd.merge(data, data_header, how="inner", on=["Track_ID","z"]) #Shrinking the Track data so just a star hit for each track is present.
 
 #What section of data will we cut?
-StartDataCut=(Subset-1)*MaxTracks
-EndDataCut=Subset*MaxTracks
+StartDataCut=(Subset)*MaxTracks
+EndDataCut=(Subset+1)*MaxTracks
 
 #Specifying the right join
 r_data=data.rename(columns={"x": "r_x"})
@@ -124,21 +120,16 @@ for i in range(0,Steps):
   merged_data.drop(merged_data.index[(merged_data['separation'] <= SI_6) & (merged_data['separation'] >= SI_5)], inplace = True) #Interval cuts
   merged_data.drop(merged_data.index[(merged_data['separation'] <= SI_4) & (merged_data['separation'] >= SI_3)], inplace = True) #Interval Cuts
   merged_data.drop(merged_data.index[(merged_data['separation'] <= SI_2) & (merged_data['separation'] >= SI_1)], inplace = True) #Interval Cuts
-  merged_data.drop(['separation'],axis=1,inplace=True) #We don't need thius field anymore
+  merged_data.drop(['separation'],axis=1,inplace=True) #We don't need this field anymore
   merged_data.drop(merged_data.index[merged_data['Track_1'] == merged_data['Track_2']], inplace = True) #Removing the cases where Seed tracks are the same
   merged_list = merged_data.values.tolist() #Convirting the result to List data type
   result_list+=merged_list #Adding the result to the list
   if len(result_list)>=2000000: #Once the list gets too big we dump the results into csv to save memory
-      progress=round((float(i)/float(Steps))*100,2)
-      print(UF.TimeStamp(),"progress is ",progress,' %') #Progress display
       UF.LogOperations(output_file_location,'UpdateLog',result_list) #Write to the csv
-
       #Clearing the memory
       del result_list
       result_list=[]
       gc.collect()
-      print(UF.TimeStamp(),'Memory usage is',psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
-
 UF.LogOperations(output_file_location,'UpdateLog',result_list) #Writing the remaining data into the csv
 UF.LogOperations(output_result_location,'StartLog',[])
 print(UF.TimeStamp(), "Seed generation is finished...")

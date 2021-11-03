@@ -50,7 +50,7 @@ MaxSeedsPerJob = PM.MaxSeedsPerJob
 #Specifying the full path to input/output files
 input_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R1_TRACKS.csv'
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-print(bcolors.HEADER+"######################     Initialising EDER-VIANN fake seed module             ########################"+bcolors.ENDC)
+print(bcolors.HEADER+"######################     Initialising EDER-VIANN fake seed decoration module  ########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################                 PhD Student at UCL                   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
@@ -81,11 +81,20 @@ if Mode=='R':
       print(UF.TimeStamp(),'Submitting jobs... ',bcolors.ENDC)
       for j in range(0,len(data)):
         for sj in range(0,int(data[j][2])):
+            f_counter=0
             for f in range(0,1000):
-              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E5_E6_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
+              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E5_E6_RawSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
               if os.path.isfile(new_output_file_location):
-               job_details=[(j+1),(sj+1),f,AFS_DIR,EOS_DIR]
-               UF.SubmitDecorateFakeSeedsJobsCondor(job_details)
+               f_counter=f
+            OptionHeader = [' --Set ',' --SubSet ', ' --EOS ', " --AFS ", " --Fraction "]
+            OptionLine = [j,sj, EOS_DIR, AFS_DIR, '$1']
+            SHName = AFS_DIR + '/HTCondor/SH/SH_E6_' + str(j) + '_' + str(sj) + '.sh'
+            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_E6_' + str(j) + '_' + str(sj) + '.sub'
+            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_E6_' + str(j) + '_' + str(sj)
+            ScriptName = AFS_DIR + '/Code/Utilities/E6_DecorateFakeSeeds_Sub.py '
+            UF.SubmitJobs2Condor(
+                [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, f_counter + 1, 'EDER-VIANN-E6', False,
+                 False])
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
    print(UF.TimeStamp(),'Checking results... ',bcolors.ENDC)
@@ -99,9 +108,16 @@ if Mode=='C':
    for j in range(0,len(data)):
        for sj in range(0,int(data[j][2])):
            for f in range (0,1000):
-              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E5_E6_RawSeeds_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
-              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E6_DEC_FAKE_SEEDS_'+str(j+1)+'_'+str(sj+1)+'_'+str(f)+'.csv'
-              job_details=[(j+1),(sj+1),f,AFS_DIR,EOS_DIR]
+              new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E5_E6_RawSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
+              required_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E6_DEC_FAKE_SEEDS_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
+              OptionHeader = [' --Set ', ' --SubSet ', ' --EOS ', " --AFS ", " --Fraction "]
+              OptionLine = [j, sj, EOS_DIR, AFS_DIR, f]
+              SHName = AFS_DIR + '/HTCondor/SH/SH_E6_' + str(j) + '_' + str(sj) + '_' + str(f)+'.sh'
+              SUBName = AFS_DIR + '/HTCondor/SUB/SUB_E6_' + str(j) + '_' + str(sj) + '_' + str(f)+'.sub'
+              MSGName = AFS_DIR + '/HTCondor/MSG/MSG_E6_' + str(j) + '_' + str(sj)+'_' + str(f)
+              ScriptName = AFS_DIR + '/Code/Utilities/E6_DecorateFakeSeeds_Sub.py '
+              job_details=[OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-E6', False,
+                 False]
               if os.path.isfile(required_output_file_location)!=True and os.path.isfile(new_output_file_location):
                  bad_pop.append(job_details)
               else:
@@ -116,7 +132,7 @@ if Mode=='C':
          exit()
      if UserAnswer=='R':
         for bp in bad_pop:
-             UF.SubmitDecorateFakeSeedsJobsCondor(bp)
+            UF.SubmitJobs2Condor(bp)
         print(UF.TimeStamp(), bcolors.OKGREEN+"All jobs have been resubmitted"+bcolors.ENDC)
         print(bcolors.BOLD+"Please check them in few hours"+bcolors.ENDC)
         exit()
