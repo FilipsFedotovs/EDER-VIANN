@@ -115,15 +115,22 @@ Vertex Reconstruction
 14) python3 R4_VertexSeeds.py --Mode C 
    
     FYI: It will check whether the HTCondor jobs have been completed, if not it will give a warning.
-    The output will produce a file R4_REC_SEEDS.csv with a list of seeds with each one given a probability value. 
+    The output will produce a file R4_R5_CNN_Fit_Seeds.csv with a list of seeds with each one given a probability value and R4_R5_CNN_Fit_Seeds.pkl with Seed class instances. 
+   
+15) python3 R5_AnalyseSeedLinks.py --Mode R
+    
+    Purpose: This script takes CNN Fit seed candidates from previous step and refines them by applying additional cuts on the parameters such Seed Link Strength.
+   FYI: The script will send warning, type Y. The program will send HTCondor jobs and exit. The jobs can take few hours.
 
-15) python3 R5_MergeVertices.py 
+16) python3 R5_AnalyseSeedLinks.py --Mode C 
+    
+    FYI: It will check whether the HTCondor jobs have been completed, if not it will give a warning.
+
+17) python3 R6_MergeVertices.py 
     
     Purpose: This script takes vertex-fitted 2-track seed candidates from previous step and merges them if seeds have a common track.
-    FYI: The execution can take up to several hours if the data size is big. The program will produce the R5_REC_VERTICES file. 
-    In the file each line will contain a list of tracks and the vertex number. 
-    The script can be ran with the option '--Acceptance' which takes in account only the seeds with probability above the given value (has to be between 0 and 1)
-   
+    FYI: The execution can take up to several hours if the data size is big. The program will produce the R6_REC_VERTICES.pkl. 
+    In the file each line will contain a list of seed objects. 
    
    
 EDER-VIANN Vertex Reconstruction Evaluation
@@ -237,14 +244,25 @@ Can only be used if there is a data available with MC vertex truth information.
 5)  M3_GenerateImages.py --Mode C 
     
     FYI: It will check whether the HTCondor jobs have been completed, if not it will give a warning.
+   
+6)  M4_RenderImages.py --Mode R 
+    
+    Purpose: This script takes the seed from the previous step and render their. This script modifies training and validation samples.
+    FYI: The script will send warning, type Y. 
+    The program will send HTCondor jobs and exit. 
+    The jobs take about an hour.
+
+6)  M4_RenderImages.py --Mode C 
+    
+    FYI: It will check whether the HTCondor jobs have been completed, if not it will give a warning.
   
-6)  python3 M5_TrainModel.py --Mode R
+7)  python3 M5_TrainModel.py --Mode R
     
     The program will send an HTCondor job and exit. 
     The job takes about 4-5 hours.
 
-6)  python3 M5_TrainModel.py --Mode C
+8)  python3 M5_TrainModel.py --Mode C
     
     FYI: It will check whether the HTCondor job has been completed, if not it will give a warning.
     If the job has been completed the script will ask the user whether he wants to continue (N/Y).
-    The model training performance (loss and accuracy) will be saved in /EDER-VIANN/Models/M5_PERFORMANCE_2T_100_FEDRA_1_model.csv file
+    The model training performance (loss and accuracy) will be saved in /EDER-VIANN/Models/M5_PERFORMANCE_ModelName.csv file
