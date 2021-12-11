@@ -11,7 +11,7 @@ import math #We use it for data manipulation
 import gc  #Helps to clear memory
 import numpy as np
 import os
-
+import pickle
 
 class bcolors:   #We use it for the interface
     HEADER = '\033[95m'
@@ -41,14 +41,16 @@ import sys
 sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import Utility_Functions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
-
+from Utility_Functions import Seed
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='This script compares the ouput of the previous step with the output of EDER-VIANN reconstructed data to calculate reconstruction perfromance.')
 parser.add_argument('--Acceptance',help="What is the mininimum acceptance", default='0.5')
 parser.add_argument('--LinkAcceptance',help="What is the mininimum acceptance", default='N')
 parser.add_argument('--sf',help="Please choose the input file", default=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_E4_LINK_FIT_SEEDS.csv')
 parser.add_argument('--of',help="Please choose the evaluation file (has to match the same geometrical domain and type of the track as the subject", default=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E3_TRUTH_SEEDS.csv')
-
+parser.add_argument('--FullVxAnalysis',help="Would you like a full vertex analysis?", default='N')
+parser.add_argument('--vf',help="Please choose the input file", default=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R5_REC_VERTICES.pkl')
+parser.add_argument('--ofv',help="Please choose the input evaluation track file (has to match the same geometrical domain and type of the track as the subject", default=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E1_TRACKS.csv')
 ######################################## Set variables  #############################################################
 args = parser.parse_args()
 acceptance=float(args.Acceptance)
@@ -59,6 +61,7 @@ if args.LinkAcceptance!='N':
 MaxTracksPerJob = PM.MaxTracksPerJob
 #Specifying the full path to input/output files
 input_eval_file_location=args.of
+input_eval_vx_location=args.ofv
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
 print(bcolors.HEADER+"######################     Initialising EDER-VIANN Evaluation module             ########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
@@ -80,8 +83,10 @@ MatchedVertices=0
 FakeVertices=0
 print(UF.TimeStamp(),'Evaluating reconstructed set ',bcolors.ENDC)
 test_file_location=args.sf
+rec_file_location=args.vf
 if os.path.isfile(test_file_location)!=True:
     print(UF.TimeStamp(), bcolors.FAIL+"Critical fail: file",test_file_location,'is missing, please restart the reconstruction sequence scripts'+bcolors.ENDC)
+    exit()
 if args.LinkAcceptance!='N':
       test_data=pd.read_csv(test_file_location,header=0,usecols=['Track_1','Track_2','Seed_CNN_Fit', 'Seed_Link_Fit'])
 else:
@@ -117,6 +122,63 @@ print('EDER-VIANN correct combinations were reconstructed:',MatchedVertices)
 print('Therefore the recall of the current model is',bcolors.BOLD+str(Recall), '%'+bcolors.ENDC)
 print('And the precision of the current model is',bcolors.BOLD+str(Precision), '%'+bcolors.ENDC)
 print('The F1 score of the current model is',bcolors.BOLD+str(F1_Score), '%'+bcolors.ENDC)
+
+if args.FullVxAnalysis=='N':
+    print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+    exit()
+print(UF.TimeStamp(), bcolors.OKGREEN+'Evaluating Vertex level reconstruction performance'+bcolors.ENDC)
+print(UF.TimeStamp(),'Analysing evaluation and EDER-VIANN full vertexing data... ',bcolors.ENDC)
+input_file_location=EOS_DIR+'/EDER-VIANN/Data/REC_SET/R4_R5_Fit_Seeds.pkl'
+print(UF.TimeStamp(), "Loading reconstructed vertices from the file",bcolors.OKBLUE+rec_file_location+bcolors.ENDC)
+ev_file=open(rec_file_location,'rb')
+ev_data=pickle.load(ev_file)
+ev_file.close()
+new_ev_data=[]
+for obj in ev_data:
+    for  TH in obj.TrackHeader:
+        new_ev_data.append([TH,str(obj.VX_CNN_ID)])
+del ev_data
+eval_data=pd.read_csv(input_eval_vx_location,header=0,usecols=['Track_ID','Mother_ID'])
+eval_data=eval_data.drop_duplicates()
+eval_data_vx_count=eval_data.groupby(by=['Mother_ID'])['Track_ID'].count().reset_index()
+eval_data_vx_count=eval_data_vx_count.rename(columns={'Track_ID': "MC_Multiplicity"})
+eval_data_vx_count=eval_data_vx_count.drop(eval_data_vx_count.index[eval_data_vx_count['MC_Multiplicity'] < 2])
+TotalFullVx=len(eval_data_vx_count)
+eval_data=pd.merge(eval_data, eval_data_vx_count, on=["Mother_ID"])
+new_ev_data = pd.DataFrame (new_ev_data, columns = ['Track_ID', 'Mother_ID'])
+new_ev_data=new_ev_data.drop_duplicates()
+new_ev_data_vx_count=new_ev_data.groupby(by=['Mother_ID'])['Track_ID'].count().reset_index()
+new_ev_data_vx_count=new_ev_data_vx_count.rename(columns={'Track_ID': "CNN_Multiplicity"})
+new_ev_data_vx_count=new_ev_data_vx_count.drop(new_ev_data_vx_count.index[new_ev_data_vx_count['CNN_Multiplicity'] < 2])
+TotalFullFedraVx=len(new_ev_data_vx_count)
+new_ev_data=pd.merge(new_ev_data, new_ev_data_vx_count, on=["Mother_ID"])
+new_ev_data=new_ev_data.rename(columns={'Mother_ID': "Vertex_ID"})
+combo_set=pd.merge(new_ev_data, eval_data, on=["Track_ID"])
+new_ev_data_map=combo_set.groupby(by=['Mother_ID','Vertex_ID','CNN_Multiplicity',"MC_Multiplicity"])['Track_ID'].count().reset_index()
+new_ev_data_map=new_ev_data_map.sort_values(['Vertex_ID','Mother_ID','Track_ID'],ascending=[1,1,0])
+new_ev_data_map=new_ev_data_map.rename(columns={'Track_ID': "Overlap"})
+new_ev_data_map.drop_duplicates(subset="Vertex_ID",keep='first',inplace=True)
+new_ev_data_map=new_ev_data_map.drop(new_ev_data_map.index[new_ev_data_map['Overlap'] < 2])
+new_ev_data_map['row_recall']=new_ev_data_map['Overlap']/new_ev_data_map['MC_Multiplicity']
+new_ev_data_map['row_precision']=new_ev_data_map['Overlap']/new_ev_data_map['CNN_Multiplicity']
+overall_recall=round((len(new_ev_data_map)/TotalFullVx)*100,2)
+overall_precision=round((len(new_ev_data_map)/TotalFullFedraVx)*100,2)
+recall_table=new_ev_data_map.groupby(by=["MC_Multiplicity"])['row_recall'].mean().reset_index()
+precision_table=new_ev_data_map.groupby(by=["MC_Multiplicity"])['row_precision'].mean().reset_index()
+count_table=new_ev_data_map.groupby(by=["MC_Multiplicity"])['row_precision'].count().reset_index()
+count_table=count_table.rename(columns={'row_precision': "No_Vx"})
+table=pd.merge(count_table, recall_table, how="inner", on=["MC_Multiplicity"])
+table=pd.merge(table, precision_table, how="inner", on=["MC_Multiplicity"])
+print('Multi-track vertices expected according to Monte Carlo:',TotalFullVx)
+print('Multi-track vertices reconstructed by EDER-VIANN:',TotalFullFedraVx)
+print('Multi-track vertices that were at least partially correctly reconstructed by EDER-VIANN:',len(new_ev_data_map))
+print('Therefore the overall recall of EDER-VIANN vertex reconstruction is',bcolors.BOLD+str(overall_recall), '%'+bcolors.ENDC)
+print('And the overall precision of the EDER-VIANN is',bcolors.BOLD+str(overall_precision), '%'+bcolors.ENDC)
+print('The average matched vertex reconstruction completeness is ',bcolors.BOLD+str(round(new_ev_data_map['row_recall'].mean(),4)*100), '%'+bcolors.ENDC)
+print('And the average vertex purity is',bcolors.BOLD+str(round(new_ev_data_map['row_precision'].mean(),4)*100), '%'+bcolors.ENDC)
+output_file_location = EOS_DIR + '/EDER-VIANN/Data/TEST_SET/E4_CNN_VX_REC_STATS.csv'
+table.to_csv(output_file_location,index=False)
+print(UF.TimeStamp(), bcolors.OKGREEN+"Stats have on FEDRA vertex reconstruction by Multiplicity has been written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 #End of the script
 
