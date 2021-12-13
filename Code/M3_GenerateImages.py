@@ -112,21 +112,12 @@ if Mode=='R':
                  False])
       print(UF.TimeStamp(), bcolors.OKGREEN+'All jobs have been submitted, please rerun this script with "--Mode C" in few hours'+bcolors.ENDC)
 if Mode=='C':
-   print(UF.TimeStamp(),'Checking results... ',bcolors.ENDC)
    ProcessStatus=1
-   test_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_CondensedImages_'+str(len(data))+'.pkl'
-   if os.path.isfile(test_file):
-       print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-       print(UF.TimeStamp(), bcolors.OKGREEN+"The process has been ran before, continuing the image generation"+bcolors.ENDC)
-       ProcessStatus=2
-   test_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_SamplesCondensedImages_'+str(len(data))+'.pkl'
-   if os.path.isfile(test_file):
-       print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
-       print(UF.TimeStamp(), bcolors.OKGREEN+"The process has been ran before and image sampling has begun"+bcolors.ENDC)
-       ProcessStatus=3
    bad_pop=[]
-   print(UF.TimeStamp(),'Checking jobs... ',bcolors.ENDC)
+   MaxJ=0
    for j in range(0,len(data)):
+       progress=int( round( (float(j)/float(len(data))*100),0)  )
+       print(UF.TimeStamp(),"Checking jobs, progress is ",progress,' %',end="\r", flush=True)
        for sj in range(0,int(data[j][2])):
            for f in range(0,1000):
               new_output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M2_M3_RawSeeds_'+str(j)+'_'+str(sj)+'_'+str(f)+'.csv'
@@ -143,6 +134,8 @@ if Mode=='C':
                              False]
               if os.path.isfile(required_output_file_location)!=True and os.path.isfile(new_output_file_location):
                  bad_pop.append(job_details)
+              if os.path.isfile(required_output_file_location):
+                  MaxJ=j
    if len(bad_pop)>0:
      print(UF.TimeStamp(),bcolors.WARNING+'Warning, there are still', len(bad_pop), 'HTCondor jobs remaining'+bcolors.ENDC)
      print(bcolors.BOLD+'If you would like to wait and try again later please enter W'+bcolors.ENDC)
@@ -158,6 +151,16 @@ if Mode=='C':
         print(bcolors.BOLD+"Please check them in few hours"+bcolors.ENDC)
         exit()
    else:
+       test_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_CondensedImages_'+str(MaxJ)+'.pkl'
+       if os.path.isfile(test_file):
+           print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+           print(UF.TimeStamp(), bcolors.OKGREEN+"The process has been ran before, continuing the image generation"+bcolors.ENDC)
+           ProcessStatus=2
+       test_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_SamplesCondensedImages_'+str(MaxJ)+'.pkl'
+       if os.path.isfile(test_file):
+           print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
+           print(UF.TimeStamp(), bcolors.OKGREEN+"The process has been ran before and image sampling has begun"+bcolors.ENDC)
+           ProcessStatus=3
        if ProcessStatus==1:
            UF.LogOperations(EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_Temp_Stats.csv','StartLog', [[0,0]])
            print(UF.TimeStamp(),bcolors.OKGREEN+'All HTCondor Seed Creation jobs have finished'+bcolors.ENDC)
@@ -235,10 +238,10 @@ if Mode=='C':
            FakeSeedCorrection=RequiredFakeSeeds/(TotalImages-TrueSeeds)
            for j in range(0,len(data)):
               req_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_SamplesCondensedImages_'+str(j)+'.pkl'
-              if os.path.isfile(req_file)==False:
+              output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_CondensedImages_'+str(j)+'.pkl'
+              if os.path.isfile(req_file)==False and os.path.isfile(output_file_location):
                   progress=int( round( (float(j)/float(len(data))*100),0)  )
                   print(UF.TimeStamp(),"Sampling image from the collated data, progress is ",progress,' % of seeds generated')
-                  output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_CondensedImages_'+str(j)+'.pkl'
                   base_data_file=open(output_file_location,'rb')
                   base_data=pickle.load(base_data_file)
                   base_data_file.close()
