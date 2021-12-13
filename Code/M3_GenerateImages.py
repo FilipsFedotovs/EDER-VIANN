@@ -241,7 +241,7 @@ if Mode=='C':
               output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_CondensedImages_'+str(j)+'.pkl'
               if os.path.isfile(req_file)==False and os.path.isfile(output_file_location):
                   progress=int( round( (float(j)/float(len(data))*100),0)  )
-                  print(UF.TimeStamp(),"Sampling image from the collated data, progress is ",progress,' % of seeds generated')
+                  print(UF.TimeStamp(),"Sampling image from the collated data, progress is ",progress,' % of seeds generated',end="\r", flush=True)
                   base_data_file=open(output_file_location,'rb')
                   base_data=pickle.load(base_data_file)
                   base_data_file.close()
@@ -266,9 +266,10 @@ if Mode=='C':
        if ProcessStatus==3:
            TotalData=[]
            for j in range(0,len(data)):
+               output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_SamplesCondensedImages_'+str(j)+'.pkl'
+               if os.path.isfile(output_file_location):
                   progress=int( round( (float(j)/float(len(data))*100),0)  )
-                  print(UF.TimeStamp(),"Sampling image from the collated data, progress is ",progress,' % of seeds generated')
-                  output_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M3_SamplesCondensedImages_'+str(j)+'.pkl'
+                  print(UF.TimeStamp(),"Re-sampling image from the collated data, progress is ",progress,' % of seeds generated',end="\r", flush=True)
                   base_data_file=open(output_file_location,'rb')
                   base_data=pickle.load(base_data_file)
                   base_data_file.close()
