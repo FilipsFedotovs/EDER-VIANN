@@ -133,8 +133,7 @@ new_combined_data=pd.merge(new_combined_data, new_combined_data_aggregated, how=
 new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
 new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
 new_combined_data=new_combined_data.drop(columns=['Bad_z', 'PosBad_Z'])
-print(new_combined_data)
-exit()
+print(UF.TimeStamp(),'The cleaned data has ',len(new_combined_data),' hits')
 new_combined_data.to_csv(output_file_location,index=False)
 print(UF.TimeStamp(), bcolors.OKGREEN+"The track data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
 print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
