@@ -70,7 +70,7 @@ if Track=='FEDRA':
  final_rows=len(data.axes[0])
  print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
  data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
- data[PM.FEDRA_Track_ID] = data[PM.FEDRA_Track_ID].astype(int)
+ #data[PM.FEDRA_Track_ID] = data[PM.FEDRA_Track_ID].astype(int)
  data[PM.FEDRA_Track_ID] = data[PM.FEDRA_Track_ID].astype(str)
  data[PM.FEDRA_Track_QUADRANT] = data[PM.FEDRA_Track_QUADRANT].astype(int)
  data[PM.FEDRA_Track_QUADRANT] = data[PM.FEDRA_Track_QUADRANT].astype(str)
