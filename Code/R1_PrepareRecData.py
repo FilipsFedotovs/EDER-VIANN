@@ -26,7 +26,7 @@ parser.add_argument('--RemoveTracksZ',help="This option enables to remove partic
 args = parser.parse_args()
 input_file_location=args.f
 RemoveTracksZ=args.RemoveTracksZ
-print(RemoveTracksZ)
+print(RemoveTracksZ[0])
 exit()
 Track=args.Track
 Xmin=float(args.Xmin)
