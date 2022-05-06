@@ -68,7 +68,7 @@ if Track=='FEDRA':
  print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
  data[PM.FEDRA_Track_ID] = data[PM.FEDRA_Track_ID].astype(int)
  data[PM.FEDRA_Track_ID] = data[PM.FEDRA_Track_ID].astype(str)
- data[PM.FEDRA_Track_QUADRANT] = data[PM.FEDRA_Track_QUADRANT].astype(int)
+ #data[PM.FEDRA_Track_QUADRANT] = data[PM.FEDRA_Track_QUADRANT].astype(int)
  data[PM.FEDRA_Track_QUADRANT] = data[PM.FEDRA_Track_QUADRANT].astype(str)
  data['Track_ID'] = data[PM.FEDRA_Track_QUADRANT] + '-' + data[PM.FEDRA_Track_ID]
  data=data.drop([PM.FEDRA_Track_ID],axis=1)
