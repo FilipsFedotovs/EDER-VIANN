@@ -132,6 +132,7 @@ new_combined_data_aggregated=new_combined_data_aggregated.rename(columns={'z': "
 new_combined_data=pd.merge(new_combined_data, new_combined_data_aggregated, how="left", on=["Track_ID"])
 new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
 new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
+new_combined_data=new_combined_data.drop(lcolumns=None='Bad_z')
 print(new_combined_data)
 exit()
 new_combined_data.to_csv(output_file_location,index=False)
