@@ -138,7 +138,7 @@ print(UF.TimeStamp(),'The cleaned data has ',len(new_combined_data),' hits')
 new_combined_data.to_csv(output_file_location,index=False)
 if args.Log=='Y':
    try:
-      eval_data_file=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E3_TRUTH_TRACKS.csv'
+      eval_data_file=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E3_TRUTH_SEEDS.csv'
       eval_data=pd.read_csv(eval_data_file,header=0)
       eval_rec=len(eval_data)
       rec_rec=new_combined_data['Track_ID']
