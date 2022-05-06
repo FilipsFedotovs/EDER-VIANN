@@ -22,9 +22,11 @@ parser.add_argument('--Xmin',help="This option excludes data events that have tr
 parser.add_argument('--Xmax',help="This option excludes data events that have tracks with hits x-coordinates that are below this value", default='0')
 parser.add_argument('--Ymin',help="This option excludes data events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option excludes data events that have tracks with hits y-coordinates that are below this value", default='0')
+parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of sarting Z-coordinate", default='[]')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 input_file_location=args.f
+RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 Track=args.Track
 Xmin=float(args.Xmin)
 Xmax=float(args.Xmax)
@@ -158,6 +160,15 @@ new_combined_data = new_combined_data.drop(['Track_No'],axis=1)
 new_combined_data=new_combined_data.sort_values(['Track_ID',PM.x],ascending=[1,1])
 grand_final_rows=len(new_combined_data.axes[0])
 print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
+print(UF.TimeStamp(),'Removing tracks based on start point')
+TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
+new_combined_data_aggregated=new_combined_data.groupby(['Track_ID'])['z'].min().reset_index()
+new_combined_data_aggregated=new_combined_data_aggregated.rename(columns={'z': "PosBad_Z"})
+new_combined_data=pd.merge(new_combined_data, new_combined_data_aggregated, how="left", on=["Track_ID"])
+new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
+new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
+new_combined_data=new_combined_data.drop(columns=['Bad_z', 'PosBad_Z'])
+print(UF.TimeStamp(),'The cleaned data has ',len(new_combined_data),' hits')
 new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
 new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
 new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
