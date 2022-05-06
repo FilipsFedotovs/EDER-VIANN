@@ -21,9 +21,13 @@ parser.add_argument('--Xmin',help="This option restricts data to only those even
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
+parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of sarting Z-coordinate", default='[]')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 input_file_location=args.f
+RemoveTracksZ=args.RemoveTracksZ
+print(RemoveTracksZ)
+exit()
 Track=args.Track
 Xmin=float(args.Xmin)
 Xmax=float(args.Xmax)
