@@ -25,7 +25,7 @@ parser.add_argument('--RemoveTracksZ',help="This option enables to remove partic
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 input_file_location=args.f
-RemoveTracksZ=args.RemoveTracksZ
+RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 print(RemoveTracksZ[0])
 exit()
 Track=args.Track
