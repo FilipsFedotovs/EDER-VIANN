@@ -65,7 +65,10 @@ if Track=='FEDRA':
  print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
  print(UF.TimeStamp(),'Removing unreconstructed hits...')
  data[PM.MC_VX_ID] = data[PM.MC_VX_ID].astype(str)
- data.drop(data.index[data[PM.MC_VX_ID] == str(PM.MC_NV_VX_ID)], inplace = True)
+ for val in PM.MC_NV_VX_ID:
+    data.drop(data.index[data[PM.MC_VX_ID] == str(val)], inplace = True)
+    print(data)
+ exit()
  data=data.dropna()
  final_rows=len(data.axes[0])
  print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
