@@ -66,14 +66,13 @@ if Track=='FEDRA':
  print(UF.TimeStamp(),'Removing unreconstructed hits...')
  data[PM.MC_VX_ID] = data[PM.MC_VX_ID].astype(str)
  data[PM.MC_VX_PDG] = data[PM.MC_VX_PDG].astype(str)
+ print(UF.TimeStamp(),'Removing invalid vertices...')
  for val in PM.MC_NV_VX_ID:
     data.drop(data.index[data[PM.MC_VX_ID] == str(val)], inplace = True)
+ print(UF.TimeStamp(),'Keeping only signal vertices...')
  for val in PM.MC_SGNL_VX_PDG:
     data.drop(data.index[data[PM.MC_VX_PDG] != str(val)], inplace = True)
- print(data)
  data=data.dropna()
- print(data)
- exit()
  final_rows=len(data.axes[0])
  print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
  data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
@@ -83,6 +82,7 @@ if Track=='FEDRA':
  data[PM.FEDRA_Track_QUADRANT] = data[PM.FEDRA_Track_QUADRANT].astype(str)
  data['Track_ID'] = data[PM.FEDRA_Track_QUADRANT] + '-' + data[PM.FEDRA_Track_ID]
  data['Mother_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_VX_ID]
+ data['Mother_PDG'] = data[PM.MC_VX_PDG]
  data=data.drop([PM.FEDRA_Track_ID],axis=1)
  data=data.drop([PM.FEDRA_Track_QUADRANT],axis=1)
  data=data.drop([PM.MC_Event_ID],axis=1)
@@ -95,6 +95,8 @@ if Track=='FEDRA':
  data=data.drop(['Mother_ID'],axis=1)
  compress_data=compress_data.drop(['Mother_No'],axis=1)
  data=pd.merge(data, compress_data, how="left", on=["Track_ID"])
+ print(data)
+ exit()
  if SliceData:
      print(UF.TimeStamp(),'Slicing the data...')
      ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
