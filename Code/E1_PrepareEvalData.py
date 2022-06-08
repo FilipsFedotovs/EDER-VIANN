@@ -95,8 +95,6 @@ if Track=='FEDRA':
  data=data.drop(['Mother_ID'],axis=1)
  compress_data=compress_data.drop(['Mother_No'],axis=1)
  data=pd.merge(data, compress_data, how="left", on=["Track_ID"])
- print(data)
- exit()
  if SliceData:
      print(UF.TimeStamp(),'Slicing the data...')
      ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
