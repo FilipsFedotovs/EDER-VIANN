@@ -69,7 +69,10 @@ if Track=='FEDRA':
     data.drop(data.index[data[PM.MC_VX_ID] == str(val)], inplace = True)
  for val in PM.MC_SGNL_VX_ID:
     data.drop(data.index[data[PM.MC_VX_PDG] != str(val)], inplace = True)
+ print(data)
  data=data.dropna()
+ print(data)
+ exit()
  final_rows=len(data.axes[0])
  print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
  data[PM.MC_Event_ID] = data[PM.MC_Event_ID].astype(str)
