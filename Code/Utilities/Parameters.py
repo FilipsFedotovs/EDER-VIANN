@@ -87,8 +87,9 @@ if Config=='SND':
     MC_VX_ID='MC Mother ID'   #Column name for Track mother id (For MC truth only)
     MC_VX_PDG='Mother PDG'   #Column name for Track mother id (For MC truth only)
     FEDRA_VX_ID='VertexS' #Column name for the reconstructed Vertex id
-    MC_NV_VX_ID=['-2','-1','0']
-    FEDRA_NV_VX_ID='-1.0'
+    MC_NV_VX_ID=['-2','-1']
+    FEDRA_NV_VX_ID=['-1.0']
+    MC_SGNL_VX_PDG=['14']
     ########List of the package run parameters
     MaxTracksPerJob=20000 #This parameter imposes the limit on the number of the tracks form the Start plate when forming the Seeds.
     MaxEvalTracksPerJob=20000 #This parameter imposes the limit on the number of the tracks form the Start plate when forming the Seeds.
