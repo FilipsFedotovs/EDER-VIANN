@@ -87,7 +87,7 @@ if Track=='FEDRA':
  data=data.drop([PM.FEDRA_Track_QUADRANT],axis=1)
  data=data.drop([PM.MC_Event_ID],axis=1)
  data=data.drop([PM.MC_VX_ID],axis=1)
- compress_data=data.drop([PM.x,PM.y,PM.z,'Mother_PDG'],axis=1)
+ compress_data=data.drop([PM.x,PM.y,PM.z,'Mother PDG'],axis=1)
  compress_data['Mother_No']= compress_data['Mother_ID']
  compress_data=compress_data.groupby(by=['Track_ID','Mother_ID',])['Mother_No'].count().reset_index()
  compress_data=compress_data.sort_values(['Track_ID','Mother_No'],ascending=[1,0])
