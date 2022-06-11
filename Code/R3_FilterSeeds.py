@@ -176,7 +176,7 @@ if Mode=='C':
         if Records>0:
               Compression_Ratio=int((Records_After_Compression/Records)*100)
         else:
-              CompressionRatio=0
+              Compression_Ratio=0
         print(UF.TimeStamp(),'Set',str(j+1),'compression ratio is ', Compression_Ratio, ' %',bcolors.ENDC)
        if args.Log=='Y':
          try:
