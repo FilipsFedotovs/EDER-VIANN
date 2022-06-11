@@ -89,7 +89,7 @@ if Config=='SND':
     FEDRA_VX_ID='VertexS' #Column name for the reconstructed Vertex id
     MC_NV_VX_ID=['-2','-1']
     FEDRA_NV_VX_ID=['-1.0']
-    MC_SGNL_VX_PDG=['14']
+    MC_SGNL_VX_PDG=[]
     ########List of the package run parameters
     MaxTracksPerJob=20000 #This parameter imposes the limit on the number of the tracks form the Start plate when forming the Seeds.
     MaxEvalTracksPerJob=20000 #This parameter imposes the limit on the number of the tracks form the Start plate when forming the Seeds.
@@ -109,8 +109,8 @@ if Config=='SND':
     MaxTrainSampleSize=50000
     MaxValSampleSize=100000
     VO_T=3900 #The minimum distance from the reconstructed Vertex Origin to the closest starting hit of any track in the seed
-    VO_max_Z=0 #Fidu
-    VO_min_Z=-39500
+    VO_max_Z=437925 #Fidu
+    VO_min_Z=360340
     MaxDoca=200
     MinAngle=0 #Seed Opening Angle (Magnitude) in radians
     MaxAngle=4 #Seed Opening Angle (Magnitude) in radians
