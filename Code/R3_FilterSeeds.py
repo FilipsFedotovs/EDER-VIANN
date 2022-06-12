@@ -201,7 +201,7 @@ if Mode=='C':
                          rec_data_file.close()
                          rec_list=[]
                          for rd in rec_data:
-                             rec_list.append([rd.SegmentHeader[0],rd.SegmentHeader[1]])
+                             rec_list.append([rd.TrackHeader[0],rd.TrackHeader[1]])
                          rec = pd.DataFrame(rec_list, columns = ['Track_1','Track_2'])
                          rec["Seed_ID"]= ['-'.join(sorted(tup)) for tup in zip(rec['Track_1'], rec['Track_2'])]
                          rec.drop(['Track_1'],axis=1,inplace=True)
