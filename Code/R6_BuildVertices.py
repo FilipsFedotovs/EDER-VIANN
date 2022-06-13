@@ -195,6 +195,7 @@ if args.Mode=='C':
 
                  if args.Log=='Y':
                   #try:
+                    csv_out=[['Track','Mother_ID']]
                     for Vx in VertexPool:
                      for Tr in Vx.TrackHeader:
                          csv_out.append([Tr,Vx.VX_CNN_ID])
