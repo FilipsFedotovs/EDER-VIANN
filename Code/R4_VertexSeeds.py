@@ -176,7 +176,7 @@ if Mode=='C':
        print(UF.TimeStamp(), 'Saving the csv file... ')
        for sd in base_data:
            eval_seeds.append([sd.TrackHeader[0],sd.TrackHeader[1],sd.Seed_CNN_Fit])
-       del base_data
+
        UF.LogOperations(output_file_eval_location,'StartLog', eval_seeds)
        if args.Log=='Y':
          #try:
@@ -210,6 +210,7 @@ if Mode=='C':
        UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R4', ['R4_R4'], "SoftUsed == \"EDER-VIANN-R4\"")
        print(bcolors.BOLD+'Would you like to delete filtered seeds data?'+bcolors.ENDC)
        UserAnswer=input(bcolors.BOLD+"Please, enter your option Y/N \n"+bcolors.ENDC)
+       del base_data
        if UserAnswer=='Y':
            UF.RecCleanUp(AFS_DIR, EOS_DIR, 'R4', ['R3_R4'], "SoftUsed == \"EDER-VIANN-R4\"")
        else:
