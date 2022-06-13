@@ -195,6 +195,7 @@ if args.Mode=='C':
 
                  if args.Log=='Y':
                   #try:
+                    import pandas as pd
                     csv_out=[]
                     for Vx in VertexPool:
                      for Tr in Vx.TrackHeader:
