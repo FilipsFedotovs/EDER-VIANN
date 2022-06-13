@@ -199,10 +199,7 @@ if Mode=='C':
              rec_eval=pd.merge(eval_data, rec, how="inner", on=['Seed_ID'])
              eval_no=len(rec_eval)
              rec_no=(len(rec)-len(rec_eval))
-             if args.ReFit=='N':
-                 UF.LogOperations(EOS_DIR+'/EDER-VIANN/Data/REC_SET/R_LOG.csv', 'UpdateLog', [[4,'CNN Fit',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
-             else:
-                 UF.LogOperations(EOS_DIR+'/EDER-VIANN/Data/REC_SET/R_LOG.csv', 'UpdateLog', [[5,'CNN Fit',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
+             UF.LogOperations(EOS_DIR+'/EDER-VIANN/Data/REC_SET/R_LOG.csv', 'UpdateLog', [[4,'CNN Fit',rec_no,eval_no,eval_no/(rec_no+eval_no),eval_no/len(eval_data)]])
              print(UF.TimeStamp(), bcolors.OKGREEN+"The log data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+EOS_DIR+'/EDER-VIANN/Data/REC_SET/R_LOG.csv'+bcolors.ENDC)
          # except:
          #     print(UF.TimeStamp(), bcolors.WARNING+'Log creation has failed'+bcolors.ENDC)
