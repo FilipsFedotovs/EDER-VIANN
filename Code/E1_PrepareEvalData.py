@@ -160,9 +160,10 @@ if len(RemoveTracksZ)>0:
     new_combined_data_aggregated=new_combined_data.groupby(['Track_ID'])['z'].min().reset_index()
     new_combined_data_aggregated=new_combined_data_aggregated.rename(columns={'z': "PosBad_Z"})
     new_combined_data=pd.merge(new_combined_data, new_combined_data_aggregated, how="left", on=["Track_ID"])
+
+    new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
     print(new_combined_data)
     exit()
-    new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
     new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
     new_combined_data=new_combined_data.drop(columns=['Bad_z', 'PosBad_Z'])
 print(UF.TimeStamp(),'The cleaned data has ',len(new_combined_data),' hits')
