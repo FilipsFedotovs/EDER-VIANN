@@ -164,8 +164,7 @@ if len(RemoveTracksZ)>0:
     new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
 
     new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
-    print(new_combined_data)
-    exit()
+
     new_combined_data=new_combined_data.drop(columns=['Bad_z', 'PosBad_Z'])
 print(UF.TimeStamp(),'The cleaned data has ',len(new_combined_data),' hits')
 new_combined_data.to_csv(output_file_location,index=False)
