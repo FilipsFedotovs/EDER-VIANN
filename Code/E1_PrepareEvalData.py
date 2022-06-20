@@ -153,7 +153,7 @@ print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
 new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
 new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
 new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
-if len(RemoveTracksZ)>1:
+if len(RemoveTracksZ)>0:
     print(UF.TimeStamp(),'Removing tracks based on start point')
     TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
     new_combined_data_aggregated=new_combined_data.groupby(['Track_ID'])['z'].min().reset_index()

@@ -4,6 +4,7 @@
 import csv
 import argparse
 import pandas as pd
+import ast
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -19,6 +20,7 @@ parser.add_argument('--Xmin',help="This option restricts data to only those even
 parser.add_argument('--Xmax',help="This option restricts data to only those events that have tracks with hits x-coordinates that are below this value", default='0')
 parser.add_argument('--Ymin',help="This option restricts data to only those events that have tracks with hits y-coordinates that are above this value", default='0')
 parser.add_argument('--Ymax',help="This option restricts data to only those events that have tracks with hits y-coordinates that are below this value", default='0')
+parser.add_argument('--RemoveTracksZ',help="This option enables to remove particular tracks of sarting Z-coordinate", default='[]')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 input_file_location=args.f
@@ -27,6 +29,7 @@ Xmax=float(args.Xmax)
 Ymin=float(args.Ymin)
 Ymax=float(args.Ymax)
 SliceData=max(Xmin,Xmax,Ymin,Ymax)>0
+RemoveTracksZ=ast.literal_eval(args.RemoveTracksZ)
 #Loading Directory locations
 csv_reader=open('../config',"r")
 config = list(csv.reader(csv_reader))
@@ -104,6 +107,15 @@ print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
 new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
 new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
 new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
+if len(RemoveTracksZ)>0:
+    print(UF.TimeStamp(),'Removing tracks based on start point')
+    TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
+    new_combined_data_aggregated=new_combined_data.groupby(['Track_ID'])['z'].min().reset_index()
+    new_combined_data_aggregated=new_combined_data_aggregated.rename(columns={'z': "PosBad_Z"})
+    new_combined_data=pd.merge(new_combined_data, new_combined_data_aggregated, how="left", on=["Track_ID"])
+    new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
+    new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
+    new_combined_data=new_combined_data.drop(columns=['Bad_z', 'PosBad_Z'])
 new_combined_data.to_csv(output_file_location,index=False)
 print(bcolors.HEADER+"################################################################################################################"+bcolors.ENDC)
 print(UF.TimeStamp(), bcolors.OKGREEN+"The track data has been created successfully and written to"+bcolors.ENDC, bcolors.OKBLUE+output_file_location+bcolors.ENDC)
