@@ -156,6 +156,7 @@ new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
 if len(RemoveTracksZ)>0:
     print(UF.TimeStamp(),'Removing tracks based on start point')
     TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
+    print(TracksZdf)
     new_combined_data_aggregated=new_combined_data.groupby(['Track_ID'])['z'].min().reset_index()
     new_combined_data_aggregated=new_combined_data_aggregated.rename(columns={'z': "PosBad_Z"})
     new_combined_data=pd.merge(new_combined_data, new_combined_data_aggregated, how="left", on=["Track_ID"])
