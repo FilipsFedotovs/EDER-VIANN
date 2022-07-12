@@ -59,13 +59,19 @@ if Track=='FEDRA':
 
  data=pd.read_csv(input_file_location,
             header=0,
-            usecols=[PM.FEDRA_Track_ID,PM.FEDRA_Track_QUADRANT,PM.x,PM.y,PM.z,PM.MC_VX_ID,PM.MC_Event_ID])
+            usecols=[PM.FEDRA_Track_ID,PM.FEDRA_Track_QUADRANT,PM.x,PM.y,PM.z,PM.MC_VX_ID,PM.MC_Event_ID, PM.MC_VX_PDG])
 
  total_rows=len(data.axes[0])
  print(UF.TimeStamp(),'The raw data has ',total_rows,' hits')
  print(UF.TimeStamp(),'Removing unreconstructed hits...')
  data[PM.MC_VX_ID] = data[PM.MC_VX_ID].astype(str)
- data.drop(data.index[data[PM.MC_VX_ID] == str(PM.MC_NV_VX_ID)], inplace = True)
+ data[PM.MC_VX_PDG] = data[PM.MC_VX_PDG].astype(str)
+ print(UF.TimeStamp(),'Removing invalid vertices...')
+ for val in PM.MC_NV_VX_ID:
+    data.drop(data.index[data[PM.MC_VX_ID] == str(val)], inplace = True)
+ print(UF.TimeStamp(),'Keeping only signal vertices...')
+ for val in PM.MC_SGNL_VX_PDG:
+    data.drop(data.index[data[PM.MC_VX_PDG] != str(val)], inplace = True)
  data=data.dropna()
  final_rows=len(data.axes[0])
  print(UF.TimeStamp(),'The cleaned data has ',final_rows,' hits')
@@ -76,13 +82,15 @@ if Track=='FEDRA':
  data[PM.FEDRA_Track_QUADRANT] = data[PM.FEDRA_Track_QUADRANT].astype(str)
  data['Track_ID'] = data[PM.FEDRA_Track_QUADRANT] + '-' + data[PM.FEDRA_Track_ID]
  data['Mother_ID'] = data[PM.MC_Event_ID] + '-' + data[PM.MC_VX_ID]
+ data['Mother_PDG'] = data[PM.MC_VX_PDG]
+ data=data.drop([PM.MC_VX_PDG],axis=1)
  data=data.drop([PM.FEDRA_Track_ID],axis=1)
  data=data.drop([PM.FEDRA_Track_QUADRANT],axis=1)
  data=data.drop([PM.MC_Event_ID],axis=1)
  data=data.drop([PM.MC_VX_ID],axis=1)
- compress_data=data.drop([PM.x,PM.y,PM.z],axis=1)
+ compress_data=data.drop([PM.x,PM.y,PM.z,'Mother_PDG'],axis=1)
  compress_data['Mother_No']= compress_data['Mother_ID']
- compress_data=compress_data.groupby(by=['Track_ID','Mother_ID'])['Mother_No'].count().reset_index()
+ compress_data=compress_data.groupby(by=['Track_ID','Mother_ID',])['Mother_No'].count().reset_index()
  compress_data=compress_data.sort_values(['Track_ID','Mother_No'],ascending=[1,0])
  compress_data.drop_duplicates(subset="Track_ID",keep='first',inplace=True)
  data=data.drop(['Mother_ID'],axis=1)
@@ -91,7 +99,7 @@ if Track=='FEDRA':
  if SliceData:
      print(UF.TimeStamp(),'Slicing the data...')
      ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-     ValidEvents.drop([PM.x,PM.y,PM.z,'Mother_ID'],axis=1,inplace=True)
+     ValidEvents.drop([PM.x,PM.y,PM.z,'Mother_ID','Mother_PDG'],axis=1,inplace=True)
      ValidEvents.drop_duplicates(subset="Track_ID",keep='first',inplace=True)
      data=pd.merge(data, ValidEvents, how="inner", on=['Track_ID'])
      final_rows=len(data.axes[0])
@@ -121,7 +129,7 @@ elif Track=='MC':
  if SliceData:
      print(UF.TimeStamp(),'Slicing the data...')
      ValidEvents=data.drop(data.index[(data[PM.x] > Xmax) | (data[PM.x] < Xmin) | (data[PM.y] > Ymax) | (data[PM.y] < Ymin)])
-     ValidEvents.drop([PM.x,PM.y,PM.z,'Track_ID','Mother_ID'],axis=1,inplace=True)
+     ValidEvents.drop([PM.x,PM.y,PM.z,'Track_ID','Mother_ID','Mother_PDG'],axis=1,inplace=True)
      ValidEvents.drop_duplicates(subset=PM.MC_Event_ID,keep='first',inplace=True)
      data=pd.merge(data, ValidEvents, how="inner", on=[PM.MC_Event_ID])
      final_rows=len(data.axes[0])
@@ -134,7 +142,7 @@ else:
   exit()
 print(UF.TimeStamp(),'Removing tracks which have less than',PM.MinHitsTrack,'hits...')
 track_no_data=data.groupby(['Track_ID'],as_index=False).count()
-track_no_data=track_no_data.drop([PM.y,PM.z,'Mother_ID'],axis=1)
+track_no_data=track_no_data.drop([PM.y,PM.z,'Mother_ID','Mother_PDG'],axis=1)
 track_no_data=track_no_data.rename(columns={PM.x: "Track_No"})
 new_combined_data=pd.merge(data, track_no_data, how="left", on=["Track_ID"])
 new_combined_data = new_combined_data[new_combined_data.Track_No >= PM.MinHitsTrack]
@@ -145,14 +153,19 @@ print(UF.TimeStamp(),'The cleaned data has ',grand_final_rows,' hits')
 new_combined_data=new_combined_data.rename(columns={PM.x: "x"})
 new_combined_data=new_combined_data.rename(columns={PM.y: "y"})
 new_combined_data=new_combined_data.rename(columns={PM.z: "z"})
-print(UF.TimeStamp(),'Removing tracks based on start point')
-TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
-new_combined_data_aggregated=new_combined_data.groupby(['Track_ID'])['z'].min().reset_index()
-new_combined_data_aggregated=new_combined_data_aggregated.rename(columns={'z': "PosBad_Z"})
-new_combined_data=pd.merge(new_combined_data, new_combined_data_aggregated, how="left", on=["Track_ID"])
-new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
-new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
-new_combined_data=new_combined_data.drop(columns=['Bad_z', 'PosBad_Z'])
+if len(RemoveTracksZ)>0:
+    print(UF.TimeStamp(),'Removing tracks based on start point')
+    TracksZdf = pd.DataFrame(RemoveTracksZ, columns = ['Bad_z'], dtype=float)
+
+    new_combined_data_aggregated=new_combined_data.groupby(['Track_ID'])['z'].min().reset_index()
+    new_combined_data_aggregated=new_combined_data_aggregated.rename(columns={'z': "PosBad_Z"})
+    new_combined_data=pd.merge(new_combined_data, new_combined_data_aggregated, how="left", on=["Track_ID"])
+
+    new_combined_data=pd.merge(new_combined_data, TracksZdf, how="left", left_on=["PosBad_Z"], right_on=['Bad_z'])
+
+    new_combined_data=new_combined_data[new_combined_data['Bad_z'].isnull()]
+
+    new_combined_data=new_combined_data.drop(['Bad_z', 'PosBad_Z'],axis=1)
 print(UF.TimeStamp(),'The cleaned data has ',len(new_combined_data),' hits')
 new_combined_data.to_csv(output_file_location,index=False)
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)

@@ -40,7 +40,7 @@ output_file_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E2_RawSeeds_'+str(Sub
 output_result_location=EOS_DIR+'/EDER-VIANN/Data/TEST_SET/E2_E2_RawSeeds_'+str(Subset)+'_RES.csv'
 print(UF.TimeStamp(), "Modules Have been imported successfully...")
 print(UF.TimeStamp(),'Loading pre-selected data from ',input_file_location)
-data=pd.read_csv(input_file_location)
+data=pd.read_csv(input_file_location, usecols=["Track_ID",'x','y','z','Mother_ID'])
 
 
 
