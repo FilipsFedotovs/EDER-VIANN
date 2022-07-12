@@ -398,6 +398,9 @@ class Seed:
                   __Hits[0]=float(__Hits[0])-__FinX
                   __Hits[1]=float(__Hits[1])-__FinY
                   __Hits[2]=float(__Hits[2])-__FinZ
+         for __Tracks in __TempTrack:
+              for __Hits in __Tracks:
+                  __Hits[2]=__Hits[2]*self.Resolution/1315
 
           #Lon Rotate x
           __LongestDistance=0.0
