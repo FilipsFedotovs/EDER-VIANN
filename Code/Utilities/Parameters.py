@@ -122,8 +122,8 @@ if Config=='SND':
     pre_vx_acceptance=0.662
     link_acceptance=1.2
     resolution=50
-    MaxX=20000
-    MaxY=20000
+    MaxX=10000
+    MaxY=10000
     MaxZ=3000
     CNN_Model_Name='2T_100_FEDRA_2_model'
 
