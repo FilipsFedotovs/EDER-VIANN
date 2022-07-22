@@ -576,7 +576,7 @@ class Seed:
           delattr(self,'LongestTrackInd')
 
       
-      def PrepareTrackGraph(self,MaxX,MaxY,MaxZ,Res,Rescale):
+      def PrepareTrackGraph(self,MaxX,MaxY,MaxZ,Rescale):
           __TempTrack=copy.deepcopy(self.TrackHits)
 
         # MaxZ =1315
@@ -608,11 +608,12 @@ class Seed:
                   __Hits[1]=float(__Hits[1])-__FinY
                   __Hits[2]=float(__Hits[2])-__FinZ
           # Rescale
-          for __Tracks in __TempTrack:
-              for __Hits in __Tracks:
-                  __Hits[0]=__Hits[0]/MaxX
-                  __Hits[1]=__Hits[1]/MaxY
-                  __Hits[2]=__Hits[2]/MaxZ
+          if Rescale:
+              for __Tracks in __TempTrack:
+                  for __Hits in __Tracks:
+                      __Hits[0]=__Hits[0]/MaxX
+                      __Hits[1]=__Hits[1]/MaxY
+                      __Hits[2]=__Hits[2]/MaxZ
 
           #Lon Rotate x
 #          __LongestDistance=0.0
