@@ -60,7 +60,7 @@ NV=PM.MC_NV_VX_ID
 MaxTracksPerJob = PM.MaxTracksPerJob
 MaxSeedsPerJob = PM.MaxSeedsPerJob
 #Specifying the full path to input/output files
-input_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M1_TRACKS.csv'
+input_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/GM1_TRACKS.csv'
 print(bcolors.HEADER+"########################################################################################################"+bcolors.ENDC)
 print(bcolors.HEADER+"####################     Initialising EDER-VIANN Train Seed Creation module          ###################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################              Written by Filips Fedotovs              #########################"+bcolors.ENDC)
