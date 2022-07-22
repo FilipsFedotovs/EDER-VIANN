@@ -51,8 +51,8 @@ if Config=='SHIP':
     pre_vx_acceptance=0.662
     link_acceptance=1.2
     resolution=100
-    MaxX=3000.0
-    MaxY=3000.0
+    MaxX=100.0
+    MaxY=100.0
     MaxZ=1315
     CNN_Model_Name='2T_100_FEDRA_2_model'
 
