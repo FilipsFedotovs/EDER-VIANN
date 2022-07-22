@@ -587,7 +587,7 @@ class Seed:
         #   self.H=(self.bX)*2
         #   self.W=(self.bY)*2
         #   self.L=(self.bZ)
-        #   __LongestDistance=0.0
+          __LongestDistance=0.0
           for __Track in __TempTrack:
             __Xdiff=float(__Track[len(__Track)-1][0])-float(__Track[0][0])
             __Ydiff=float(__Track[len(__Track)-1][1])-float(__Track[0][1])
