@@ -94,7 +94,7 @@ if Mode=='R':
            OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxTracks ", " --SI_1 ",
                            " --SI_2 ", " --SI_3 ", " --SI_4 ", " --SI_5 ", " --SI_6 ", " --SI_7 ", " --NV "]
            OptionLine = [j, '$1', EOS_DIR, AFS_DIR, int(data[j][0]), MaxTracksPerJob, SI_1, SI_2, SI_3, SI_4, SI_5,
-                         SI_6, SI_7, NV]
+                         SI_6, SI_7, '"'+str(NV)+'"']
            SHName = AFS_DIR + '/HTCondor/SH/SH_GM2_' + str(j) + '.sh'
            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_GM2_' + str(j) + '.sub'
            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_GM2_' + str(j)
@@ -111,7 +111,7 @@ if Mode=='C':
            OptionHeader = [' --Set ', ' --Subset ', ' --EOS ', " --AFS ", " --PlateZ ", " --MaxTracks ", " --SI_1 ",
                            " --SI_2 ", " --SI_3 ", " --SI_4 ", " --SI_5 ", " --SI_6 ", " --SI_7 ",  " --NV "]
            OptionLine = [j, sj, EOS_DIR, AFS_DIR, int(data[j][0]), MaxTracksPerJob, SI_1, SI_2, SI_3, SI_4,
-                         SI_5, SI_6, SI_7,NV]
+                         SI_5, SI_6, SI_7,'"'+str(NV)+'"']
            SHName = AFS_DIR + '/HTCondor/SH/SH_GM2_' + str(j) + '_' + str(sj) + '.sh'
            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_GM2_' + str(j) + '_' + str(sj) + '.sub'
            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_GM2_' + str(j) + '_' + str(sj)

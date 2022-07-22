@@ -11,6 +11,7 @@ from pandas import DataFrame as df
 import math #We use it for data manipulation
 import gc  #Helps to clear memory
 import numpy as np
+import ast
 
 #Setting the parser - this script is usually not run directly, but is used by a Master version Counterpart that passes the required arguments
 parser = argparse.ArgumentParser(description='select cut parameters')
@@ -24,7 +25,7 @@ parser.add_argument('--SI_4',help="Separation Bound", default='2630')
 parser.add_argument('--SI_3',help="Separation Bound", default='1850')
 parser.add_argument('--SI_2',help="Separation Bound", default='1310')
 parser.add_argument('--SI_1',help="Separation Bound", default='1050')
-parser.add_argument('--NV',help="Skip Invalid Mother_IDs", default='-1')
+parser.add_argument('--NV',help="Skip Invalid Mother_IDs", default=[-1])
 parser.add_argument('--EOS',help="EOS directory location", default='.')
 parser.add_argument('--AFS',help="AFS directory location", default='.')
 parser.add_argument('--MaxTracks',help="A maximum number of track combinations that will be used in a particular HTCondor job for this script", default='20000')
@@ -42,7 +43,7 @@ SI_4=float(args.SI_4)
 SI_5=float(args.SI_5)
 SI_6=float(args.SI_6)
 SI_7=float(args.SI_7)
-NV='-'+args.NV
+NV=ast.literal_eval(args.NV)
 
 ########################################     Preset framework parameters    #########################################
 MaxRecords=10000000 #A set parameter that helps to manage memory load of this script (Please do not exceed 10000000)
@@ -130,7 +131,7 @@ for i in range(0,Steps):
   merged_data.drop(merged_data.index[(merged_data['separation'] < SI_2) & (merged_data['separation'] > SI_1)], inplace = True) #Interval Cuts
   merged_data.drop(['separation'],axis=1,inplace=True) #We don't need thius field anymore
   merged_data.drop(merged_data.index[merged_data['Track_1'] == merged_data['Track_2']], inplace = True) #Removing the cases where Seed tracks are the same
-  merged_data['Seed_Type']=((merged_data['Mother_1']==merged_data['Mother_2']) & (merged_data['Mother_1'].str.contains(NV)==False))
+  merged_data['Seed_Type']=True                                                                                                                                         for n in NV:                                                                                                                                                        merged_data['Seed_Type']=((merged_data['Mother_1']==merged_data['Mother_2']) & (merged_data['Mother_1'].str.contains(str('-'+n))==False) &         (merged_data['Seed_Type']==True))
 
   merged_data.drop(['Mother_1'],axis=1,inplace=True)
   merged_data.drop(['Mother_2'],axis=1,inplace=True)
