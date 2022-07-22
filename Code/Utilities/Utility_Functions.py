@@ -615,6 +615,10 @@ class Seed:
                       __Hits[1]=__Hits[1]/MaxY
                       __Hits[2]=__Hits[2]/MaxZ
 
+          print(__TempTrack)
+          exit()
+
+
           #Lon Rotate x
 #          __LongestDistance=0.0
 #          __Track=__TempTrack[self.LongestTrackInd]
