@@ -20,9 +20,9 @@ parser.add_argument('--Fraction',help="Fraction", default='1')
 parser.add_argument('--EOS',help="EOS location", default='')
 parser.add_argument('--AFS',help="AFS location", default='')
 parser.add_argument('--resolution',help="Resolution in microns per pixel", default='100')
-parser.add_argument('--MaxX',help="Image size in microns along the x-axis", default='3500.0')
-parser.add_argument('--MaxY',help="Image size in microns along the y-axis", default='1000.0')
-parser.add_argument('--MaxZ',help="Image size in microns along the z-axis", default='20000.0')
+parser.add_argument('--MaxX',help="Image size in microns along the x-axis", default='3000.0')
+parser.add_argument('--MaxY',help="Image size in microns along the y-axis", default='3000.0')
+parser.add_argument('--MaxZ',help="Image size in microns along the z-axis", default='1315.0')
 parser.add_argument('--SetType',help="Val/Train", default='Val')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
@@ -36,11 +36,11 @@ MaxZ=float(args.MaxZ)
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
 if args.SetType=='Val':
- input_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M4_Validation_Set.pkl'
- output_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M4_M5_VALIDATION_SET.pkl'
+ input_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/GM3_GM4_Validation_Set.pkl'
+ output_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/GM4_GM5_VALIDATION_SET.pkl'
 if args.SetType=='Train':
- input_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M3_M4_Train_Set_'+str(fraction)+'.pkl'
- output_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/M4_M5_TRAIN_SET_'+str(fraction)+'.pkl'
+ input_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/GM3_GM4_Train_Set_'+str(fraction)+'.pkl'
+ output_seed_file_location=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/GM4_GM5_TRAIN_SET_'+str(fraction)+'.pkl'
 print(UF.TimeStamp(),'Analysing the data')
 image_file=open(input_seed_file_location,'rb')
 images=pickle.load(image_file)
@@ -48,7 +48,7 @@ image_file.close()
 print(UF.TimeStamp(),bcolors.OKGREEN+'Data has been successfully loaded and prepared..'+bcolors.ENDC)
 print(UF.TimeStamp(),'Beginning the rendering part...')
 for im in images:
-    im.PrepareRawTrackPrint(MaxX,MaxY,MaxZ,resolution,False)
+    im.PrepareTrackGraph(MaxX,MaxY,MaxZ,resolution,False)
 print(UF.TimeStamp(),bcolors.OKGREEN+'The image rendering has been completed..'+bcolors.ENDC)
 print(UF.TimeStamp(),'Saving the results..')
 open_file = open(output_seed_file_location, "wb")
