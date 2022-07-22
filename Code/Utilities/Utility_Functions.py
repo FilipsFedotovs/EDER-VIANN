@@ -616,6 +616,13 @@ class Seed:
                       __Hits[2]=__Hits[2]/MaxZ
 
           print(__TempTrack)
+          __TempGraphTrack=__TempTrack[0]+__TempTrack[1]
+          print(__TempGraphTrack)
+          import torch
+          import torch_geometric
+          from torch_geometric.data import Data
+          self.GraphSeed=Data(x=torch.Tensor(__ClusterHitsTemp), edge_index = None, y=None)
+          print(self.GraphSeed.x)
           exit()
 
 
