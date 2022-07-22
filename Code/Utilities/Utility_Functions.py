@@ -580,8 +580,6 @@ class Seed:
           __TempTrack=copy.deepcopy(self.TrackHits)
 
         # MaxZ =1315
-          print(__TempTrack)
-          exit()
         #   self.Resolution=Res
         #   self.bX=int(round(MaxX/self.Resolution,0))
         #   self.bY=int(round(MaxY/self.Resolution,0))
