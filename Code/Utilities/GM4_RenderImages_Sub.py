@@ -19,7 +19,6 @@ parser = argparse.ArgumentParser(description='select cut parameters')
 parser.add_argument('--Fraction',help="Fraction", default='1')
 parser.add_argument('--EOS',help="EOS location", default='')
 parser.add_argument('--AFS',help="AFS location", default='')
-parser.add_argument('--resolution',help="Resolution in microns per pixel", default='100')
 parser.add_argument('--MaxX',help="Image size in microns along the x-axis", default='3000.0')
 parser.add_argument('--MaxY',help="Image size in microns along the y-axis", default='3000.0')
 parser.add_argument('--MaxZ',help="Image size in microns along the z-axis", default='1315.0')
@@ -27,7 +26,6 @@ parser.add_argument('--SetType',help="Val/Train", default='Val')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 fraction=int(args.Fraction)+1
-resolution=float(args.resolution)
 #Maximum bounds on the image size in microns
 MaxX=float(args.MaxX)
 MaxY=float(args.MaxY)
