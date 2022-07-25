@@ -139,7 +139,7 @@ train_file.close()
 dataset = []
 for image in TrainImages :
     dataset.append(image.GraphSeed)
-train_dataset = dataset.shuffle()
+
 
 
 print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+vlocation+bcolors.ENDC)
