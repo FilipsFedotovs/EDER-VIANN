@@ -626,9 +626,9 @@ class Seed:
           print(__graphData_edge_index)
 
           if self.MC_truth_label ==True:
-            __graphData_y = 1
+            __graphData_y = [1]
           else:
-            __graphData_y = 0
+            __graphData_y = [0]
           print(__graphData_y)
           
 
