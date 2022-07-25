@@ -127,11 +127,6 @@ class GCN(torch.nn.Module):
 model = GCN(hidden_channels=64)
 print(model)
 
-
-
-
-
-
 #Estimate number of images in the training file
 #Calculate number of batches used for this job
 TrainBatchSize=(OutputDNA[0][1]*4)
@@ -139,12 +134,66 @@ TrainBatchSize=(OutputDNA[0][1]*4)
 print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
 train_file=open(flocation,'rb')
 TrainImages=pickle.load(train_file)
-print(TrainImages[0].GraphSeed.x)
-
-#    TrainImages=TrainImages[:25000]
-
 train_file.close()
-NTrainBatches=math.ceil(float(len(TrainImages))/float(TrainBatchSize))
+
+dataset = []
+for image in TrainImages :
+    dataset.append(image.GraphSeed)
+train_dataset = dataset.shuffle()
+
+
+print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+vlocation+bcolors.ENDC)
+test_file=open(vlocation,'rb')
+TestImages=pickle.load(val_file)
+test_file.close()
+test_dataset = []
+for image in TestImages :
+    test_dataset.append(image.GraphSeed)
+
+
+from torch_geometric.loader import DataLoader
+
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+
+
+from IPython.display import Javascript
+display(Javascript('''google.colab.output.setIframeHeight(0, true, {maxHeight: 300})'''))
+
+model = GCN(hidden_channels=64)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+criterion = torch.nn.CrossEntropyLoss()
+
+def train():
+    model.train()
+
+    for data in train_loader:  # Iterate in batches over the training dataset.
+         out = model(data.x, data.edge_index, data.batch)  # Perform a single forward pass.
+         loss = criterion(out, data.y)  # Compute the loss.
+         loss.backward()  # Derive gradients.
+         optimizer.step()  # Update parameters based on gradients.
+         optimizer.zero_grad()  # Clear gradients.
+
+def test(loader):
+     model.eval()
+
+     correct = 0
+     for data in loader:  # Iterate in batches over the training/test dataset.
+         out = model(data.x, data.edge_index, data.batch)  
+         pred = out.argmax(dim=1)  # Use the class with highest probability.
+         correct += int((pred == data.y).sum())  # Check against ground-truth labels.
+     return correct / len(loader.dataset)  # Derive ratio of correct predictions.
+
+
+for epoch in range(1, 171):
+    train()
+    train_acc = test(train_loader)
+    test_acc = test(test_loader)
+    print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
+
+exit()
+
+
 print(UF.TimeStamp(),'This iteration will be split in',bcolors.BOLD+str(NTrainBatches)+bcolors.ENDC,str(TrainBatchSize),'-size batches')
 exit()
 
