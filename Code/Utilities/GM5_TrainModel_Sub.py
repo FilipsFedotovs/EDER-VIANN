@@ -97,6 +97,7 @@ from torch_geometric.nn import GCNConv
 from torch_geometric.nn import global_mean_pool
 
 num_node_features = 3
+num_classes = 2
 class GCN(torch.nn.Module):
     def __init__(self, hidden_channels):
         super(GCN, self).__init__()
@@ -104,7 +105,7 @@ class GCN(torch.nn.Module):
         self.conv1 = GCNConv(num_node_features , hidden_channels)
         self.conv2 = GCNConv(hidden_channels, hidden_channels)
         self.conv3 = GCNConv(hidden_channels, hidden_channels)
-        self.lin = Linear(hidden_channels, dataset.num_classes)
+        self.lin = Linear(hidden_channels, num_classes)
 
     def forward(self, x, edge_index, batch):
         # 1. Obtain node embeddings 
