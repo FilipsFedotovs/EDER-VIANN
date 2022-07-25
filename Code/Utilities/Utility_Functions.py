@@ -618,8 +618,15 @@ class Seed:
 
           __graphData_x =__TempTrack[0]+__TempTrack[1]
 
+          # position of nodes
+          __graphData_pos = []
+          for node in __graphData_x:
+            __graphData_pos.append(node[0:3])
 
+          # edge index and attributes
           __graphData_edge_index = []
+          #__graphData_edge_attr = []
+          
           for i in range(len(__TempTrack[0])):
             for j in range(len(__TempTrack[1])):
                 __graphData_edge_index.append([i,j+len(__TempTrack[0])])
@@ -637,7 +644,9 @@ class Seed:
 
           self.GraphSeed=Data(x=torch.Tensor(__graphData_x), 
                               edge_index = torch.Tensor(__graphData_edge_index).t().contiguous().long(),
-                              y=torch.Tensor(__graphData_y).long())
+                              y=torch.Tensor(__graphData_y).long(),
+                              pos = torch.Tensor(__graphData_pos)
+                              )
 
        
 

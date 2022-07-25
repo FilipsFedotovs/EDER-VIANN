@@ -140,8 +140,6 @@ train_file.close()
 
 train_dataset = []
 for image in TrainImages :
-    print(image.GraphSeed.y)
-    exit()
     train_dataset.append(image.GraphSeed)
 
 
@@ -155,7 +153,6 @@ TestImages=pickle.load(test_file)
 test_file.close()
 test_dataset = []
 for image in TestImages :
-
     test_dataset.append(image.GraphSeed)
 
 
