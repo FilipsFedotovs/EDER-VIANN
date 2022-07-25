@@ -613,7 +613,7 @@ class Seed:
                       __Hits[1]=__Hits[1]/MaxY
                       __Hits[2]=__Hits[2]/MaxZ
 
-          print(__TempTrack)
+          #print(__TempTrack)
 
 
           __graphData_x =__TempTrack[0]+__TempTrack[1]
