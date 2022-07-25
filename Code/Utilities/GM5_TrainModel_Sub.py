@@ -140,7 +140,7 @@ train_file.close()
 
 train_dataset = []
 for image in TrainImages :
-    print(image.y)
+    print(image.GraphSeed.y)
     exit()
     train_dataset.append(image.GraphSeed)
 
