@@ -614,13 +614,38 @@ class Seed:
                       __Hits[2]=__Hits[2]/MaxZ
 
           print(__TempTrack)
-          __TempGraphTrack=__TempTrack[0]+__TempTrack[1]
-          print(__TempGraphTrack)
+
+
+          __graphData_x =__TempTrack[0]+__TempTrack[1]
+          print(__graphData_x)
+
+          __graphData_edge_index = []
+          for i in range(len(__TempTrack[0])):
+            for j in range(len(__TempTrack[1])):
+                __graphData_edge_index.append([i,j+len(__TempTrack[0])])
+          print(__graphData_edge_index)
+
+          if self.MC_truth_label ==True:
+            __graphData_y = 1
+          else:
+            __graphData_y = 0
+          print(__graphData_y)
+          
+
+
+
           import torch
           import torch_geometric
           from torch_geometric.data import Data
-          self.GraphSeed=Data(x=torch.Tensor(__ClusterHitsTemp), edge_index = None, y=None)
+          
+
+          self.GraphSeed=Data(x=torch.Tensor(__graphData_x, dtype=torch.float), 
+                              edge_index = torch.Tensor(__graphData_edge_index, dtype=torch.long).t().contiguous(),
+                              y=torch.Tensor(__graphData_y, dtype=torch.float)
+       
           print(self.GraphSeed.x)
+          print(self.GraphSeed.edge_index)
+          print(self.GraphSeed.y)
           exit()
 
 
