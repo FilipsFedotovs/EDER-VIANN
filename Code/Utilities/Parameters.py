@@ -50,10 +50,10 @@ if Config=='SHIP':
     acceptance=0.5
     pre_vx_acceptance=0.662
     link_acceptance=1.2
-    resolution=100
-    MaxX=100.0
-    MaxY=100.0
-    MaxZ=1315
+    resolution=50
+    MaxX=5000.0
+    MaxY=5000.0
+    MaxZ=3000.0
     GNNMaxX=100.0
     GNNMaxY=100.0
     GNNMaxZ=1315
