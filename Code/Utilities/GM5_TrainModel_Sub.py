@@ -144,6 +144,8 @@ for image in TrainImages :
 
 
 
+
+
 print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+vlocation+bcolors.ENDC)
 test_file=open(vlocation,'rb')
 TestImages=pickle.load(test_file)
