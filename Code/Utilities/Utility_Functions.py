@@ -641,7 +641,7 @@ class Seed:
           
 
           self.GraphSeed=Data(x=torch.Tensor(__graphData_x), 
-                              edge_index = torch.Tensor(__graphData_edge_index, dtype=torch.int8).t().contiguous(),
+                              edge_index = torch.Tensor(__graphData_edge_index).t().contiguous().long(),
                               y=torch.Tensor(__graphData_y))
        
           print(self.GraphSeed.x)
