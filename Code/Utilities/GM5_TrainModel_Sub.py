@@ -157,9 +157,6 @@ train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 
 
-from IPython.display import Javascript
-display(Javascript('''google.colab.output.setIframeHeight(0, true, {maxHeight: 300})'''))
-
 model = GCN(hidden_channels=64)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 criterion = torch.nn.CrossEntropyLoss()
