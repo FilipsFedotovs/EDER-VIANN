@@ -22,7 +22,7 @@ parser.add_argument('--AFS',help="AFS location", default='')
 parser.add_argument('--GNNMaxX',help="Image size in microns along the x-axis", default='100.0')
 parser.add_argument('--GNNMaxY',help="Image size in microns along the y-axis", default='100.0')
 parser.add_argument('--GNNMaxZ',help="Image size in microns along the z-axis", default='1315.0')
-parser.add_argument('--GNNSetType',help="Val/Train", default='Val')
+parser.add_argument('--SetType',help="Val/Train", default='Val')
 ########################################     Main body functions    #########################################
 args = parser.parse_args()
 fraction=int(args.Fraction)+1
