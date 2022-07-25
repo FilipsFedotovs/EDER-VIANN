@@ -623,7 +623,7 @@ class Seed:
           for i in range(len(__TempTrack[0])):
             for j in range(len(__TempTrack[1])):
                 __graphData_edge_index.append([i,j+len(__TempTrack[0])])
-                __graphData_edge_index.append([j+len(__TempTrack[0],i)])
+                __graphData_edge_index.append([j+len(__TempTrack[0]),i])
           print(__graphData_edge_index)
 
           if self.MC_truth_label ==True:
