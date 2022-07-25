@@ -153,6 +153,8 @@ TestImages=pickle.load(test_file)
 test_file.close()
 test_dataset = []
 for image in TestImages :
+    print(image.GraphSeed.y)
+    exit()
     test_dataset.append(image.GraphSeed)
 
 
