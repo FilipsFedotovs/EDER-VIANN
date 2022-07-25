@@ -174,6 +174,7 @@ def train():
          print(out)
          print(data.y)
          loss = criterion(out, data.y)  # Compute the loss.
+         print(loss)
          loss.backward()  # Derive gradients.
          optimizer.step()  # Update parameters based on gradients.
          optimizer.zero_grad()  # Clear gradients.
