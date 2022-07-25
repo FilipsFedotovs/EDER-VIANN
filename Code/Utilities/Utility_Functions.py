@@ -626,9 +626,9 @@ class Seed:
                 __graphData_edge_index.append([j+len(__TempTrack[0]),i])
 
           if self.MC_truth_label ==True:
-            __graphData_y = np.array([1,0])
+            __graphData_y = np.array([[1,0]])
           else:
-            __graphData_y = np.array([0,1])
+            __graphData_y = np.array([[0,1]])
 
           import torch
           import torch_geometric
