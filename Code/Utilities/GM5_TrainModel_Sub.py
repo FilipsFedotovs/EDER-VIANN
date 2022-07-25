@@ -126,7 +126,7 @@ class GCN(torch.nn.Module):
 
 model = GCN(hidden_channels=64)
 print(model)
-exit()
+
 
 
 
@@ -135,16 +135,18 @@ exit()
 #Estimate number of images in the training file
 #Calculate number of batches used for this job
 TrainBatchSize=(OutputDNA[0][1]*4)
-if Mode!='Test':
-    print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
-    train_file=open(flocation,'rb')
-    TrainImages=pickle.load(train_file)
+
+print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
+train_file=open(flocation,'rb')
+TrainImages=pickle.load(train_file)
+print(TrainImages[0].GraphSeed.x)
 
 #    TrainImages=TrainImages[:25000]
 
-    train_file.close()
-    NTrainBatches=math.ceil(float(len(TrainImages))/float(TrainBatchSize))
-    print(UF.TimeStamp(),'This iteration will be split in',bcolors.BOLD+str(NTrainBatches)+bcolors.ENDC,str(TrainBatchSize),'-size batches')
+train_file.close()
+NTrainBatches=math.ceil(float(len(TrainImages))/float(TrainBatchSize))
+print(UF.TimeStamp(),'This iteration will be split in',bcolors.BOLD+str(NTrainBatches)+bcolors.ENDC,str(TrainBatchSize),'-size batches')
+exit()
 
 print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+vlocation+bcolors.ENDC)
 val_file=open(vlocation,'rb')
