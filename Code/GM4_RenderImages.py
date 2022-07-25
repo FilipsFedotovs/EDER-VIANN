@@ -71,7 +71,7 @@ if Mode=='R':
 
    if UserAnswer=='Y':
       print(UF.TimeStamp(),'Performing the cleanup... ',bcolors.ENDC)
-      UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'M4', ['M4_GM5'], "SoftUsed == \"EDER-VIANN-M4\"")
+      UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'GM4', ['GM4_GM5'], "SoftUsed == \"EDER-VIANN-GM4\"")
       print(UF.TimeStamp(),'Submitting jobs... ',bcolors.ENDC)
       val_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/GM3_GM4_Validation_Set.pkl'
       if os.path.isfile(val_file)==False:
