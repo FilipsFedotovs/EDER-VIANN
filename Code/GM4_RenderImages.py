@@ -46,10 +46,10 @@ sys.path.insert(1, AFS_DIR+'/Code/Utilities/')
 import Utility_Functions as UF #This is where we keep routine utility functions
 import Parameters as PM #This is where we keep framework global parameters
 ########################################     Preset framework parameters    #########################################
-resolution=PM.resolution
-MaxX=PM.MaxX
-MaxY=PM.MaxY
-MaxZ=PM.MaxZ
+
+GNNMaxX=PM.GNNMaxX
+GNNMaxY=PM.GNNMaxY
+GNNMaxZ=PM.GNNMaxZ
  #The Separation bound is the maximum Euclidean distance that is allowed between hits in the beggining of Seed tracks.
 MaxTracksPerJob = PM.MaxTracksPerJob
 MaxSeedsPerJob = PM.MaxSeedsPerJob
@@ -78,9 +78,9 @@ if Mode=='R':
           print(UF.TimeStamp(),bcolors.FAIL+'Critical fail!', val_file, 'is missing. Please make sure that the previous script GM3_GenerateImages.py has finished correctly '+bcolors.ENDC)
           exit()
       else:
-          OptionHeader = [' --SetType ', ' --Fraction ', ' --EOS ', " --AFS ", " --resolution ",
-                          " --MaxX ", " --MaxY ", " --MaxZ "]
-          OptionLine = ['Val', 0, EOS_DIR, AFS_DIR, resolution, MaxX, MaxY, MaxZ]
+          OptionHeader = [' --SetType ', ' --Fraction ', ' --EOS ', " --AFS ", 
+                          " --GNNMaxX ", " --GNNMaxY ", " --GNNMaxZ "]
+          OptionLine = ['Val', 0, EOS_DIR, AFS_DIR, GNNMaxX, GNNMaxY, GNNMaxZ]
           SHName = AFS_DIR + '/HTCondor/SH/SH_GM4_Val.sh'
           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_GM4_Val.sub'
           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_GM4_Val'
@@ -93,9 +93,9 @@ if Mode=='R':
              train_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/GM3_GM4_Train_Set_'+str(f)+'.pkl'
              if os.path.isfile(train_file):
               f_counter=f
-          OptionHeader = [' --SetType ', ' --Fraction ', ' --EOS ', " --AFS ", " --resolution ",
-                          " --MaxX ", " --MaxY ", " --MaxZ "]
-          OptionLine = ['Train', '$1', EOS_DIR, AFS_DIR, resolution, MaxX, MaxY, MaxZ]
+          OptionHeader = [' --SetType ', ' --Fraction ', ' --EOS ', " --AFS ", 
+                          " --GNNMaxX ", " --GNNMaxY ", " --GNNMaxZ "]
+          OptionLine = ['Train', '$1', EOS_DIR, AFS_DIR, GNNMaxX, GNNMaxY, GNNMaxZ]
           SHName = AFS_DIR + '/HTCondor/SH/SH_GM4.sh'
           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_GM4.sub'
           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_GM4'
@@ -110,9 +110,9 @@ if Mode=='C':
    print(UF.TimeStamp(),'Checking jobs... ',bcolors.ENDC)
    val_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/GM4_GM5_VALIDATION_SET.pkl'
    if os.path.isfile(val_file)==False:
-           OptionHeader = [' --SetType ', ' --Fraction ', ' --EOS ', " --AFS ", " --resolution ",
-                           " --MaxX ", " --MaxY ", " --MaxZ "]
-           OptionLine = ['Val', 0, EOS_DIR, AFS_DIR, resolution, MaxX, MaxY, MaxZ]
+           OptionHeader = [' --SetType ', ' --Fraction ', ' --EOS ', " --AFS ", 
+                           " --GNNMaxX ", " --GNNMaxY ", " --GNNMaxZ "]
+           OptionLine = ['Val', 0, EOS_DIR, AFS_DIR, GNNMaxX, GNNMaxY, GNNMaxZ]
            SHName = AFS_DIR + '/HTCondor/SH/SH_GM4.sh_Val'
            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_GM4_Val.sub'
            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_GM4_Val'
@@ -122,9 +122,9 @@ if Mode=='C':
    for f in range(1,100):
               train_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/GM3_GM4_Train_Set_'+str(f)+'.pkl'
               req_train_file=EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/GM4_GM5_TRAIN_SET_'+str(f)+'.pkl'
-              OptionHeader = [' --SetType ', ' --Fraction ', ' --EOS ', " --AFS ", " --resolution ",
-                              " --MaxX ", " --MaxY ", " --MaxZ "]
-              OptionLine = ['Train', f-1, EOS_DIR, AFS_DIR, resolution, MaxX, MaxY, MaxZ]
+              OptionHeader = [' --SetType ', ' --Fraction ', ' --EOS ', " --AFS ", 
+                              " --GNNMaxX ", " --GNNMaxY ", " --GNNMaxZ "]
+              OptionLine = ['Train', f-1, EOS_DIR, AFS_DIR,  GNNMaxX, GNNMaxY, GNNMaxZ]
               SHName = AFS_DIR + '/HTCondor/SH/SH_GM4_'+str(f-1)+'.sh'
               SUBName = AFS_DIR + '/HTCondor/SUB/SUB_GM4_'+str(f-1)+'.sub'
               MSGName = AFS_DIR + '/HTCondor/MSG/MSG_GM4'+str(f-1)

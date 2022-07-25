@@ -54,6 +54,9 @@ if Config=='SHIP':
     MaxX=100.0
     MaxY=100.0
     MaxZ=1315
+    GNNMaxX=100.0
+    GNNMaxY=100.0
+    GNNMaxZ=1315
     CNN_Model_Name='2T_100_FEDRA_2_model'
 
 
