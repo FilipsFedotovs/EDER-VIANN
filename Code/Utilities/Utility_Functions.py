@@ -640,9 +640,9 @@ class Seed:
           from torch_geometric.data import Data
           
 
-          self.GraphSeed=Data(x=torch.Tensor(__graphData_x, dtype=torch.float), 
-                              edge_index = torch.Tensor(__graphData_edge_index, dtype=torch.long).t().contiguous(),
-                              y=torch.Tensor(__graphData_y, dtype=torch.float))
+          self.GraphSeed=Data(x=torch.Tensor(__graphData_x), 
+                              edge_index = torch.Tensor(__graphData_edge_index).t().contiguous(),
+                              y=torch.Tensor(__graphData_y))
        
           print(self.GraphSeed.x)
           print(self.GraphSeed.edge_index)
