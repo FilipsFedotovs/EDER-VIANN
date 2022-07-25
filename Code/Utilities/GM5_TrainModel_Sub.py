@@ -186,6 +186,8 @@ def test(loader):
      for data in loader:  # Iterate in batches over the training/test dataset.
          out = model(data.x, data.edge_index, data.batch)  
          pred = out.argmax(dim=1)  # Use the class with highest probability.
+         print(out)
+         print(pred)
          correct += int((pred == data.y).sum())  # Check against ground-truth labels.
      return correct / len(loader.dataset)  # Derive ratio of correct predictions.
 
