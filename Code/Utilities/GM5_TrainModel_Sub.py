@@ -174,7 +174,6 @@ def train():
     for data in train_loader:  # Iterate in batches over the training dataset.
          out = model(data.x, data.edge_index, data.batch)  # Perform a single forward pass.
          loss = criterion(out, data.y)  # Compute the loss.
-         print(loss)
          loss.backward()  # Derive gradients.
          optimizer.step()  # Update parameters based on gradients.
          optimizer.zero_grad()  # Clear gradients.
