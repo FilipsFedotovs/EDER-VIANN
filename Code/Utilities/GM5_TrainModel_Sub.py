@@ -106,8 +106,7 @@ class GCN(torch.nn.Module):
     def __init__(self, hidden_channels):
         super(GCN, self).__init__()
         torch.manual_seed(12345)
-        # self.conv1 = GCNConv(num_node_features , hidden_channels)
-        self.layer1 = TAGConv(num_node_features, hidden_channels, 2)
+        self.conv1 = GCNConv(num_node_features , hidden_channels)
         self.conv2 = GCNConv(hidden_channels, hidden_channels)
         self.conv3 = GCNConv(hidden_channels, hidden_channels)
         self.lin = Linear(hidden_channels, num_classes)
@@ -115,8 +114,7 @@ class GCN(torch.nn.Module):
 
     def forward(self, x, edge_index, batch):
         # 1. Obtain node embeddings 
-        #x = self.conv1(x, edge_index)
-        x = self.layer1(x, edge_index)
+        x = self.conv1(x, edge_index)
         # x = x.relu()
         # x = self.conv2(x, edge_index)
         # x = x.relu()
@@ -192,7 +190,9 @@ def test(loader):
          pred = out.argmax(dim=1)  # Use the class with highest probability.
          y_index = data.y.argmax(dim=1)
          correct += int((pred == y_index).sum())  # Check against ground-truth labels.
-     return correct / len(loader.dataset)  # Derive ratio of correct predictions.
+         loss = criterion(out, data.y)
+         loss_accumulative += float(loss)
+     return (correct / len(loader.dataset), loss_accumulative/len(loader.dataset))  # Derive ratio of correct predictions.
      
 #for epoch in range(1, 171):
 #    train()
@@ -208,9 +208,11 @@ with open('GCN.csv', 'w', newline='') as file:
 
     for epoch in range(1, 171):
         train()
-        train_acc = test(train_loader)
-        test_acc = test(test_loader)
-        writer.writerow([epoch, train_acc, test_acc])
+        train_acc = test(train_loader)[0]
+        train_loss = test(train_loader)[1]
+        test_acc = test(test_loader)[0]
+        test_loss = test(test_loader)[1]
+        writer.writerow([epoch, train_acc, test_acc, train_loss, test_loss])
         print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
 
     exit()
