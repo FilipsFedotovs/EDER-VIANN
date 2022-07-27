@@ -207,7 +207,7 @@ with open('GCN.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy'])
 
-    for epoch in range(1, 1):
+    for epoch in range(1, 10):
         train()
         train_acc = test(train_loader)[0]
         train_loss = test(train_loader)[1]
