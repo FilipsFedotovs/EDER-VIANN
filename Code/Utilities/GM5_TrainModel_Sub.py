@@ -185,6 +185,7 @@ def test(loader):
      model.eval()
 
      correct = 0
+     loss_accumulative = 0
      for data in loader:  # Iterate in batches over the training/test dataset.
          out = model(data.x, data.edge_index, data.batch)  
          pred = out.argmax(dim=1)  # Use the class with highest probability.
@@ -206,7 +207,7 @@ with open('GCN.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy'])
 
-    for epoch in range(1, 171):
+    for epoch in range(1, 1):
         train()
         train_acc = test(train_loader)[0]
         train_loss = test(train_loader)[1]
