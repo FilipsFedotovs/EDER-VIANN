@@ -17,6 +17,8 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 import copy
 import pickle
 import torch
+import dgl
+from dgl.nn import TAGConv
 
 
 
@@ -103,7 +105,8 @@ class GCN(torch.nn.Module):
     def __init__(self, hidden_channels):
         super(GCN, self).__init__()
         torch.manual_seed(12345)
-        self.conv1 = GCNConv(num_node_features , hidden_channels)
+        # self.conv1 = GCNConv(num_node_features , hidden_channels)
+        self.layer1 = TAGConv(num_node_features, hidden channels, 2)
         self.conv2 = GCNConv(hidden_channels, hidden_channels)
         self.conv3 = GCNConv(hidden_channels, hidden_channels)
         self.lin = Linear(hidden_channels, num_classes)
@@ -111,7 +114,8 @@ class GCN(torch.nn.Module):
 
     def forward(self, x, edge_index, batch):
         # 1. Obtain node embeddings 
-        x = self.conv1(x, edge_index)
+        #x = self.conv1(x, edge_index)
+        x = self.layer1(x, edge_index)
         # x = x.relu()
         # x = self.conv2(x, edge_index)
         # x = x.relu()
