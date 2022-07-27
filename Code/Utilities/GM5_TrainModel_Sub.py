@@ -140,7 +140,7 @@ train_file.close()
 
 train_dataset = []
 for image in TrainImages :
-    image.GraphSeed.y = image.GraphSeed.y.float()
+    image.GraphSeed.y = image.Seed.y.float()
     train_dataset.append(image.GraphSeed)
 
 
@@ -188,15 +188,27 @@ def test(loader):
          y_index = data.y.argmax(dim=1)
          correct += int((pred == y_index).sum())  # Check against ground-truth labels.
      return correct / len(loader.dataset)  # Derive ratio of correct predictions.
+     
+#for epoch in range(1, 171):
+#    train()
+#    train_acc = test(train_loader)
+#    test_acc = test(test_loader)
+#    print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
 
+#exit()
 
-for epoch in range(1, 171):
-    train()
-    train_acc = test(train_loader)
-    test_acc = test(test_loader)
-    print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
+with open('GCN.csv', 'w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy'])
 
-exit()
+    for epoch in range(1, 171):
+        train()
+        train_acc = test(train_loader)
+        test_acc = test(test_loader)
+        writer.writerow([epoch, train_acc, test_acc])
+        print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
+
+    exit()
 
 
 print(UF.TimeStamp(),'This iteration will be split in',bcolors.BOLD+str(NTrainBatches)+bcolors.ENDC,str(TrainBatchSize),'-size batches')
