@@ -17,8 +17,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 import copy
 import pickle
 import torch
-import dgl
-from dgl.nn import TAGConv
+
 
 
 
@@ -98,6 +97,8 @@ from torch.nn import Softmax
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv
 from torch_geometric.nn import global_mean_pool
+import dgl
+from dgl.nn import TAGConv
 
 num_node_features = 3
 num_classes = 2

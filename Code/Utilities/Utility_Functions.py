@@ -627,19 +627,35 @@ class Seed:
           __graphData_edge_index = []
           #__graphData_edge_attr = []
           
+          ei1 = []
+          ei2 = []
           for i in range(len(__TempTrack[0])):
-            for j in range(len(__TempTrack[1])):
-                __graphData_edge_index.append([i,j+len(__TempTrack[0])])
-                __graphData_edge_index.append([j+len(__TempTrack[0]),i])
-
-          if self.MC_truth_label ==True:
-            __graphData_y = np.array([[1,0]])
-          else:
-            __graphData_y = np.array([[0,1]])
+            ei1.append(i)
+            ei2.append(i+1)
+            
+          __graphData_edge_index = [ei1,ei2]
+          
+          
+#          for i in range(len(__TempTrack[0])):
+#            for j in range(len(__TempTrack[1])):
+#                __graphData_edge_index.append([i,j+len(__TempTrack[0])])
+#                __graphData_edge_index.append([j+len(__TempTrack[0]),i])
+#
+#          if self.MC_truth_label ==True:
+#            __graphData_y = np.array([[1,0]])
+#          else:
+#            __graphData_y = np.array([[0,1]])
 
           import torch
           import torch_geometric
           from torch_geometric.data import Data
+
+          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index))
+          
+          print(self.GraphSeed.x)
+          print(self.GraphSeed.edge_index)
+          exit()
+
           
 
           self.GraphSeed=Data(x=torch.Tensor(__graphData_x), 
