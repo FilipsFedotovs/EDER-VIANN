@@ -142,7 +142,7 @@ TrainImages=pickle.load(train_file)
 train_file.close()
 
 train_dataset = []
-for image in TrainImages[:100] :
+for image in TrainImages[:1000] :
     image.GraphSeed.y = image.GraphSeed.y.float()
     train_dataset.append(image.GraphSeed)
 
@@ -156,7 +156,7 @@ test_file=open(vlocation,'rb')
 TestImages=pickle.load(test_file)
 test_file.close()
 test_dataset = []
-for image in TestImages[:10] :
+for image in TestImages[:100] :
     image.GraphSeed.y = image.GraphSeed.y.float()
     test_dataset.append(image.GraphSeed)
 
