@@ -633,6 +633,10 @@ class Seed:
             ei1.append(i)
             ei2.append(i+1)
             
+          for i in range(len(__TempTrack[0]),len(__TempTrack[0]) + len(__TempTrack[1])-1):
+            ei1.append(i)
+            ei2.append(i+1)
+            
           __graphData_edge_index = [ei1,ei2]
           
           
