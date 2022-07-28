@@ -141,6 +141,8 @@ if Mode!='Train' and Mode!='Test':
                  DR=float(HL[6]-1)/10.0
                  if HiddenLayerDNA.index(HL)==0:
                     model.add(Conv3D(Nodes, activation=act_fun_list[HL[1]],kernel_size=(KS,KS,KS),kernel_initializer='he_uniform', input_shape=(TrainImages[0].H,TrainImages[0].W,TrainImages[0].L,1)))
+                        print(input_shape)
+                        exit()
                  else:
                     model.add(Conv3D(Nodes, activation=act_fun_list[HL[1]],kernel_size=(KS,KS,KS),kernel_initializer='he_uniform'))
                  if PS>1:
