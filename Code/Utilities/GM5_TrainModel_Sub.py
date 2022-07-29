@@ -115,10 +115,10 @@ class GCN(torch.nn.Module):
     def forward(self, x, edge_index, batch):
         # 1. Obtain node embeddings 
         x = self.conv1(x, edge_index)
-        # x = x.relu()
-        # x = self.conv2(x, edge_index)
-        # x = x.relu()
-        # x = self.conv3(x, edge_index)
+        x = x.relu()
+        x = self.conv2(x, edge_index)
+        x = x.relu()
+        x = self.conv3(x, edge_index)
 
         # 2. Readout layer
         x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
@@ -175,7 +175,8 @@ def train():
     model.train()
 
     for data in train_dataset:  # Iterate in batches over the training dataset.
-         print(data.x)
+         print(data)
+         exit()
          print(data.edge_index)
          out = model(data.x, data.edge_index, data.batch)  # Perform a single forward pass.
          loss = criterion(out, data.y)  # Compute the loss.
