@@ -130,7 +130,7 @@ if Config=='SND':
     MaxZ=3000
     GNNMaxX=100.0
     GNNMaxY=100.0
-    GNNMaxZ=1315
+    GNNMaxZ=10000
     CNN_Model_Name='2T_100_FEDRA_2_model'
 
 
