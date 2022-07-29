@@ -171,6 +171,7 @@ test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
 print(train_dataset[0].x)
 print(train_dataset[0].edge_index)
 print(train_dataset[0])
+exit()
 
 model = GCN(hidden_channels=4)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
