@@ -142,7 +142,7 @@ TrainImages=pickle.load(train_file)
 train_file.close()
 
 train_dataset = []
-for image in TrainImages[:100] :
+for image in TrainImages[:1000] :
     image.GraphSeed.y = image.GraphSeed.y
     train_dataset.append(image.GraphSeed)
 
@@ -156,7 +156,7 @@ test_file=open(vlocation,'rb')
 TestImages=pickle.load(test_file)
 test_file.close()
 test_dataset = []
-for image in TestImages[:20] :
+for image in TestImages[:100] :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
 
@@ -208,14 +208,14 @@ with open('GCN.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy'])
 
-    for epoch in range(1, 10):
+    for epoch in range(1, 20):
         train()
         train_acc = test(train_loader)[0]
         train_loss = test(train_loader)[1]
         test_acc = test(test_loader)[0]
         test_loss = test(test_loader)[1]
         writer.writerow([epoch, train_acc, test_acc, train_loss, test_loss])
-        print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
+        print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f} Train Loss: {train_loss:.4f} Test Loss: {test_loss:.4f}')
 
     exit()
 
