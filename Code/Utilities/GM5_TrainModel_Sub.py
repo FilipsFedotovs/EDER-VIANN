@@ -168,11 +168,6 @@ for f in train_dataset:
 train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
 
-for step,data in enumerate(train_loader):
-    print(step+1)
-    print(data.num_graphs)
-    print(data)
-    exit()
 print(train_dataset[0].x)
 print(train_dataset[0].edge_index)
 print(train_dataset[0])
@@ -184,7 +179,7 @@ criterion = torch.nn.CrossEntropyLoss()
 def train():
     model.train()
 
-    for data in train_loader:  # Iterate in batches over the training dataset.
+    for data in train_dataset:  # Iterate in batches over the training dataset.
          print(data)
          print(data.edge_index)
          out = model(data.x, data.edge_index, data.batch)  # Perform a single forward pass.
