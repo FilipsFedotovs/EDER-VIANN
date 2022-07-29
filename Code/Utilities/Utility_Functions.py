@@ -645,6 +645,10 @@ class Seed:
             
           __graphData_edge_index = [ei1,ei2]
           
+          edge_attr = []
+          for ei in range(ei1):
+            edge_attr.append([1])
+          
           
 #          for i in range(len(__TempTrack[0])):
 #            for j in range(len(__TempTrack[1])):
@@ -660,7 +664,7 @@ class Seed:
           import torch_geometric
           from torch_geometric.data import Data
 
-          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index))
+          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index), edge_attr = torch.Tensor(edge_attr))
           
           print(self.GraphSeed.x)
           print(self.GraphSeed.edge_index)
