@@ -162,8 +162,6 @@ for image in TestImages[:100] :
 
 
 from torch_geometric.loader import DataLoader
-for f in train_dataset:
-    print(f)
     
 train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
@@ -171,7 +169,6 @@ test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
 print(train_dataset[0].x)
 print(train_dataset[0].edge_index)
 print(train_dataset[0])
-exit()
 
 model = GCN(hidden_channels=4)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
@@ -180,7 +177,7 @@ criterion = torch.nn.CrossEntropyLoss()
 def train():
     model.train()
 
-    for data in train_dataset:  # Iterate in batches over the training dataset.
+    for data in train_loader:  # Iterate in batches over the training dataset.
          print(data)
          print(data.edge_index)
          out = model(data.x, data.edge_index, data.batch)  # Perform a single forward pass.
