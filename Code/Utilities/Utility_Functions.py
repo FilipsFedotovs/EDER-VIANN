@@ -665,11 +665,7 @@ class Seed:
           from torch_geometric.data import Data
 
           self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index), edge_attr = torch.Tensor(edge_attr))
-          
-          print(self.GraphSeed.x)
-          print(self.GraphSeed.edge_index)
-          print(edge_attr)
-          exit()
+
 
        
 
