@@ -181,6 +181,8 @@ def train():
          print(data)
          print(data.edge_index)
          out = model(data.x, data.edge_index, data.batch)  # Perform a single forward pass.
+         print(out)
+         print(data.y)
          loss = criterion(out, data.y)  # Compute the loss.
          print(loss)
          
