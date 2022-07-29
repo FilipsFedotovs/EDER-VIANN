@@ -191,8 +191,8 @@ for ib in range(0,NTrainBatches):
     counter += 1
     StartSeed=(ib*TrainBatchSize)+1
     EndSeed=StartSeed+TrainBatchSize-1
-    BatchImages=UF.LoadRenderImages(TrainImages,StartSeed,EndSeed)
-    model.train_on_batch(BatchImages[0],BatchImages[1])
+    #BatchImages=UF.LoadRenderImages(TrainImages,StartSeed,EndSeed)
+    #model.train_on_batch(BatchImages[0],BatchImages[1])
     progress=int(round((float(ib)/float(NTrainBatches))*100,0))
     print("Training in progress ",progress,' %', end="\r", flush=True)
     if counter == 125:
