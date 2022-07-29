@@ -125,8 +125,8 @@ if Config=='SND':
     pre_vx_acceptance=0.662
     link_acceptance=1.2
     resolution=50
-    MaxX=10000
-    MaxY=10000
+    MaxX=5000
+    MaxY=5000
     MaxZ=3000
     GNNMaxX=100.0
     GNNMaxY=100.0
