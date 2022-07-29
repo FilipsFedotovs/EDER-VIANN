@@ -215,7 +215,6 @@ for ib in range(0,NTrainBatches):
             val_acc=a[1]
             model.reset_metrics()
             print("Test validation in progress ",ib2)
-    print("Training in progress ",progress,' %', end="\r", flush=True)
         records.append([counter2,ImageSet,len(TrainImages),train_loss,train_acc,val_loss,val_acc])
         print(records)
         counter=0
