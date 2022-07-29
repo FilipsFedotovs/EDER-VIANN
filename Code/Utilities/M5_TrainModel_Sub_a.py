@@ -193,8 +193,7 @@ for ib in range(0,NTrainBatches):
     EndSeed=StartSeed+TrainBatchSize-1
     #BatchImages=UF.LoadRenderImages(TrainImages,StartSeed,EndSeed)
     #model.train_on_batch(BatchImages[0],BatchImages[1])
-    progress=int(round((float(ib)/float(NTrainBatches))*100,0))
-    print("Training in progress ",progress,' %', end="\r", flush=True)
+    
     if counter == 125:
         counter2+=1
         for ib2 in range(ib-124,ib):
@@ -205,6 +204,8 @@ for ib in range(0,NTrainBatches):
             train_loss=t[0]
             train_acc=t[1]
             model.reset_metrics()
+            
+            print("Train validation in progress ",ib2)
         for ib2 in range(0,NValBatches):
             StartSeed=(ib2*TrainBatchSize)+1
             EndSeed=StartSeed+TrainBatchSize-1
@@ -213,6 +214,8 @@ for ib in range(0,NTrainBatches):
             val_loss=a[0]
             val_acc=a[1]
             model.reset_metrics()
+            print("Test validation in progress ",ib2)
+    print("Training in progress ",progress,' %', end="\r", flush=True)
         records.append([counter2,ImageSet,len(TrainImages),train_loss,train_acc,val_loss,val_acc])
         print(records)
         counter=0
