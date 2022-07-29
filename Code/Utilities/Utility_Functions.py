@@ -609,8 +609,8 @@ class Seed:
           if Rescale:
               for __Tracks in __TempTrack:
                   for __Hits in __Tracks:
-                      __Hits[0]=__Hits[0]/MaxX
-                      __Hits[1]=__Hits[1]/MaxY
+                      __Hits[0]=__Hits[0]/MaxZ
+                      __Hits[1]=__Hits[1]/MaxZ
                       __Hits[2]=__Hits[2]/MaxZ
 
 
@@ -670,14 +670,6 @@ class Seed:
           print(self.GraphSeed.edge_index)
           print(edge_attr)
           exit()
-
-          
-
-          self.GraphSeed=Data(x=torch.Tensor(__graphData_x), 
-                              edge_index = torch.Tensor(__graphData_edge_index).t().contiguous().long(),
-                              y=torch.Tensor(__graphData_y).long(),
-                              pos = torch.Tensor(__graphData_pos)
-                              )
 
        
 
