@@ -646,7 +646,7 @@ class Seed:
           __graphData_edge_index = [ei1,ei2]
           
           edge_attr = []
-          for ei in range(ei1):
+          for ei in range(len(ei1)):
             edge_attr.append([1])
           
           
