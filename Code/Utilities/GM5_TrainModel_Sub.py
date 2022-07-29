@@ -100,7 +100,7 @@ from torch_geometric.nn import global_mean_pool
 import dgl
 from dgl.nn import TAGConv
 
-num_node_features = 3
+num_node_features = 4
 num_classes = 2
 class GCN(torch.nn.Module):
     def __init__(self, hidden_channels):
