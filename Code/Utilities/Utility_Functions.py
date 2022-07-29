@@ -668,6 +668,7 @@ class Seed:
           
           print(self.GraphSeed.x)
           print(self.GraphSeed.edge_index)
+          print(edge_attr)
           exit()
 
           
