@@ -116,9 +116,9 @@ class GCN(torch.nn.Module):
         # 1. Obtain node embeddings 
         x = self.conv1(x, edge_index)
         x = x.relu()
-        x = self.conv2(x, edge_index)
-        x = x.relu()
-        x = self.conv3(x, edge_index)
+        #x = self.conv2(x, edge_index)
+        #x = x.relu()
+        #x = self.conv3(x, edge_index)
 
         # 2. Readout layer
         x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
@@ -142,7 +142,7 @@ TrainImages=pickle.load(train_file)
 train_file.close()
 
 train_dataset = []
-for image in TrainImages :
+for image in TrainImages[:100] :
     image.GraphSeed.y = image.GraphSeed.y
     train_dataset.append(image.GraphSeed)
 
@@ -156,7 +156,7 @@ test_file=open(vlocation,'rb')
 TestImages=pickle.load(test_file)
 test_file.close()
 test_dataset = []
-for image in TestImages :
+for image in TestImages[:20] :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
 
