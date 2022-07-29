@@ -165,7 +165,7 @@ from torch_geometric.loader import DataLoader
 
 train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
-
+print(train_loader)
 
 model = GCN(hidden_channels=4)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
