@@ -178,6 +178,7 @@ def train():
          out = model(data.x, data.edge_index, data.batch)  # Perform a single forward pass.
          loss = criterion(out, data.y)  # Compute the loss.
          print(loss)
+         print(data.x)
          exit()
          loss.backward()  # Derive gradients.
          optimizer.step()  # Update parameters based on gradients.
