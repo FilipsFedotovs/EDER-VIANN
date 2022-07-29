@@ -616,6 +616,14 @@ class Seed:
 
 
           print(__TempTrack[0])
+          for t in __TempTrack[0]:
+            t.append(0)
+            
+          for t in __TempTrack[1]:
+            t.append(1)
+            
+            
+          print(__TempTrack)
           exit()
           __graphData_x =__TempTrack[0]+__TempTrack[1]
 
