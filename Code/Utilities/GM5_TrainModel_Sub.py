@@ -129,7 +129,7 @@ class GCN(torch.nn.Module):
         x = self.softmax(x)
         return x
 
-model = GCN(hidden_channels=64)
+model = GCN(hidden_channels=4)
 print(model)
 
 #Estimate number of images in the training file
@@ -142,7 +142,7 @@ TrainImages=pickle.load(train_file)
 train_file.close()
 
 train_dataset = []
-for image in TrainImages[:2000] :
+for image in TrainImages :
     image.GraphSeed.y = image.GraphSeed.y
     train_dataset.append(image.GraphSeed)
 
@@ -156,19 +156,16 @@ test_file=open(vlocation,'rb')
 TestImages=pickle.load(test_file)
 test_file.close()
 test_dataset = []
-for image in TestImages[:100] :
+for image in TestImages :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
 
 
 from torch_geometric.loader import DataLoader
     
-train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 
-print(train_dataset[0].x)
-print(train_dataset[0].edge_index)
-print(train_dataset[0])
 
 model = GCN(hidden_channels=4)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
@@ -178,15 +175,9 @@ def train():
     model.train()
 
     for data in train_loader:  # Iterate in batches over the training dataset.
-         print(data)
-         print(data.edge_index)
+
          out = model(data.x, data.edge_index, data.batch)  # Perform a single forward pass.
-         print(out)
-         print(data.y)
          loss = criterion(out, data.y)  # Compute the loss.
-         print(loss)
-         
-         exit()
          loss.backward()  # Derive gradients.
          optimizer.step()  # Update parameters based on gradients.
          optimizer.zero_grad()  # Clear gradients.
@@ -229,26 +220,26 @@ with open('GCN.csv', 'w', newline='') as file:
     exit()
 
 
-print(UF.TimeStamp(),'This iteration will be split in',bcolors.BOLD+str(NTrainBatches)+bcolors.ENDC,str(TrainBatchSize),'-size batches')
-exit()
+#print(UF.TimeStamp(),'This iteration will be split in',bcolors.BOLD+str(NTrainBatches)+bcolors.ENDC,str(TrainBatchSize),'-size batches')
+#exit()
 
-print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+vlocation+bcolors.ENDC)
-val_file=open(vlocation,'rb')
-ValImages=pickle.load(val_file)
-val_file.close()
-
-print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been loaded successfully..."+bcolors.ENDC)
-
-NValBatches=math.ceil(float(len(ValImages))/float(TrainBatchSize))
-
-print(UF.TimeStamp(),'Loading the model...')
-##### This but has to be converted to a part that interprets DNA code  ###################################
-if args.LR=='Default':
-  LR=10**(-int(OutputDNA[0][3]))
-  opt = adam(learning_rate=10**(-int(OutputDNA[0][3])))
-else:
-    LR=float(args.LR)
-    opt = adam(learning_rate=float(args.LR))
+#print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+vlocation+bcolors.ENDC)
+#val_file=open(vlocation,'rb')
+#ValImages=pickle.load(val_file)
+#val_file.close()
+#
+#print(UF.TimeStamp(), bcolors.OKGREEN+"Train data has been loaded successfully..."+bcolors.ENDC)
+#
+#NValBatches=math.ceil(float(len(ValImages))/float(TrainBatchSize))
+#
+#print(UF.TimeStamp(),'Loading the model...')
+###### This but has to be converted to a part that interprets DNA code  ###################################
+#if args.LR=='Default':
+#  LR=10**(-int(OutputDNA[0][3]))
+#  opt = adam(learning_rate=10**(-int(OutputDNA[0][3])))
+#else:
+#    LR=float(args.LR)
+#    opt = adam(learning_rate=float(args.LR))
 # if Mode=='Train':
 #            model_name=EOSsubModelDIR+'/'+args.ModelName
 #            model=tf.keras.models.load_model(model_name)
@@ -306,36 +297,36 @@ else:
 #            print("Final Validation loss is:",val_loss)
 #            print("Final Validation accuracy is:",val_acc)
 #            exit()
-records=[]
-print(UF.TimeStamp(),'Starting the training process... ')
-for ib in range(0,NTrainBatches):
-    StartSeed=(ib*TrainBatchSize)+1
-    EndSeed=StartSeed+TrainBatchSize-1
-    BatchImages=UF.LoadRenderImages(TrainImages,StartSeed,EndSeed)
-    model.train_on_batch(BatchImages[0],BatchImages[1])
-    progress=int(round((float(ib)/float(NTrainBatches))*100,0))
-    print("Training in progress ",progress,' %', end="\r", flush=True)
-print(UF.TimeStamp(),'Finished with the training... ')
-print(UF.TimeStamp(),'Evaluating this epoch ')
-model.reset_metrics()
-for ib in range(0,NTrainBatches):
-    StartSeed=(ib*TrainBatchSize)+1
-    EndSeed=StartSeed+TrainBatchSize-1
-    BatchImages=UF.LoadRenderImages(TrainImages,StartSeed,EndSeed)
-    t=model.test_on_batch(BatchImages[0], BatchImages[1], reset_metrics=False)
-    train_loss=t[0]
-    train_acc=t[1]
-model.reset_metrics()
-for ib in range(0,NValBatches):
-    StartSeed=(ib*TrainBatchSize)+1
-    EndSeed=StartSeed+TrainBatchSize-1
-    BatchImages=UF.LoadRenderImages(ValImages,StartSeed,EndSeed)
-    a=model.test_on_batch(BatchImages[0], BatchImages[1], reset_metrics=False)
-    val_loss=a[0]
-    val_acc=a[1]
-if ValidModel:
-    model_name=EOSsubModelDIR+'/'+args.ModelNewName
-    model.save(model_name)
-    records.append([int(args.Epoch),ImageSet,len(TrainImages),train_loss,train_acc,val_loss,val_acc])
-    UF.LogOperations(EOSsubModelDIR+'/'+'GM5_GM5_model_train_log_'+ImageSet+'.csv','StartLog', records)
+#records=[]
+#print(UF.TimeStamp(),'Starting the training process... ')
+#for ib in range(0,NTrainBatches):
+#    StartSeed=(ib*TrainBatchSize)+1
+#    EndSeed=StartSeed+TrainBatchSize-1
+#    BatchImages=UF.LoadRenderImages(TrainImages,StartSeed,EndSeed)
+#    model.train_on_batch(BatchImages[0],BatchImages[1])
+#    progress=int(round((float(ib)/float(NTrainBatches))*100,0))
+#    print("Training in progress ",progress,' %', end="\r", flush=True)
+#print(UF.TimeStamp(),'Finished with the training... ')
+#print(UF.TimeStamp(),'Evaluating this epoch ')
+#model.reset_metrics()
+#for ib in range(0,NTrainBatches):
+#    StartSeed=(ib*TrainBatchSize)+1
+#    EndSeed=StartSeed+TrainBatchSize-1
+#    BatchImages=UF.LoadRenderImages(TrainImages,StartSeed,EndSeed)
+#    t=model.test_on_batch(BatchImages[0], BatchImages[1], reset_metrics=False)
+#    train_loss=t[0]
+#    train_acc=t[1]
+#model.reset_metrics()
+#for ib in range(0,NValBatches):
+#    StartSeed=(ib*TrainBatchSize)+1
+#    EndSeed=StartSeed+TrainBatchSize-1
+#    BatchImages=UF.LoadRenderImages(ValImages,StartSeed,EndSeed)
+#    a=model.test_on_batch(BatchImages[0], BatchImages[1], reset_metrics=False)
+#    val_loss=a[0]
+#    val_acc=a[1]
+#if ValidModel:
+#    model_name=EOSsubModelDIR+'/'+args.ModelNewName
+#    model.save(model_name)
+#    records.append([int(args.Epoch),ImageSet,len(TrainImages),train_loss,train_acc,val_loss,val_acc])
+#    UF.LogOperations(EOSsubModelDIR+'/'+'GM5_GM5_model_train_log_'+ImageSet+'.csv','StartLog', records)
 
