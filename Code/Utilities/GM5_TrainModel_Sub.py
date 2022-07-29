@@ -176,7 +176,7 @@ def train():
 
     for data in train_dataset:  # Iterate in batches over the training dataset.
          print(data.x)
-         print(edge_index)
+         print(data.edge_index)
          out = model(data.x, data.edge_index, data.batch)  # Perform a single forward pass.
          loss = criterion(out, data.y)  # Compute the loss.
          print(loss)
