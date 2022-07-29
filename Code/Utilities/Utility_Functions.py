@@ -664,8 +664,9 @@ class Seed:
           import torch_geometric
           from torch_geometric.data import Data
 
-          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor(__graphData_y))
+          self.GraphSeed = Data(x=torch.Tensor([__graphData_x]), edge_index = torch.Tensor([__graphData_edge_index]), edge_attr = torch.Tensor([edge_attr]),y=torch.Tensor([__graphData_y]))
           print(self.GraphSeed.num_nodes)
+          exit()
 
        
 
