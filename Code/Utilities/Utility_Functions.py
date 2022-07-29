@@ -615,7 +615,8 @@ class Seed:
 
 
 
-
+          print(__TempTrack[0])
+          exit()
           __graphData_x =__TempTrack[0]+__TempTrack[1]
 
           # position of nodes
