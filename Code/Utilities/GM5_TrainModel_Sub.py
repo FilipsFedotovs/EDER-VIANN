@@ -156,7 +156,7 @@ test_file=open(vlocation,'rb')
 TestImages=pickle.load(test_file)
 test_file.close()
 test_dataset = []
-for image in TestImages[:100] :
+for image in TestImages[:1000] :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
 
