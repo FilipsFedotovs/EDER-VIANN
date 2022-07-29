@@ -142,7 +142,7 @@ TrainImages=pickle.load(train_file)
 train_file.close()
 
 train_dataset = []
-for image in TrainImages[:1000] :
+for image in TrainImages[:2000] :
     image.GraphSeed.y = image.GraphSeed.y.float()
     train_dataset.append(image.GraphSeed)
 
@@ -167,7 +167,7 @@ train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
 
 
-model = GCN(hidden_channels=64)
+model = GCN(hidden_channels=4)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 criterion = torch.nn.CrossEntropyLoss()
 
