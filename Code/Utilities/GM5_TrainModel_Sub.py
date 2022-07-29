@@ -129,7 +129,7 @@ class GCN(torch.nn.Module):
         x = self.softmax(x)
         return x
 
-model = GCN(hidden_channels=8)
+model = GCN(hidden_channels=16)
 print(model)
 
 #Estimate number of images in the training file
@@ -167,7 +167,7 @@ train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 
 
-model = GCN(hidden_channels=8)
+model = GCN(hidden_channels=16)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 criterion = torch.nn.CrossEntropyLoss()
 
