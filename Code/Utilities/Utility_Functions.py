@@ -655,16 +655,16 @@ class Seed:
 #                __graphData_edge_index.append([i,j+len(__TempTrack[0])])
 #                __graphData_edge_index.append([j+len(__TempTrack[0]),i])
 #
-#          if self.MC_truth_label ==True:
-#            __graphData_y = np.array([[1,0]])
-#          else:
-#            __graphData_y = np.array([[0,1]])
+          if self.MC_truth_label ==True:
+            __graphData_y = np.array([[1,0]])
+          else:
+            __graphData_y = np.array([[0,1]])
 
           import torch
           import torch_geometric
           from torch_geometric.data import Data
 
-          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index), edge_attr = torch.Tensor(edge_attr))
+          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor(__graphData_y))
 
 
        
