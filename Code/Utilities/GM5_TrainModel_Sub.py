@@ -165,7 +165,6 @@ from torch_geometric.loader import DataLoader
 for f in train_dataset:
     print(f)
     
-exit()
 train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
 
@@ -173,6 +172,7 @@ for step,data in enumerate(train_loader):
     print(step+1)
     print(data.num_graphs)
     print(data)
+    exit()
 print(train_dataset[0].x)
 print(train_dataset[0].edge_index)
 print(train_dataset[0])
