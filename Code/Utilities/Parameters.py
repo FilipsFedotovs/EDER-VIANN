@@ -142,8 +142,8 @@ if Config=='SND':
 
     ModelArchitecture=\
         [[1, 4, 1, 2, 2, 2, 2], #Layer 1
-            [1, 4, 1, 0, 2, 2, 2], #Layer 2
-            [1, 4, 1, 0, 2, 2, 2], #Layer 3
+            [], #Layer 2
+            [], #Layer 3
             [1, 4, 2, 0, 2, 2, 2], #Layer 4
             [2, 4, 2, 2, 2, 2, 2], #Layer 5
             [1, 4, 2], #Dense Layer 1
