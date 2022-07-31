@@ -116,8 +116,8 @@ class GCN(torch.nn.Module):
         # 1. Obtain node embeddings 
         x = self.conv1(x, edge_index)
         x = x.relu()
-        #x = self.conv2(x, edge_index)
-        #x = x.relu()
+        x = self.conv2(x, edge_index)
+        x = x.relu()
         #x = self.conv3(x, edge_index)
 
         # 2. Readout layer
