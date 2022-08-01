@@ -97,8 +97,6 @@ from torch.nn import Softmax
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv
 from torch_geometric.nn import global_mean_pool
-import dgl
-from dgl.nn import TAGConv
 
 num_node_features = 4
 num_classes = 2
@@ -168,7 +166,7 @@ test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 
 
 model = GCN(hidden_channels=32)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 criterion = torch.nn.CrossEntropyLoss()
 
 def train():
