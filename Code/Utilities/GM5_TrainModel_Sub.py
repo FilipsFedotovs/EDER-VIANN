@@ -53,6 +53,10 @@ DNA=ast.literal_eval(args.DNA)
 HiddenLayerDNA=[]
 FullyConnectedDNA=[]
 OutputDNA=[]
+if args.LR == 'Default':
+    LR = 0.001
+else:
+    LR = float(args.LR)
 for gene in DNA:
     if DNA.index(gene)<=4 and len(gene)>0:
         HiddenLayerDNA.append(gene)
@@ -166,7 +170,7 @@ test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 
 
 #model = GCN(hidden_channels=32)
-optimizer = torch.optim.Adam(model.parameters(), lr=float(args.LR))
+optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 criterion = torch.nn.CrossEntropyLoss()
 
 def train():
