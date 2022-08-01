@@ -168,7 +168,7 @@ test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 
 
 model = GCN(hidden_channels=32)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
 criterion = torch.nn.CrossEntropyLoss()
 
 def train():
