@@ -131,7 +131,7 @@ class GCN(torch.nn.Module):
         x = self.softmax(x)
         return x
 
-model = GCN(hidden_channels=64)
+model = GCN(hidden_channels=32)
 print(model)
 
 #Estimate number of images in the training file
@@ -144,7 +144,7 @@ TrainImages=pickle.load(train_file)
 train_file.close()
 
 train_dataset = []
-for image in TrainImages[:1000] :
+for image in TrainImages[:2000] :
     image.GraphSeed.y = image.GraphSeed.y
     train_dataset.append(image.GraphSeed)
 
@@ -158,7 +158,7 @@ test_file=open(vlocation,'rb')
 TestImages=pickle.load(test_file)
 test_file.close()
 test_dataset = []
-for image in TestImages[:1000] :
+for image in TestImages[:2000] :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
 
