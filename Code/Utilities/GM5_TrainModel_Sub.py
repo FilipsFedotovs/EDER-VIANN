@@ -206,7 +206,7 @@ def test(loader):
 
 #exit()
 
-with open('/eos/user/l/lewolf/EDER-VIANN/Models/GCN'+ args.ModelNewName + '.csv', 'w', newline='') as file:
+with open('/eos/user/l/lewolf/EDER-VIANN/Models/'+ args.ModelNewName + '.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy'])
 
