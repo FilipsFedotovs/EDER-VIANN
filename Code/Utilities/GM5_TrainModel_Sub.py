@@ -131,7 +131,7 @@ class GCN(torch.nn.Module):
         x = self.softmax(x)
         return x
 
-model = GCN(hidden_channels=16)
+model = GCN(hidden_channels=32)
 print(model)
 
 #Estimate number of images in the training file
@@ -210,7 +210,7 @@ with open('/eos/user/l/lewolf/EDER-VIANN/Models/GCN'+ args.ModelNewName + '.csv'
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy'])
 
-    for epoch in range(1, 500):
+    for epoch in range(1, 150):
         train()
         train_acc = test(train_loader)[0]
         train_loss = test(train_loader)[1]
