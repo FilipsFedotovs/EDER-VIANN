@@ -120,7 +120,7 @@ class GCN(torch.nn.Module):
         x = x.relu()
         x = self.conv2(x, edge_index)
         x = x.relu()
-        #x = self.conv3(x, edge_index)
+        x = self.conv3(x, edge_index)
 
         # 2. Readout layer
         x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
@@ -208,7 +208,7 @@ def test(loader):
 
 with open('/eos/user/l/lewolf/EDER-VIANN/Models/'+ args.ModelNewName + '.csv', 'w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy'])
+    writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', Test loss, Train loss])
 
     for epoch in range(1, 150):
         train()
