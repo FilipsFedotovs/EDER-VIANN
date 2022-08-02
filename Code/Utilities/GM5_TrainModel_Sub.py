@@ -131,7 +131,7 @@ class GCN(torch.nn.Module):
         x = self.softmax(x)
         return x
 
-model = GCN(hidden_channels=32)
+model = GCN(hidden_channels=16)
 print(model)
 
 #Estimate number of images in the training file
