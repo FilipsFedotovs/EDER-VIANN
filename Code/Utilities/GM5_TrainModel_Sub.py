@@ -144,7 +144,7 @@ TrainImages=pickle.load(train_file)
 train_file.close()
 
 train_dataset = []
-for image in TrainImages[:1000] :
+for image in TrainImages :
     image.GraphSeed.y = image.GraphSeed.y
     train_dataset.append(image.GraphSeed)
 
@@ -158,7 +158,7 @@ test_file=open(vlocation,'rb')
 TestImages=pickle.load(test_file)
 test_file.close()
 test_dataset = []
-for image in TestImages[:1000] :
+for image in TestImages :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
 
@@ -210,7 +210,7 @@ with open('/eos/user/l/lewolf/EDER-VIANN/Models/'+ args.ModelNewName + '.csv', '
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Test loss', 'Train loss'])
 
-    for epoch in range(1, 150):
+    for epoch in range(1, 1000):
         train()
         train_acc = test(train_loader)[0]
         train_loss = test(train_loader)[1]
