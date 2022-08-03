@@ -131,7 +131,7 @@ class GCN(torch.nn.Module):
         x = self.softmax(x)
         return x
 
-model = GCN(hidden_channels=32)
+model = GCN(hidden_channels=64)
 print(model)
 
 #Estimate number of images in the training file
@@ -144,7 +144,7 @@ TrainImages=pickle.load(train_file)
 train_file.close()
 
 train_dataset = []
-for image in TrainImages :
+for image in TrainImages[:1000] :
     image.GraphSeed.y = image.GraphSeed.y
     train_dataset.append(image.GraphSeed)
 
@@ -158,7 +158,7 @@ test_file=open(vlocation,'rb')
 TestImages=pickle.load(test_file)
 test_file.close()
 test_dataset = []
-for image in TestImages :
+for image in TestImages[:1000] :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
 
@@ -208,7 +208,7 @@ def test(loader):
 
 with open('/eos/user/l/lewolf/EDER-VIANN/Models/'+ args.ModelNewName + '.csv', 'w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Test loss', 'Train loss'])
+    writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss'])
 
     for epoch in range(1, 150):
         train()
