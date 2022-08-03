@@ -106,21 +106,30 @@ from torch_geometric.nn import TAGConv
 num_node_features = 4
 num_classes = 2
 
-class GCN(torch.nn.Module):
+class model(torch.nn.Module):
     def __init__(self, hidden_channels):
         super(GCN, self).__init__()
         torch.manual_seed(12345)
+        #GCN layers
         self.conv1 = GCNConv(num_node_features , hidden_channels)
         self.conv2 = GCNConv(hidden_channels, hidden_channels)
         self.conv3 = GCNConv(hidden_channels, hidden_channels)
+        #TAGCN layers
+        self.tagconv1 = TAGConv(num_node_features, hidden_channels)
+        self.tagconv2 = TAGConv(hidden_channels, hidden_channels)
+        self.tagconv3 = TAGConv(hidden_channels, hidden_channels)
+        
         self.lin = Linear(hidden_channels, num_classes)
         self.softmax = Softmax()
 
     def forward(self, x, edge_index, batch):
         # 1. Obtain node embeddings 
-        x = self.conv1(x, edge_index)
+        #x = self.conv1(x, edge_index)
+        x = self.tagconv1(x, edge_index)
         x = x.relu()
-        x = self.conv2(x, edge_index)
+        #x = self.tagconv2(x, edge_index)
+        #x = self.conv2(x, edge_index)
+        #x = self.tagconv1(x, edge_index)
         #x = x.relu()
         #x = self.conv3(x, edge_index)
 
@@ -133,35 +142,7 @@ class GCN(torch.nn.Module):
         x = self.softmax(x)
         return x
 
-num_node_features = 4
-num_classes = 2
-class TAG(torch.nn.Module):
-    def __init__(self, hidden_channels):
-        super(TAG, self).__init__()
-        torch.manual_seed(12345)
-        self.tagconv1 = TAGConv(num_node_features, hidden_channels)
-        self.tagconv2 = TAGConv(hidden_channels, hidden_channels)
-        self.tagconv3 = TAGConv(hidden_channels, hidden_channels)
-        self.lin = Linear(hidden_channels, num_classes)
-        self.softmax = Softmax()
-        
-    def forward(self, x, edge_index, batch):
-    
-        x = self.tagconv1(x, edge_index)
-        x = x.relu()
-        #x = self.tagconv2(x, edge_index)
-        #x = x.relu()
-        #x = self.tagconv3(x, edge_index)
-        
-        x = global_mean_pool(x, batch)
-        
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.lin(x)
-        x = self.softmax(x)
-        return x
-
-#model = GCN(hidden_channels=64)
-model = TAG(hidden_channels=16)
+model = model(hidden_channels=16)
 
 #Estimate number of images in the training file
 #Calculate number of batches used for this job
