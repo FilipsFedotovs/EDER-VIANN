@@ -108,7 +108,7 @@ num_classes = 2
 
 class model(torch.nn.Module):
     def __init__(self, hidden_channels):
-        super(GCN, self).__init__()
+        super(model, self).__init__()
         torch.manual_seed(12345)
         #GCN layers
         self.conv1 = GCNConv(num_node_features , hidden_channels)
