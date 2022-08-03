@@ -118,9 +118,9 @@ class GCN(torch.nn.Module):
         # 1. Obtain node embeddings 
         x = self.conv1(x, edge_index)
         x = x.relu()
-        x = self.conv2(x, edge_index)
-        x = x.relu()
-        x = self.conv3(x, edge_index)
+        #x = self.conv2(x, edge_index)
+        #x = x.relu()
+        #x = self.conv3(x, edge_index)
 
         # 2. Readout layer
         x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
@@ -210,7 +210,7 @@ with open('/eos/user/l/lewolf/EDER-VIANN/Models/'+ args.ModelNewName + '.csv', '
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Test loss', 'Train loss'])
 
-    for epoch in range(1, 1000):
+    for epoch in range(1, 150):
         train()
         train_acc = test(train_loader)[0]
         train_loss = test(train_loader)[1]
