@@ -120,7 +120,7 @@ class GCN(torch.nn.Module):
         x = x.relu()
         x = self.conv2(x, edge_index)
         x = x.relu()
-        #x = self.conv3(x, edge_index)
+        x = self.conv3(x, edge_index)
 
         # 2. Readout layer
         x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
