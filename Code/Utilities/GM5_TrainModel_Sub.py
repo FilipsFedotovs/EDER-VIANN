@@ -127,11 +127,11 @@ class model(torch.nn.Module):
         #x = self.conv1(x, edge_index)
         x = self.tagconv1(x, edge_index)
         x = x.relu()
-        #x = self.tagconv2(x, edge_index)
         #x = self.conv2(x, edge_index)
-        x = self.tagconv1(x, edge_index)
+        x = self.tagconv2(x, edge_index)
         x = x.relu()
         #x = self.conv3(x, edge_index)
+        #x = self.tagconv3(x, edge_index)
 
         # 2. Readout layer
         x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
