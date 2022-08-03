@@ -105,6 +105,7 @@ from torch_geometric.nn import TAGConv
 
 num_node_features = 4
 num_classes = 2
+
 class GCN(torch.nn.Module):
     def __init__(self, hidden_channels):
         super(GCN, self).__init__()
@@ -132,6 +133,8 @@ class GCN(torch.nn.Module):
         x = self.softmax(x)
         return x
 
+num_node_features = 4
+num_classes = 2
 class TAGConv(torch.nn.Module):
     def __init__(self, hidden_channels):
         super(TAGConv, self).__init__()
