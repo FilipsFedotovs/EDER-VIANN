@@ -135,9 +135,9 @@ class GCN(torch.nn.Module):
 
 num_node_features = 4
 num_classes = 2
-class TAGConv(torch.nn.Module):
+class TAG(torch.nn.Module):
     def __init__(self, hidden_channels):
-        super(TAGConv, self).__init__()
+        super(TAG, self).__init__()
         torch.manual_seed(12345)
         self.tagconv1 = TAGConv(num_node_features, hidden_channels)
         self.tagconv2 = TAGConv(hidden_channels, hidden_channels)
@@ -161,7 +161,7 @@ class TAGConv(torch.nn.Module):
         return x
 
 #model = GCN(hidden_channels=64)
-model = TAGConv(hidden_channels=16)
+model = TAG(hidden_channels=16)
 
 #Estimate number of images in the training file
 #Calculate number of batches used for this job
