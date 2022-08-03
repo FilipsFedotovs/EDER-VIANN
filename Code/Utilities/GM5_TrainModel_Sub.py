@@ -144,7 +144,7 @@ TrainImages=pickle.load(train_file)
 train_file.close()
 
 train_dataset = []
-for image in TrainImage :
+for image in TrainImages :
     image.GraphSeed.y = image.GraphSeed.y
     train_dataset.append(image.GraphSeed)
 
