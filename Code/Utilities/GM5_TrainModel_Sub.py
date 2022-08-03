@@ -101,6 +101,7 @@ from torch.nn import Softmax
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv
 from torch_geometric.nn import global_mean_pool
+from torch_geometric.nn import TAGConv
 
 num_node_features = 4
 num_classes = 2
@@ -131,8 +132,33 @@ class GCN(torch.nn.Module):
         x = self.softmax(x)
         return x
 
-model = GCN(hidden_channels=64)
-print(model)
+class TAGConv(torch.nn.Module):
+    def __init__(self, hidden_channels):
+        super(TAGConv, self).__init__()
+        torch.manual_seed(12345)
+        self.tagconv1 = TAGConv(num_node_features, hidden_channels)
+        self.tagconv2 = TAGConv(hidden_channels, hidden_channels)
+        self.tagconv3 = TAGConv(hidden_channels, hidden_channels)
+        self.lin = Linear(hidden_channels, num_classes)
+        self.softmax = Softmax()
+        
+    def forward(self, x, edge_index, batch):
+    
+        x = self.tagconv1(x, edge_index)
+        x = x.relu()
+        x = self.tagconv2(x, edge_index)
+        x = x.relu()
+        x = self.tagconv3(x, edge_index)
+        
+        x = global_mean_pool(x, batch)
+        
+        x = F.dropout(x, p=0.5, training=self.training)
+        x = self.lin(x)
+        x = self.softmax(x)
+        return x
+
+#model = GCN(hidden_channels=64)
+model = TAGConv(hidden_channels=16)
 
 #Estimate number of images in the training file
 #Calculate number of batches used for this job
