@@ -220,7 +220,7 @@ with open('/eos/user/l/lewolf/EDER-VIANN/Models/'+ args.ModelNewName + '.csv', '
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss'])
 
-    for epoch in range(1, 150):
+    for epoch in range(1, 1000):
         train()
         train_acc = test(train_loader)[0]
         train_loss = test(train_loader)[1]
