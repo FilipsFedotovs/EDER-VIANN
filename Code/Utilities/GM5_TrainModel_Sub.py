@@ -136,10 +136,10 @@ class model(torch.nn.Module):
         #x = self.mmconv1(x, edge_index)
         x = x.relu()
         
-        #x = self.conv2(x, edge_index)
+        x = self.conv2(x, edge_index)
         #x = self.tagconv2(x, edge_index)
         #x = self.mmconv2(x, edge_index)
-        #x = x.relu()
+        x = x.relu()
         
         #x = self.conv3(x, edge_index)
         #x = self.tagconv3(x, edge_index)
@@ -154,7 +154,7 @@ class model(torch.nn.Module):
         x = self.softmax(x)
         return x
 
-model = model(hidden_channels=16)
+model = model(hidden_channels=32)
 
 #Estimate number of images in the training file
 #Calculate number of batches used for this job
@@ -166,7 +166,7 @@ TrainImages=pickle.load(train_file)
 train_file.close()
 
 train_dataset = []
-for image in TrainImages[:1000] :
+for image in TrainImages :
     image.GraphSeed.y = image.GraphSeed.y
     train_dataset.append(image.GraphSeed)
 
@@ -180,7 +180,7 @@ test_file=open(vlocation,'rb')
 TestImages=pickle.load(test_file)
 test_file.close()
 test_dataset = []
-for image in TestImages[:1000] :
+for image in TestImages :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
 
@@ -232,7 +232,7 @@ with open('/eos/user/l/lewolf/EDER-VIANN/Models/'+ args.ModelNewName + '.csv', '
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss'])
 
-    for epoch in range(1, 150):
+    for epoch in range(1, 1000):
         train()
         train_acc = test(train_loader)[0]
         train_loss = test(train_loader)[1]
