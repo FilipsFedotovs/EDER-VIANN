@@ -625,7 +625,17 @@ class Seed:
           
           __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'TrackID'])
           __graphData_x['dummy'] = 'dummy'
-          print(__graphData_x)
+          __graphData_x_r = __graphData_x
+          
+          __graphData_join = pd.merge(
+            __graphData_x,
+            __graphData_x_r,
+            how="inner",
+            on="dummy",
+            suffixes=("_r"),
+            )
+          
+          print(__graphData_join)
           
           exit()
 #Graph representation v1
