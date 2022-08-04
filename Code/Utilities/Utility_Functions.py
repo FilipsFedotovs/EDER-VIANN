@@ -634,7 +634,7 @@ class Seed:
             __graphData_x_r,
             how="inner",
             on="dummy",
-            suffixes=("_r"),
+            suffixes=('_l','_r'),
             )
           
           print(__graphData_join)
