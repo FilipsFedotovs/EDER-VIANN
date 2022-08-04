@@ -665,11 +665,20 @@ class Seed:
           Data_x = []
           for g in __graphData_nodes:
             Data_x.append(g[:3])
-            
+          
+          node_ind_list=[]
+          for g in __graphData_nodes:
+            node_ind_list.append(g[3])
+          
+          
           top_edge = []
           bottom_edge = []
+          
+          
+          
+          
           for h in __graphData_list:
-            top_edge.append(__graphData_nodes.index(h[5]))
+            top_edge.append(node_ind_list.index(h[5]))
             
           print(top_edge)
           
