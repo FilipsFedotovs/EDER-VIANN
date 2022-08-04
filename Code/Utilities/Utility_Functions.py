@@ -640,6 +640,7 @@ class Seed:
           
           __graphData_join['d_z'] = np.sqrt((__graphData_join['z_l'] - __graphData_join['z_r'])**2)
           __graphData_join['d_xy'] = np.sqrt((__graphData_join['x_l'] - __graphData_join['x_r'])**2 + (__graphData_join['y_l'] - __graphData_join['y_r'])**2)
+          __graphData_join['d_xyz'] = np.sqrt((__graphData_join['x_l'] - __graphData_join['x_r'])**2 + (__graphData_join['y_l'] - __graphData_join['y_r'])**2 + (__graphData_join['z_l'] - __graphData_join['z_r'])**2)
           
           
           print(__graphData_join)
