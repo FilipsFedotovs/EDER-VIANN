@@ -656,7 +656,7 @@ class Seed:
           __graphData_list = __graphData_join.values.tolist()
           
           
-          print(__graphData_join)
+          print(__graphData_list)
           
           exit()
 #Graph representation v1
