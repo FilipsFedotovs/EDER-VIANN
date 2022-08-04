@@ -662,7 +662,10 @@ class Seed:
             g.pop(3)
             g.pop(3)
           
-          print(__graphData_nodes)
+          Data_x = []
+          for g in __graphData_nodes:
+            Data_x.append[:3]
+          print(Data_x)
           
           exit()
 #Graph representation v1
