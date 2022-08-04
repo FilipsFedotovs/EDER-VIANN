@@ -613,53 +613,55 @@ class Seed:
                       __Hits[1]=__Hits[1]/MaxZ
                       __Hits[2]=__Hits[2]/MaxZ
 
-
-
-          for t in __TempTrack[0]:
-            t.append(0)
-            
-          for t in __TempTrack[1]:
-            t.append(1)
-            
-            
-          __graphData_x =__TempTrack[0]+__TempTrack[1]
-
-          # position of nodes
-          __graphData_pos = []
-          for node in __graphData_x:
-            __graphData_pos.append(node[0:4])
-
-          # edge index and attributes
-          __graphData_edge_index = []
-          #__graphData_edge_attr = []
-          
-          ei1 = []
-          ei2 = []
-          for i in range(len(__TempTrack[0])-1):
-            ei1.append(i)
-            ei2.append(i+1)
-            
-          for i in range(len(__TempTrack[0]),len(__TempTrack[0]) + len(__TempTrack[1])-1):
-            ei1.append(i)
-            ei2.append(i+1)
-            
-          __graphData_edge_index = [ei1,ei2]
-          
-          edge_attr = []
-          for ei in range(len(ei1)):
-            edge_attr.append([1])
-          
-          
-#          for i in range(len(__TempTrack[0])):
-#            for j in range(len(__TempTrack[1])):
-#                __graphData_edge_index.append([i,j+len(__TempTrack[0])])
-#                __graphData_edge_index.append([j+len(__TempTrack[0]),i])
+          import pandas
+          print(__TempTrack)
+          exit()
+#Graph representation v1
+#          for t in __TempTrack[0]:
+#            t.append(0)
 #
-
-          if self.MC_truth_label==0:
-             __graphData_y = ([1,0])
-          if self.MC_truth_label==1:
-             __graphData_y = ([0,1])
+#          for t in __TempTrack[1]:
+#            t.append(1)
+#
+#
+#          __graphData_x =__TempTrack[0]+__TempTrack[1]
+#
+#          # position of nodes
+#          __graphData_pos = []
+#          for node in __graphData_x:
+#            __graphData_pos.append(node[0:4])
+#
+#          # edge index and attributes
+#          __graphData_edge_index = []
+#          #__graphData_edge_attr = []
+#
+#          ei1 = []
+#          ei2 = []
+#          for i in range(len(__TempTrack[0])-1):
+#            ei1.append(i)
+#            ei2.append(i+1)
+#
+#          for i in range(len(__TempTrack[0]),len(__TempTrack[0]) + len(__TempTrack[1])-1):
+#            ei1.append(i)
+#            ei2.append(i+1)
+#
+#          __graphData_edge_index = [ei1,ei2]
+#
+#          edge_attr = []
+#          for ei in range(len(ei1)):
+#            edge_attr.append([1])
+#
+#
+##          for i in range(len(__TempTrack[0])):
+##            for j in range(len(__TempTrack[1])):
+##                __graphData_edge_index.append([i,j+len(__TempTrack[0])])
+##                __graphData_edge_index.append([j+len(__TempTrack[0]),i])
+##
+#
+#          if self.MC_truth_label==0:
+#             __graphData_y = ([1,0])
+#          if self.MC_truth_label==1:
+#             __graphData_y = ([0,1])
 
           import torch
           import torch_geometric
