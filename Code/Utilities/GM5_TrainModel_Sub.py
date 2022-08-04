@@ -104,7 +104,7 @@ from torch_geometric.nn import global_mean_pool
 from torch_geometric.nn import TAGConv
 from torch_geometric.nn import GMMConv
 
-num_node_features = 3
+num_node_features = 4
 num_classes = 2
 
 class model(torch.nn.Module):

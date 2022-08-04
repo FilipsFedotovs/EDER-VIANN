@@ -661,15 +661,16 @@ class Seed:
           
           for g in __graphData_nodes:
             g.append(g[3]+'-'+str(g[4]))
-          print(__graphData_nodes)
+            g[3]=float(g[3])
+
           
           Data_x = []
           for g in __graphData_nodes:
-            Data_x.append(g[:3])
+            Data_x.append(g[:4])
           
           node_ind_list=[]
           for g in __graphData_nodes:
-            node_ind_list.append(g[3])
+            node_ind_list.append(g[5])
           
           
           top_edge = []
