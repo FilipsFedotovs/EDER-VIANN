@@ -130,7 +130,7 @@ class model(torch.nn.Module):
         x = self.conv2(x, edge_index)
         #x = self.tagconv2(x, edge_index)
         #x = x.relu()
-        x = self.conv3(x, edge_index)
+        #x = self.conv3(x, edge_index)
         #x = self.tagconv3(x, edge_index)
 
         # 2. Readout layer
@@ -142,7 +142,7 @@ class model(torch.nn.Module):
         x = self.softmax(x)
         return x
 
-model = model(hidden_channels=64)
+model = model(hidden_channels=32)
 
 #Estimate number of images in the training file
 #Calculate number of batches used for this job
@@ -220,7 +220,7 @@ with open('/eos/user/l/lewolf/EDER-VIANN/Models/'+ args.ModelNewName + '.csv', '
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss'])
 
-    for epoch in range(1, 1000):
+    for epoch in range(1, 150):
         train()
         train_acc = test(train_loader)[0]
         train_loss = test(train_loader)[1]
