@@ -680,7 +680,11 @@ class Seed:
           for h in __graphData_list:
             top_edge.append(node_ind_list.index(h[5]))
             
+          for h in __graphData_list:
+            bottom_edge.append(h[4])
+            
           print(top_edge)
+          print(bottom_edge)
           
           exit()
 #Graph representation v1
