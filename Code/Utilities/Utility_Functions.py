@@ -624,6 +624,7 @@ class Seed:
           __graphData_x =__TempTrack[0]+__TempTrack[1]
           
           __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'TrackID'])
+          __graphData_x['dummy'] = 'dummy'
           print(__graphData_x)
           
           exit()
