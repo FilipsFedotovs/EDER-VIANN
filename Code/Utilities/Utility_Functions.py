@@ -655,8 +655,8 @@ class Seed:
           
           __graphData_list = __graphData_join.values.tolist()
           
-          
-          print(__graphData_list)
+          __graphData_nodes =__TempTrack[0]+__TempTrack[1]
+          print(__graphData_nodes)
           
           exit()
 #Graph representation v1
