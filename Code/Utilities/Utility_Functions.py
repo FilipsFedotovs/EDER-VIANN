@@ -681,7 +681,7 @@ class Seed:
             top_edge.append(node_ind_list.index(h[5]))
             
           for h in __graphData_list:
-            bottom_edge.append(h[4])
+            bottom_edge.append(node_ind_list.index(h[4]))
             
           print(top_edge)
           print(bottom_edge)
