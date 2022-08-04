@@ -743,15 +743,6 @@ class Seed:
 #          print(self.GraphSeed.edge_index)
 
           self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
-          print(self.GraphSeed.x)
-          print(self.GraphSeed.y)
-          print(self.GraphSeed.edge_index)
-          print(self.GraphSeed.edge_attr)
-       
-          exit()
-
-
-
 
       def Plot(self,PlotType):
         if PlotType=='XZ' or PlotType=='ZX':
