@@ -615,15 +615,17 @@ class Seed:
 
           import pandas as pd
           
-          for el in __TempTrack[0]:
-            el.append('0')
+          for el in range(len(__TempTrack[0])):
+             __TempTrack[0][el].append('0')
+             __TempTrack[0][el].append(el)
             
-          for el in __TempTrack[1]:
-            el.append('1')
+          for el in range(len(__TempTrack[1])):
+             __TempTrack[1][el].append('1')
+             __TempTrack[1][el].append(el)
             
           __graphData_x =__TempTrack[0]+__TempTrack[1]
           
-          __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'TrackID'])
+          __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'TrackID', 'NodeIndex'])
           __graphData_x['dummy'] = 'dummy'
           __graphData_x_r = __graphData_x
           
