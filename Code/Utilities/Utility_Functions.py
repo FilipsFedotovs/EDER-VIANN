@@ -614,6 +614,13 @@ class Seed:
                       __Hits[2]=__Hits[2]/MaxZ
 
           import pandas
+          
+          for el in __TempTrack[0]:
+            el.append('0')
+            
+          for el in __TempTrack[1]:
+            el.append('1')
+          
           print(__TempTrack)
           exit()
 #Graph representation v1
