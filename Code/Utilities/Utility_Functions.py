@@ -658,10 +658,10 @@ class Seed:
 
             
           __graphData_nodes =__TempTrack[0]+__TempTrack[1]
-          print(__graphData_nodes)
+          
           for g in __graphData_nodes:
             g.append(g[3]+'-'+str(g[4]))
-
+          print(__graphData_nodes)
           
           Data_x = []
           for g in __graphData_nodes:
