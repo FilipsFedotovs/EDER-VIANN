@@ -685,11 +685,8 @@ class Seed:
             
           for h in __graphData_list:
             edge_attr.append(h[:4])
-            
-          print(top_edge)
-          print(bottom_edge)
+
           
-          exit()
 #Graph representation v1
 #          for t in __TempTrack[0]:
 #            t.append(0)
@@ -732,20 +729,26 @@ class Seed:
 ##                __graphData_edge_index.append([j+len(__TempTrack[0]),i])
 ##
 #
-#          if self.MC_truth_label==0:
-#             __graphData_y = ([1,0])
-#          if self.MC_truth_label==1:
-#             __graphData_y = ([0,1])
+          if self.MC_truth_label==0:
+             __graphData_y = ([1,0])
+          if self.MC_truth_label==1:
+             __graphData_y = ([0,1])
 
           import torch
           import torch_geometric
           from torch_geometric.data import Data
+# Version 1
+#          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
+#          print(self.GraphSeed)
+#          print(self.GraphSeed.edge_index)
 
-          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
-          print(self.GraphSeed)
+          self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
+          print(self.GraphSeed.x)
+          print(self.GraphSeed.y)
           print(self.GraphSeed.edge_index)
+          print(self.GraphSeed.edge_attr)
        
-
+          exit()
 
 
 
