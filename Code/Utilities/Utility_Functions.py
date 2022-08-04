@@ -655,12 +655,13 @@ class Seed:
           
           __graphData_list = __graphData_join.values.tolist()
           
+
+            
           __graphData_nodes =__TempTrack[0]+__TempTrack[1]
-          
+          print(__graphData_nodes)
           for g in __graphData_nodes:
             g.append(g[3]+'-'+str(g[4]))
-            g.pop(3)
-            g.pop(3)
+
           
           Data_x = []
           for g in __graphData_nodes:
