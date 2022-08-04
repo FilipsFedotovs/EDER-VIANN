@@ -620,8 +620,12 @@ class Seed:
             
           for el in __TempTrack[1]:
             el.append('1')
+            
+          __graphData_x =__TempTrack[0]+__TempTrack[1]
           
-          print(__TempTrack)
+          __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'TrackID'])
+          print(__graphData_x)
+          
           exit()
 #Graph representation v1
 #          for t in __TempTrack[0]:
