@@ -636,6 +636,8 @@ class Seed:
             on="dummy",
             suffixes=('_l','_r'),
             )
+          __graphData_join.drop(__graphData_join[__graphData_join['TrackID']==__graphData_join['TrackID']] & __graphData_join[__graphData_join['NodeIndex']==__graphData_join['NodeIndex']])
+          
           
           print(__graphData_join)
           
