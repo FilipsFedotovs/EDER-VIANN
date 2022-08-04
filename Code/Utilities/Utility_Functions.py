@@ -665,7 +665,13 @@ class Seed:
           Data_x = []
           for g in __graphData_nodes:
             Data_x.append(g[:3])
-          print(Data_x)
+            
+          top_edge = []
+          bottom_edge = []
+          for h in __graphData_list:
+            top_edge.append(__graphData_nodes.index(h[5]))
+            
+          print(top_edge)
           
           exit()
 #Graph representation v1
