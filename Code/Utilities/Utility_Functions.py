@@ -613,7 +613,7 @@ class Seed:
                       __Hits[1]=__Hits[1]/MaxZ
                       __Hits[2]=__Hits[2]/MaxZ
 
-          import pandas
+          import pandas as pd
           
           for el in __TempTrack[0]:
             el.append('0')
