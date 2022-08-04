@@ -136,7 +136,7 @@ class model(torch.nn.Module):
         #x = self.mmconv1(x, edge_index)
         x = x.relu()
         
-        x = self.conv2(x, edge_index)
+        #x = self.conv2(x, edge_index)
         #x = self.tagconv2(x, edge_index)
         #x = self.mmconv2(x, edge_index)
         #x = x.relu()
@@ -154,7 +154,7 @@ class model(torch.nn.Module):
         x = self.softmax(x)
         return x
 
-model = model(hidden_channels=32)
+model = model(hidden_channels=16)
 
 #Estimate number of images in the training file
 #Calculate number of batches used for this job
