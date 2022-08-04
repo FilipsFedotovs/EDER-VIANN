@@ -659,8 +659,8 @@ class Seed:
           
           for g in __graphData_nodes:
             g.append(g[3]+'-'+str(g[4]))
-            #g.pop(3)
-            #g.pop(4)
+            g.pop(3)
+            g.pop(3)
           
           print(__graphData_nodes)
           
