@@ -647,6 +647,9 @@ class Seed:
           __graphData_join[['ConnectionType']] = __graphData_join[['ConnectionType']].astype(float)
           __graphData_join[['NodeIndex_l']] = __graphData_join[['NodeIndex_l']].astype(str)
           __graphData_join[['NodeIndex_r']] = __graphData_join[['NodeIndex_r']].astype(str)
+          
+          __graphData_join['LeftKey'] = __graphData_join['TrackID_l'] +'-'+ __graphData_join['NodeIndex_l']
+          __graphData_join['RightKey'] = __graphData_join['TrackID_r'] +'-'+ __graphData_join['NodeIndex_r']
 
           
           
