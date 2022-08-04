@@ -644,6 +644,9 @@ class Seed:
           __graphData_join['ConnectionType'] = __graphData_join['TrackID_l'] == __graphData_join['TrackID_r']
           __graphData_join.drop(['x_l', 'y_l', 'z_l', 'x_r', 'y_r', 'z_r', 'dummy'], axis = 1, inplace = True)
           
+          __graphData_join[['ConnectionType']] = __graphData_join[['ConnectionType']].astype(float)
+
+          
           
           print(__graphData_join)
           
