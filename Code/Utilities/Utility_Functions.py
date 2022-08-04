@@ -664,7 +664,7 @@ class Seed:
           
           Data_x = []
           for g in __graphData_nodes:
-            Data_x.append[:3]
+            Data_x.append(g[:3])
           print(Data_x)
           
           exit()
