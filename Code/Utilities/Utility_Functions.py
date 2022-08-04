@@ -653,6 +653,8 @@ class Seed:
           
           __graphData_join.drop(['NodeIndex_l', 'TrackID_l', 'NodeIndex_r', 'TrackID_r'], axis = 1, inplace = True)
           
+          __graphData_list = __graphData_join.values.tolist()
+          
           
           print(__graphData_join)
           
