@@ -190,7 +190,7 @@ if mode=='C':
       print(UF.TimeStamp(),bcolors.OKGREEN+'The training of the model by using the epochs ',CurrentEpoch,'-',RequiredEpoch,'has been completed'+bcolors.ENDC)
 
       print(UF.TimeStamp(),'Training stats are below:')
-      print(pd.DataFrame (Result, columns = ['Set','Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss']))
+      print(pd.DataFrame (Result[2:], columns = ['Set','Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss']))
       exit()
 #          if os.path.isfile(EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/'+'GM4_GM5_TRAIN_SET_'+str(CurrentSet+1)+'.pkl')==False:
 #           print(bcolors.WARNING+'No more training files left, restarting the new epoch...'+bcolors.ENDC)
