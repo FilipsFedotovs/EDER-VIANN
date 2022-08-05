@@ -257,6 +257,8 @@ if Mode=='Train':
         print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f} Train Loss: {train_loss:.4f} Test Loss: {test_loss:.4f}')
  torch.save(model.state_dict(), model_name)
  UF.LogOperations(log_name,'UpdateLog',log)
+
+
 #print(UF.TimeStamp(),'This iteration will be split in',bcolors.BOLD+str(NTrainBatches)+bcolors.ENDC,str(TrainBatchSize),'-size batches')
 #exit()
 

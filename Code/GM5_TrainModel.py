@@ -24,11 +24,10 @@ parser.add_argument('--Mode',help="Please enter the running mode: 'R' for reset,
 parser.add_argument('--ModelName',help="Which model would you like to use as a base for training (please enter N if you want to train a new model from scratch)", default='Default')
 parser.add_argument('--ModelNewName',help="Would you like to save your pretrained model as a separate one", default='Default')
 parser.add_argument('--LR',help="Would you like to modify the model Learning Rate, If yes please enter it here eg: 0.01 ", default='Default')
-parser.add_argument('--EpochLength',help="Would you like to modify the model Learning Rate, If yes please enter it here eg: 0.01 ", default='Default')
+parser.add_argument('--EpochLength',help="How long do you want your epochs to be?", default='1000')
 args = parser.parse_args()
 #setting main learning parameters
 mode=args.Mode
-_=0
 #Loading Directory locations
 csv_reader=open('../config',"r")
 config = list(csv.reader(csv_reader))
@@ -51,7 +50,7 @@ if args.ModelName=='Default':
     ModelName=PM.CNN_Model_Name
 else:
     ModelName=args.ModelName
-
+epoch_len=int(args.EpochLength)
 print(bcolors.HEADER+"####################################################################################################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################  Initialising EDER-VIANN model training module   #########################"+bcolors.ENDC)
 print(bcolors.HEADER+"#########################            Written by Filips Fedotovs            #########################"+bcolors.ENDC)
@@ -71,22 +70,20 @@ if mode=='R' and args.ModelName=='N':
  DNA='"'+str(PM.ModelArchitecture)+'"'
  if args.ModelNewName=='Default':
      job.append(ModelName)
-     OptionLine = ['Create', 1, EOS_DIR, AFS_DIR, DNA, args.LR, 1, ModelName, ModelName]
+     OptionLine = ['Create', 1, EOS_DIR, AFS_DIR, DNA, args.LR, 1, ModelName, ModelName, epoch_len]
  else:
      job.append(args.ModelNewName)
-     OptionLine = ['Create', 1, EOS_DIR, AFS_DIR, DNA, args.LR, 1, ModelName, args.ModelNewName]
+     OptionLine = ['Create', 1, EOS_DIR, AFS_DIR, DNA, args.LR, 1, ModelName, args.ModelNewName, epoch_len]
  print(UF.TimeStamp(),bcolors.OKGREEN+'Job description has been created'+bcolors.ENDC)
- PerformanceHeader=[['Epochs','Set','Training Samples','Train Loss','Train Accuracy','Validation Loss','Validation Accuracy']]
- UF.LogOperations(EOSsubModelDIR+'/GM5_PERFORMANCE_'+job[5]+'.csv','StartLog',PerformanceHeader)
  OptionHeader = [' --Mode ', ' --ImageSet ', ' --EOS ', " --AFS ", " --DNA ",
-                 " --LR ", " --Epoch ", " --ModelName ", " --ModelNewName "]
+                 " --LR ", " --Epoch ", " --ModelName ", " --ModelNewName ", ' --EpochLength ']
  SHName = AFS_DIR + '/HTCondor/SH/SH_GM5.sh'
  SUBName = AFS_DIR + '/HTCondor/SUB/SUB_GM5.sub'
  MSGName = AFS_DIR + '/HTCondor/MSG/MSG_GM5'
  ScriptName = AFS_DIR + '/Code/Utilities/GM5_TrainModel_Sub.py '
  UF.SubmitJobs2Condor(
-     [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-GM5', True,
-      True])
+     [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-GM5', False,
+      False])
  job[4]=job[5]
  UF.LogOperations(EOSsubModelDIR+'/GM5_GM5_JobTask.csv','StartLog',[job])
  print(bcolors.BOLD+"Please the job completion in few hours by running this script with the option C"+bcolors.ENDC)
