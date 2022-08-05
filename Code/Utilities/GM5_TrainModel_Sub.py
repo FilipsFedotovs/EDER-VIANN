@@ -177,7 +177,7 @@ model = model(hidden_channels=32)
 
 #Estimate number of images in the training file
 #Calculate number of batches used for this job
-TrainBatchSize=(OutputDNA[0][1]*4)
+#TrainBatchSize=(OutputDNA[0][1]*4)
 
 
 
