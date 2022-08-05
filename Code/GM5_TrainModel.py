@@ -191,7 +191,7 @@ if mode=='C':
       print(UF.TimeStamp(),bcolors.OKGREEN+'The training of the model',bcolors.OKBLUE+PreviousJob[0][4]+bcolors.ENDC, bcolors.OKGREEN+' by using the epochs ',str(PreviousJob[0][1]),'-',RequiredEpoch,'has been completed'+bcolors.ENDC)
 
       print(UF.TimeStamp(),'Training stats are below:')
-      print(pd.DataFrame (Result[2:], columns = ['Set','Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss']))
+      print(pd.DataFrame (Result[1:], columns = ['Set','Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss']))
       print(bcolors.BOLD+'Would you like to continue training?'+bcolors.ENDC)
       UserAnswer=input(bcolors.BOLD+"Please, enter Y/N\n"+bcolors.ENDC)
       if UserAnswer=='Y':
