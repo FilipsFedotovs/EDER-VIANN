@@ -139,7 +139,7 @@ if mode=='C':
    CurrentEpoch=int(PreviousJob[0][1])
    log_name=EOSsubModelDIR+'/'+ PreviousJob[0][5] + '.csv'
    Result=UF.LogOperations(log_name,'ReadLog', '_')
-   print(Result)
+   print(int(Result[len(Result)]))
    exit()
    ###Working out the latest batch
    ###Working out the remaining jobs
