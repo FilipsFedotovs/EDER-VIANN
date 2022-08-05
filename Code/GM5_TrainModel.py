@@ -164,6 +164,7 @@ if mode=='C':
 
    CurrentEpoch=int(Result[-1][1])
    RequiredEpoch=int(PreviousJob[0][1])+int(PreviousJob[0][6])-1
+
    ###Working out the latest batch
    ###Working out the remaining jobs
    if CurrentEpoch!=RequiredEpoch:
@@ -187,7 +188,7 @@ if mode=='C':
         print(bcolors.OKGREEN+"Please check it in a few hours"+bcolors.ENDC)
         exit()
    else:
-      print(UF.TimeStamp(),bcolors.OKGREEN+'The training of the model by using the epochs ',CurrentEpoch,'-',RequiredEpoch,'has been completed'+bcolors.ENDC)
+      print(UF.TimeStamp(),bcolors.OKGREEN+'The training of the model',PreviousJob[0][4], ' by using the epochs ',str(PreviousJob[0][1]),'-',RequiredEpoch,'has been completed'+bcolors.ENDC)
 
       print(UF.TimeStamp(),'Training stats are below:')
       print(pd.DataFrame (Result[2:], columns = ['Set','Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss']))
