@@ -122,7 +122,7 @@ test_dataset = []
 for image in TestImages :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
-num_node_features = TrainImages[0].x.num_nodes_features()
+num_node_features = test_dataset[0].x.num_nodes_features()
 
 
 num_classes = 2
