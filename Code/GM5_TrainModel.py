@@ -207,7 +207,7 @@ if mode=='C':
             print(bcolors.BOLD,'Please run the script in few hours with --MODE C setting'+bcolors.ENDC)
             print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 
-        if UserAnswer=='N':
+      if UserAnswer=='N':
             print(UF.TimeStamp(),bcolors.OKGREEN+'Training is finished then, thank you and good bye'+bcolors.ENDC)
             print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
 exit()
