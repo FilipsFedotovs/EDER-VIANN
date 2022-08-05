@@ -136,7 +136,8 @@ if mode=='C':
    csv_reader.close()
    CurrentSet=int(PreviousJob[0][0])
    CurrentEpoch=int(PreviousJob[0][1])
-   print(PreviousJob)
+   log_name=EOSsubModelDIR+'/'+ PreviousJob[5] + '.csv'
+   print(log_name)
    exit()
    ###Working out the latest batch
    ###Working out the remaining jobs
