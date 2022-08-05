@@ -192,30 +192,14 @@ if mode=='C':
 
       print(UF.TimeStamp(),'Training stats are below:')
       print(pd.DataFrame (Result[2:], columns = ['Set','Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss']))
-      exit()
-#          if os.path.isfile(EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/'+'GM4_GM5_TRAIN_SET_'+str(CurrentSet+1)+'.pkl')==False:
-#           print(bcolors.WARNING+'No more training files left, restarting the new epoch...'+bcolors.ENDC)
-#           CurrentSet=1
-#           CurrentEpoch+=1
+      print(bcolors.BOLD+'Would you like to continue training?'+bcolors.ENDC)
+      UserAnswer=input(bcolors.BOLD+"Please, enter Y/N\n"+bcolors.ENDC)
+      if UserAnswer=='Y':
+            CurrentSet+=1
 #           PreviousJob[0][0]=str(CurrentSet)
-#           PreviousJob[0][1]=str(CurrentEpoch)
-#           OptionLine = ['Train', PreviousJob[0][0], EOS_DIR, AFS_DIR, '"'+str(PreviousJob[0][2])+'"', PreviousJob[0][3], PreviousJob[0][1], PreviousJob[0][4], PreviousJob[0][5]]
-#           OptionHeader = [' --Mode ', ' --ImageSet ', ' --EOS ', " --AFS ", " --DNA ",
-#                           " --LR ", " --Epoch ", " --ModelName ", " --ModelNewName "]
-#           SHName = AFS_DIR + '/HTCondor/SH/SH_GM5.sh'
-#           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_GM5.sub'
-#           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_GM5'
-#           ScriptName = AFS_DIR + '/Code/Utilities/GM5_TrainModel_Sub.py '
-#           UF.SubmitJobs2Condor(
-#               [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-GM5', True,
-#                True])
-#           print(UF.TimeStamp(),bcolors.OKGREEN+'The Image Set',CurrentSet,'has been submitted to HTCondor'+bcolors.ENDC)
-#           exit()
-#       print(bcolors.BOLD+'Would you like to continue training?'+bcolors.ENDC)
-#       UserAnswer=input(bcolors.BOLD+"Please, enter Y/N\n"+bcolors.ENDC)
-#       if UserAnswer=='Y':
-#           CurrentSet+=1
-#           PreviousJob[0][0]=str(CurrentSet)
+            PreviousJob[0][1]+=int(PreviousJob[0][6])
+            print(PreviousJob)
+            exit()
 #           UF.LogOperations(EOSsubModelDIR+'/GM5_GM5_JobTask.csv','StartLog',PreviousJob)
 #           OptionLine = ['Train', PreviousJob[0][0], EOS_DIR, AFS_DIR, '"'+str(PreviousJob[0][2])+'"', PreviousJob[0][3], PreviousJob[0][1], PreviousJob[0][4], PreviousJob[0][5]]
 #           OptionHeader = [' --Mode ', ' --ImageSet ', ' --EOS ', " --AFS ", " --DNA ",
