@@ -235,21 +235,23 @@ if Mode=='Create':
  torch.save(model.state_dict(), model_name)
  UF.LogOperations(log_name,'StartLog',log)
 if Mode=='Train':
+ model_name=EOSsubModelDIR+'/'+args.ModelName
+ model = model(hidden_channels=32)
  model.load_state_dict(torch.load(model_name))
  checkpoint = torch.load(State_Save_Path)
  optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
- with open(EOSsubModelDIR+'/'+ args.ModelName + '.csv', 'w', newline='') as file:
-    writer = csv.writer(file)
-    writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss'])
-    for epoch in range(1, int(args.Epochs)+1):
+ log_name=EOSsubModelDIR+'/'+ args.ModelName + '.csv'
+ log=[]
+ for epoch in range(int(args.Epoch), int(args.Epoch)+int(args.EpochLength)):
         train()
         train_acc = test(train_loader)[0]
         train_loss = test(train_loader)[1]
         test_acc = test(test_loader)[0]
         test_loss = test(test_loader)[1]
-        writer.writerow([epoch, train_acc, test_acc, train_loss, test_loss])
+        log.append([epoch, train_acc, test_acc, train_loss, test_loss])
         print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f} Train Loss: {train_loss:.4f} Test Loss: {test_loss:.4f}')
-    torch.save(model.state_dict(), model_name)
+ torch.save(model.state_dict(), model_name)
+ UF.LogOperations(log_name,'UpdateLog',log)
 #print(UF.TimeStamp(),'This iteration will be split in',bcolors.BOLD+str(NTrainBatches)+bcolors.ENDC,str(TrainBatchSize),'-size batches')
 #exit()
 
