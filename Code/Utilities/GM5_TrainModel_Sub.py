@@ -131,13 +131,13 @@ class model(torch.nn.Module):
 
     def forward(self, x, edge_index, batch):
         # 1. Obtain node embeddings 
-        x = self.conv1(x, edge_index)
-        #x = self.tagconv1(x, edge_index)
+        #x = self.conv1(x, edge_index)
+        x = self.tagconv1(x, edge_index)
         #x = self.mmconv1(x, edge_index)
         x = x.relu()
         
-        x = self.conv2(x, edge_index)
-        #x = self.tagconv2(x, edge_index)
+        #x = self.conv2(x, edge_index)
+        x = self.tagconv2(x, edge_index)
         #x = self.mmconv2(x, edge_index)
         x = x.relu()
         
