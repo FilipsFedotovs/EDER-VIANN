@@ -67,6 +67,7 @@ if mode=='R' and args.ModelName=='N':
  job.append(PM.ModelArchitecture)
  job.append(args.LR)
  job.append(ModelName)
+ job.append(epoch_len)
  DNA='"'+str(PM.ModelArchitecture)+'"'
  if args.ModelNewName=='Default':
      job.append(ModelName)
