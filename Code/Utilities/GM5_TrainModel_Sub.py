@@ -41,7 +41,8 @@ parser.add_argument('--DNA',help="Please enter the model dna", default='[[4, 4, 
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--LR',help="Please enter the value of learning rate", default='0.001')
-parser.add_argument('--Epochs',help="Please enter the epoch number", default='1000')
+parser.add_argument('--Epoch',help="Please enter the epoch number", default='1')
+parser.add_argument('--EpochLength',help="Please enter the epoch number", default='1000')
 parser.add_argument('--ModelName',help="Name of the model", default='2T_100_MC_1_model')
 parser.add_argument('--ModelNewName',help="Name of the model", default='2T_100_MC_1_model')
 parser.add_argument('--f',help="Image set location (for test)", default='')
@@ -103,6 +104,7 @@ from torch_geometric.nn import GCNConv
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.nn import TAGConv
 from torch_geometric.nn import GMMConv
+from torch.optim.lr_scheduler import StepLR
 
 print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
 train_file=open(flocation,'rb')
@@ -215,29 +217,27 @@ def test(loader):
 #model = GCN(hidden_channels=32)
 
 if Mode=='Create':
-
  model_name=EOSsubModelDIR+'/'+args.ModelNewName
  model = model(hidden_channels=32)
  optimizer = torch.optim.Adam(model.parameters(), lr=LR)
  criterion = torch.nn.CrossEntropyLoss()
  State_Save_Path=EOSsubModelDIR+'/'+args.ModelNewName+'_State_Save'
- with open(EOSsubModelDIR+'/'+ args.ModelNewName + '.csv', 'w', newline='') as file:
-    writer = csv.writer(file)
-    writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss'])
-    for epoch in range(1, int(args.Epochs)+1):
+ log_name=EOSsubModelDIR+'/'+ args.ModelNewName + '.csv'
+ log=[['Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss']]
+ for epoch in range(int(args.Epoch), int(args.Epoch)+int(args.EpochLength)):
         train()
         train_acc = test(train_loader)[0]
         train_loss = test(train_loader)[1]
         test_acc = test(test_loader)[0]
         test_loss = test(test_loader)[1]
-        writer.writerow([epoch, train_acc, test_acc, train_loss, test_loss])
+        log.append([epoch, train_acc, test_acc, train_loss, test_loss])
         print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f} Train Loss: {train_loss:.4f} Test Loss: {test_loss:.4f}')
-    torch.save(model.state_dict(), model_name)
+ torch.save(model.state_dict(), model_name)
+ UF.LogOperations(log_name,'StartLog',log)
 if Mode=='Train':
  model.load_state_dict(torch.load(model_name))
  checkpoint = torch.load(State_Save_Path)
  optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
- scheduler.load_state_dict(checkpoint['scheduler'])
  with open(EOSsubModelDIR+'/'+ args.ModelName + '.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss'])
