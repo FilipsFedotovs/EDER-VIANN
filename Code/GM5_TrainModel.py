@@ -166,7 +166,7 @@ if mode=='C':
    RequiredEpoch=int(PreviousJob[0][1])+int(PreviousJob[0][6])-1
    ###Working out the latest batch
    ###Working out the remaining jobs
-   if CurrentEpoch!=RequiredEpoch-1:
+   if CurrentEpoch!=RequiredEpoch:
      print(UF.TimeStamp(),bcolors.WARNING+'Warning, the HTCondor job is still running'+bcolors.ENDC)
      print(bcolors.BOLD+'If you would like to wait and try again later please enter W'+bcolors.ENDC)
      print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
