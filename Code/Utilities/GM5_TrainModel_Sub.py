@@ -223,7 +223,7 @@ if Mode=='Create':
  criterion = torch.nn.CrossEntropyLoss()
  State_Save_Path=EOSsubModelDIR+'/'+args.ModelNewName+'_State_Save'
  log_name=EOSsubModelDIR+'/'+ args.ModelNewName + '.csv'
- log=[['Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss']]
+ log=[['Set','Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss']]
  for epoch in range(int(args.Epoch), int(args.Epoch)+int(args.EpochLength)):
         train()
         train_acc = test(train_loader)[0]
@@ -231,7 +231,7 @@ if Mode=='Create':
         test_acc = test(test_loader)[0]
         test_loss = test(test_loader)[1]
         log.append([epoch, train_acc, test_acc, train_loss, test_loss])
-        print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f} Train Loss: {train_loss:.4f} Test Loss: {test_loss:.4f}')
+        print(f'Set: {ImageSet:03d},Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f} Train Loss: {train_loss:.4f} Test Loss: {test_loss:.4f}')
  torch.save(model.state_dict(), model_name)
  torch.save({'epoch': epoch,
                     'optimizer_state_dict': optimizer.state_dict()}, State_Save_Path)
@@ -254,7 +254,7 @@ if Mode=='Train':
         test_acc = test(test_loader)[0]
         test_loss = test(test_loader)[1]
         log.append([epoch, train_acc, test_acc, train_loss, test_loss])
-        print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f} Train Loss: {train_loss:.4f} Test Loss: {test_loss:.4f}')
+        print(f'Set: {ImageSet:03d},Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f} Train Loss: {train_loss:.4f} Test Loss: {test_loss:.4f}')
  torch.save(model.state_dict(), model_name)
  UF.LogOperations(log_name,'UpdateLog',log)
 
