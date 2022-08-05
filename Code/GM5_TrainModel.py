@@ -135,12 +135,34 @@ if mode=='C':
    #    print(bcolors.BOLD+"Please restart this script with the option R"+bcolors.ENDC)
    #    exit()
    csv_reader.close()
-   CurrentSet=int(PreviousJob[0][0])
    CurrentEpoch=int(PreviousJob[0][1])
    log_name=EOSsubModelDIR+'/'+ PreviousJob[0][5] + '.csv'
-   Result=UF.LogOperations(log_name,'ReadLog', '_')
+   try:
+       Result=UF.LogOperations(log_name,'ReadLog', '_')
+   except:
+     print(UF.TimeStamp(),bcolors.WARNING+'Warning, the HTCondor job is still running'+bcolors.ENDC)
+     print(bcolors.BOLD+'If you would like to wait and try again later please enter W'+bcolors.ENDC)
+     print(bcolors.BOLD+'If you would like to resubmit please enter R'+bcolors.ENDC)
+     UserAnswer=input(bcolors.BOLD+"Please, enter your option\n"+bcolors.ENDC)
+     if UserAnswer=='W':
+         print(UF.TimeStamp(),'OK, exiting now then')
+         exit()
+     if UserAnswer=='R':
+        OptionLine = ['Create', PreviousJob[0][0], EOS_DIR, AFS_DIR, '"'+str(PreviousJob[0][2])+'"', PreviousJob[0][3], PreviousJob[0][1], PreviousJob[0][4], PreviousJob[0][5],PreviousJob[0][6]]
+        SHName = AFS_DIR + '/HTCondor/SH/SH_GM5.sh'
+        SUBName = AFS_DIR + '/HTCondor/SUB/SUB_GM5.sub'
+        MSGName = AFS_DIR + '/HTCondor/MSG/MSG_GM5'
+        ScriptName = AFS_DIR + '/Code/Utilities/GM5_TrainModel_Sub.py '
+        UF.SubmitJobs2Condor(
+            [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-GM5', False,
+             False])
+        print(UF.TimeStamp(), bcolors.OKGREEN+"The Training Job for the CurrentSet",CurrentSet,"have been resubmitted"+bcolors.ENDC)
+        print(bcolors.OKGREEN+"Please check it in a few hours"+bcolors.ENDC)
+        exit()
    print(Result)
-   print(int(Result[-1][0]))
+   CurrentEpoch=int(Result[-1][0])
+   RequiredEpoch=int(PreviousJob[0][1])+int(PreviousJob[0][6])
+   print(CurrentEpoch,RequiredEpoch)
    exit()
    ###Working out the latest batch
    ###Working out the remaining jobs

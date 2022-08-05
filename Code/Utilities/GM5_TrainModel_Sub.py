@@ -230,7 +230,7 @@ if Mode=='Create':
         train_loss = test(train_loader)[1]
         test_acc = test(test_loader)[0]
         test_loss = test(test_loader)[1]
-        log.append([epoch, train_acc, test_acc, train_loss, test_loss])
+        log.append([ImageSet,epoch, train_acc, test_acc, train_loss, test_loss])
         print(f'Set: {ImageSet:03d},Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f} Train Loss: {train_loss:.4f} Test Loss: {test_loss:.4f}')
  torch.save(model.state_dict(), model_name)
  torch.save({'epoch': epoch,
@@ -253,7 +253,7 @@ if Mode=='Train':
         train_loss = test(train_loader)[1]
         test_acc = test(test_loader)[0]
         test_loss = test(test_loader)[1]
-        log.append([epoch, train_acc, test_acc, train_loss, test_loss])
+        log.append([ImageSet, epoch, train_acc, test_acc, train_loss, test_loss])
         print(f'Set: {ImageSet:03d},Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f} Train Loss: {train_loss:.4f} Test Loss: {test_loss:.4f}')
  torch.save(model.state_dict(), model_name)
  UF.LogOperations(log_name,'UpdateLog',log)
