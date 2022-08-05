@@ -162,7 +162,7 @@ if mode=='C':
         print(bcolors.OKGREEN+"Please check it in a few hours"+bcolors.ENDC)
         exit()
 
-   CurrentEpoch=int(Result[-1][0])
+   CurrentEpoch=int(Result[-1][1])
    RequiredEpoch=int(PreviousJob[0][1])+int(PreviousJob[0][6])-1
    ###Working out the latest batch
    ###Working out the remaining jobs
