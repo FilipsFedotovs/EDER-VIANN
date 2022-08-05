@@ -193,7 +193,6 @@ if mode=='C':
       if UserAnswer=='Y':
             CurrentSet+=1
             PreviousJob[0][1]=str(int(PreviousJob[0][1])+int(PreviousJob[0][6]))
-            print(PreviousJob)
             UF.LogOperations(EOSsubModelDIR+'/GM5_GM5_JobTask.csv','StartLog',PreviousJob)
             OptionLine = ['Train', PreviousJob[0][0], EOS_DIR, AFS_DIR, '"'+str(PreviousJob[0][2])+'"', PreviousJob[0][3], PreviousJob[0][1], PreviousJob[0][4], PreviousJob[0][5],PreviousJob[0][6]]
             SHName = AFS_DIR + '/HTCondor/SH/SH_GM5.sh'

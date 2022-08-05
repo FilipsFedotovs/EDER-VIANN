@@ -111,7 +111,7 @@ train_file=open(flocation,'rb')
 TrainImages=pickle.load(train_file)
 train_file.close()
 train_dataset = []
-for image in TrainImages[:1000]:
+for image in TrainImages:
     image.GraphSeed.y = image.GraphSeed.y
     train_dataset.append(image.GraphSeed)
 
@@ -121,7 +121,7 @@ test_file=open(vlocation,'rb')
 TestImages=pickle.load(test_file)
 test_file.close()
 test_dataset = []
-for image in TestImages[:100] :
+for image in TestImages :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
 
@@ -214,7 +214,6 @@ def test(loader):
          loss_accumulative += float(loss)
      return (correct / len(loader.dataset), loss_accumulative/len(loader.dataset))  # Derive ratio of correct predictions.
      
-#model = GCN(hidden_channels=32)
 
 if Mode=='Create':
  model_name=EOSsubModelDIR+'/'+args.ModelNewName
