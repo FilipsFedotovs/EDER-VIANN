@@ -21,7 +21,7 @@ class bcolors:
 #Set the parsing module
 parser = argparse.ArgumentParser(description='Enter training job parameters')
 parser.add_argument('--Mode',help="Please enter the running mode: 'R' for reset, 'C' for continuing the training", default='C')
-parser.add_argument('--ModelName',help="Which model would you like to use as a base for training (please enter N if you want to train a new model from scratch)", default='Default')
+parser.add_argument('--ModelName',help="Which model would you like to use as a base for training (please enter N if you want to train a new model from scratch)", default='N')
 parser.add_argument('--ModelNewName',help="Would you like to save your pretrained model as a separate one", default='Default')
 parser.add_argument('--LR',help="Would you like to modify the model Learning Rate, If yes please enter it here eg: 0.01 ", default='Default')
 parser.add_argument('--EpochLength',help="How long do you want your epochs to be?", default='1000')
@@ -88,35 +88,37 @@ if mode=='R' and args.ModelName=='N':
  UF.LogOperations(EOSsubModelDIR+'/GM5_GM5_JobTask.csv','StartLog',[job])
  print(bcolors.BOLD+"Please the job completion in few hours by running this script with the option C"+bcolors.ENDC)
 elif mode=='R':
- UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'GM5', ['GM5_GM5','GM5_PERFORMANCE_'], "SoftUsed == \"EDER-VIANN-GM5\"")
- job=[]
- job.append(1)
- job.append(1)
- job.append(PM.ModelArchitecture)
- job.append(args.LR)
- job.append(ModelName)
- DNA = '"' + str(PM.ModelArchitecture) + '"'
- if args.ModelNewName=='Default':
-     job.append(ModelName)
-     OptionLine = ['Train', 1, EOS_DIR, AFS_DIR, DNA, args.LR, 1,  ModelName, ModelName]
- else:
-     job.append(args.ModelNewName)
-     OptionLine = ['Train', 1, EOS_DIR, AFS_DIR, DNA, args.LR, 1, ModelName, args.ModelNewName]
- print(UF.TimeStamp(),bcolors.OKGREEN+'Job description has been created'+bcolors.ENDC)
- PerformanceHeader=[['Epochs','Set','Training Samples','Train Loss','Train Accuracy','Validation Loss','Validation Accuracy']]
- UF.LogOperations(EOSsubModelDIR+'/GM5_PERFORMANCE_'+job[5]+'.csv','StartLog',PerformanceHeader)
- OptionHeader = [' --Mode ', ' --ImageSet ', ' --EOS ', " --AFS ", " --DNA ",
-                 " --LR ", " --Epoch ", " --ModelName ", " --ModelNewName "]
- SHName = AFS_DIR + '/HTCondor/SH/SH_GM5.sh'
- SUBName = AFS_DIR + '/HTCondor/SUB/SUB_GM5.sub'
- MSGName = AFS_DIR + '/HTCondor/MSG/MSG_GM5'
- ScriptName = AFS_DIR + '/Code/Utilities/GM5_TrainModel_Sub.py '
- UF.SubmitJobs2Condor(
-     [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-GM5', True,
-      True])
- job[4]=job[5]
- UF.LogOperations(EOSsubModelDIR+'/GM5_GM5_JobTask.csv','StartLog',[job])
- print(bcolors.BOLD+"Please the job completion in few hours by running this script with the option C"+bcolors.ENDC)
+ print(bcolors.FAIL+"Unfinished code, please run with --ModelName N for now"+bcolors.ENDC)
+ exit()
+ # UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'GM5', ['GM5_GM5','GM5_PERFORMANCE_'], "SoftUsed == \"EDER-VIANN-GM5\"")
+ # job=[]
+ # job.append(1)
+ # job.append(1)
+ # job.append(PM.ModelArchitecture)
+ # job.append(args.LR)
+ # job.append(ModelName)
+ # DNA = '"' + str(PM.ModelArchitecture) + '"'
+ # if args.ModelNewName=='Default':
+ #     job.append(ModelName)
+ #     OptionLine = ['Train', 1, EOS_DIR, AFS_DIR, DNA, args.LR, 1,  ModelName, ModelName]
+ # else:
+ #     job.append(args.ModelNewName)
+ #     OptionLine = ['Train', 1, EOS_DIR, AFS_DIR, DNA, args.LR, 1, ModelName, args.ModelNewName]
+ # print(UF.TimeStamp(),bcolors.OKGREEN+'Job description has been created'+bcolors.ENDC)
+ # PerformanceHeader=[['Epochs','Set','Training Samples','Train Loss','Train Accuracy','Validation Loss','Validation Accuracy']]
+ # UF.LogOperations(EOSsubModelDIR+'/GM5_PERFORMANCE_'+job[5]+'.csv','StartLog',PerformanceHeader)
+ # OptionHeader = [' --Mode ', ' --ImageSet ', ' --EOS ', " --AFS ", " --DNA ",
+ #                 " --LR ", " --Epoch ", " --ModelName ", " --ModelNewName "]
+ # SHName = AFS_DIR + '/HTCondor/SH/SH_GM5.sh'
+ # SUBName = AFS_DIR + '/HTCondor/SUB/SUB_GM5.sub'
+ # MSGName = AFS_DIR + '/HTCondor/MSG/MSG_GM5'
+ # ScriptName = AFS_DIR + '/Code/Utilities/GM5_TrainModel_Sub.py '
+ # UF.SubmitJobs2Condor(
+ #     [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-GM5', True,
+ #      True])
+ # job[4]=job[5]
+ # UF.LogOperations(EOSsubModelDIR+'/GM5_GM5_JobTask.csv','StartLog',[job])
+ # print(bcolors.BOLD+"Please the job completion in few hours by running this script with the option C"+bcolors.ENDC)
 if mode=='C':
    CurrentSet=0
    print(UF.TimeStamp(),'Continuing the training that has been started before')
@@ -132,9 +134,10 @@ if mode=='C':
    csv_reader.close()
    CurrentSet=int(PreviousJob[0][0])
    CurrentEpoch=int(PreviousJob[0][1])
+   print(PreviousJob)
+   exit()
    ###Working out the latest batch
    ###Working out the remaining jobs
-   required_file_name=EOSsubModelDIR+'/GM5_GM5_model_train_log_'+PreviousJob[0][0]+'.csv'
    if os.path.isfile(required_file_name)==False:
      print(UF.TimeStamp(),bcolors.WARNING+'Warning, the HTCondor job is still running'+bcolors.ENDC)
      print(bcolors.BOLD+'If you would like to wait and try again later please enter W'+bcolors.ENDC)
