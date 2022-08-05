@@ -35,7 +35,7 @@ class bcolors:
 
 ########################## Setting the parser ################################################
 parser = argparse.ArgumentParser(description='select cut parameters')
-parser.add_argument('--Mode',help="Please enter the mode: Create/Test/Train", default='Test')
+parser.add_argument('--Mode',help="Please enter the mode: Create/Test/Train", default='Create')
 parser.add_argument('--ImageSet',help="Please enter the image set", default='1')
 parser.add_argument('--DNA',help="Please enter the model dna", default='[[4, 4, 1, 2, 2, 2, 2], [5, 4, 1, 1, 2, 2, 2], [5, 4, 2, 1, 2, 2, 2], [5, 4, 2, 1, 2, 2, 2], [], [3, 4, 2], [3, 4, 2], [2, 4, 2], [], [], [7, 1, 1, 4]]')
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
@@ -109,7 +109,7 @@ train_file=open(flocation,'rb')
 TrainImages=pickle.load(train_file)
 train_file.close()
 train_dataset = []
-for image in TrainImages:
+for image in TrainImages[:100]:
     image.GraphSeed.y = image.GraphSeed.y
     train_dataset.append(image.GraphSeed)
 
@@ -119,7 +119,7 @@ test_file=open(vlocation,'rb')
 TestImages=pickle.load(test_file)
 test_file.close()
 test_dataset = []
-for image in TestImages :
+for image in TestImages[:10] :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
 
@@ -173,7 +173,7 @@ class model(torch.nn.Module):
         x = self.softmax(x)
         return x
 
-model = model(hidden_channels=32)
+
 
 #Estimate number of images in the training file
 #Calculate number of batches used for this job
@@ -188,9 +188,7 @@ train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 
 
-#model = GCN(hidden_channels=32)
-optimizer = torch.optim.Adam(model.parameters(), lr=LR)
-criterion = torch.nn.CrossEntropyLoss()
+
 
 def train():
     model.train()
@@ -214,11 +212,16 @@ def test(loader):
          loss_accumulative += float(loss)
      return (correct / len(loader.dataset), loss_accumulative/len(loader.dataset))  # Derive ratio of correct predictions.
      
-
-with open(EOSsubModelDIR+'/'+ args.ModelNewName + '.csv', 'w', newline='') as file:
+#model = GCN(hidden_channels=32)
+optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+criterion = torch.nn.CrossEntropyLoss()
+State_Save_Path=EOSsubModelDIR+'/'+args.ModelNewName+'_State_Save'
+model_name=EOSsubModelDIR+'/'+args.ModelNewName
+if Mode=='Create':
+ model = model(hidden_channels=32)
+ with open(EOSsubModelDIR+'/'+ args.ModelNewName + '.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss'])
-
     for epoch in range(1, int(args.Epochs)+1):
         train()
         train_acc = test(train_loader)[0]
@@ -227,8 +230,24 @@ with open(EOSsubModelDIR+'/'+ args.ModelNewName + '.csv', 'w', newline='') as fi
         test_loss = test(test_loader)[1]
         writer.writerow([epoch, train_acc, test_acc, train_loss, test_loss])
         print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f} Train Loss: {train_loss:.4f} Test Loss: {test_loss:.4f}')
-
-
+    torch.save(model.state_dict(), model_name)
+if Mode=='Train':
+ model.load_state_dict(torch.load(model_name))
+ checkpoint = torch.load(State_Save_Path)
+ optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+ scheduler.load_state_dict(checkpoint['scheduler'])
+ with open(EOSsubModelDIR+'/'+ args.ModelName + '.csv', 'w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss'])
+    for epoch in range(1, int(args.Epochs)+1):
+        train()
+        train_acc = test(train_loader)[0]
+        train_loss = test(train_loader)[1]
+        test_acc = test(test_loader)[0]
+        test_loss = test(test_loader)[1]
+        writer.writerow([epoch, train_acc, test_acc, train_loss, test_loss])
+        print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f} Train Loss: {train_loss:.4f} Test Loss: {test_loss:.4f}')
+    torch.save(model.state_dict(), model_name)
 #print(UF.TimeStamp(),'This iteration will be split in',bcolors.BOLD+str(NTrainBatches)+bcolors.ENDC,str(TrainBatchSize),'-size batches')
 #exit()
 
