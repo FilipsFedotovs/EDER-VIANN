@@ -240,6 +240,8 @@ if Mode=='Train':
  model_name=EOSsubModelDIR+'/'+args.ModelName
  model = model(hidden_channels=32)
  model.load_state_dict(torch.load(model_name))
+ optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+ criterion = torch.nn.CrossEntropyLoss()
  State_Save_Path=EOSsubModelDIR+'/'+args.ModelNewName+'_State_Save'
  checkpoint = torch.load(State_Save_Path)
  optimizer.load_state_dict(checkpoint['optimizer_state_dict'])

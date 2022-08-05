@@ -24,6 +24,7 @@ parser.add_argument('--Mode',help="Please enter the running mode: 'R' for reset,
 parser.add_argument('--ModelName',help="Which model would you like to use as a base for training (please enter N if you want to train a new model from scratch)", default='Default')
 parser.add_argument('--ModelNewName',help="Would you like to save your pretrained model as a separate one", default='Default')
 parser.add_argument('--LR',help="Would you like to modify the model Learning Rate, If yes please enter it here eg: 0.01 ", default='Default')
+parser.add_argument('--EpochLength',help="Would you like to modify the model Learning Rate, If yes please enter it here eg: 0.01 ", default='Default')
 args = parser.parse_args()
 #setting main learning parameters
 mode=args.Mode
