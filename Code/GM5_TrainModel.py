@@ -67,7 +67,7 @@ if mode=='R' and args.ModelName=='N':
  job.append(PM.ModelArchitecture)
  job.append(args.LR)
  job.append(ModelName)
- job.append(epoch_len)
+
  DNA='"'+str(PM.ModelArchitecture)+'"'
  if args.ModelNewName=='Default':
      job.append(ModelName)
@@ -75,6 +75,7 @@ if mode=='R' and args.ModelName=='N':
  else:
      job.append(args.ModelNewName)
      OptionLine = ['Create', 1, EOS_DIR, AFS_DIR, DNA, args.LR, 1, ModelName, args.ModelNewName, epoch_len]
+ job.append(epoch_len)
  print(UF.TimeStamp(),bcolors.OKGREEN+'Job description has been created'+bcolors.ENDC)
  OptionHeader = [' --Mode ', ' --ImageSet ', ' --EOS ', " --AFS ", " --DNA ",
                  " --LR ", " --Epoch ", " --ModelName ", " --ModelNewName ", ' --EpochLength ']
