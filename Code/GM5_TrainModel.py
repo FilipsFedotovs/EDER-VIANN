@@ -8,6 +8,7 @@ import os
 from os import path
 import random as rnd
 from random import random
+import pandas as pd
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -160,11 +161,9 @@ if mode=='C':
         print(UF.TimeStamp(), bcolors.OKGREEN+"The Training Job for the CurrentSet",CurrentSet,"have been resubmitted"+bcolors.ENDC)
         print(bcolors.OKGREEN+"Please check it in a few hours"+bcolors.ENDC)
         exit()
-   print(Result)
+
    CurrentEpoch=int(Result[-1][0])
    RequiredEpoch=int(PreviousJob[0][1])+int(PreviousJob[0][6])-1
-   print(CurrentEpoch,RequiredEpoch)
-   exit()
    ###Working out the latest batch
    ###Working out the remaining jobs
    if CurrentEpoch!=RequiredEpoch-1:
@@ -189,7 +188,9 @@ if mode=='C':
         exit()
    else:
       print(UF.TimeStamp(),bcolors.OKGREEN+'The training of the model by using the epochs ',CurrentEpoch,'-',RequiredEpoch,'has been completed'+bcolors.ENDC)
-      print(UF.TimeStamp(),'Creating next batch',CurrentSet+1)
+
+      print(UF.TimeStamp(),'Training stats are below:')
+      print(pd.DataFrame (Result, columns = ['Set','Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss']))
       exit()
 #          if os.path.isfile(EOS_DIR+'/EDER-VIANN/Data/TRAIN_SET/'+'GM4_GM5_TRAIN_SET_'+str(CurrentSet+1)+'.pkl')==False:
 #           print(bcolors.WARNING+'No more training files left, restarting the new epoch...'+bcolors.ENDC)
