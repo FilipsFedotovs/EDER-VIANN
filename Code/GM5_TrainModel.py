@@ -197,7 +197,7 @@ if mode=='C':
       if UserAnswer=='Y':
             CurrentSet+=1
 #           PreviousJob[0][0]=str(CurrentSet)
-            PreviousJob[0][1]+=int(PreviousJob[0][6])
+            PreviousJob[0][1]=str(int(PreviousJob[0][1])+int(PreviousJob[0][6]))
             print(PreviousJob)
             exit()
 #           UF.LogOperations(EOSsubModelDIR+'/GM5_GM5_JobTask.csv','StartLog',PreviousJob)
