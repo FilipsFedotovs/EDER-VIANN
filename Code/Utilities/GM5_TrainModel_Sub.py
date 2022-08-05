@@ -213,12 +213,14 @@ def test(loader):
      return (correct / len(loader.dataset), loss_accumulative/len(loader.dataset))  # Derive ratio of correct predictions.
      
 #model = GCN(hidden_channels=32)
-optimizer = torch.optim.Adam(model.parameters(), lr=LR)
-criterion = torch.nn.CrossEntropyLoss()
-State_Save_Path=EOSsubModelDIR+'/'+args.ModelNewName+'_State_Save'
-model_name=EOSsubModelDIR+'/'+args.ModelNewName
+
 if Mode=='Create':
+
+ model_name=EOSsubModelDIR+'/'+args.ModelNewName
  model = model(hidden_channels=32)
+ optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+ criterion = torch.nn.CrossEntropyLoss()
+ State_Save_Path=EOSsubModelDIR+'/'+args.ModelNewName+'_State_Save'
  with open(EOSsubModelDIR+'/'+ args.ModelNewName + '.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss'])
