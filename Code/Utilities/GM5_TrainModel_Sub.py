@@ -41,7 +41,7 @@ parser.add_argument('--DNA',help="Please enter the model dna", default='[[4, 4, 
 parser.add_argument('--AFS',help="Please enter the user afs directory", default='.')
 parser.add_argument('--EOS',help="Please enter the user eos directory", default='.')
 parser.add_argument('--LR',help="Please enter the value of learning rate", default='0.001')
-parser.add_argument('--Epoch',help="Please enter the epoch number", default='1')
+parser.add_argument('--Epochs',help="Please enter the epoch number", default='1000')
 parser.add_argument('--ModelName',help="Name of the model", default='2T_100_MC_1_model')
 parser.add_argument('--ModelNewName',help="Name of the model", default='2T_100_MC_1_model')
 parser.add_argument('--f',help="Image set location (for test)", default='')
@@ -57,18 +57,18 @@ if args.LR == 'Default':
     LR = 0.001
 else:
     LR = float(args.LR)
-for gene in DNA:
-    if DNA.index(gene)<=4 and len(gene)>0:
-        HiddenLayerDNA.append(gene)
-    elif DNA.index(gene)<=9 and len(gene)>0:
-        FullyConnectedDNA.append(gene)
-    elif DNA.index(gene)>9 and len(gene)>0:
-        OutputDNA.append(gene)
-
-act_fun_list=['N/A','linear','exponential','elu','relu', 'selu','sigmoid','softmax','softplus','softsign','tanh']
-ValidModel=True
-Accuracy=0.0
-Accuracy0=0.0
+# for gene in DNA:
+#     if DNA.index(gene)<=4 and len(gene)>0:
+#         HiddenLayerDNA.append(gene)
+#     elif DNA.index(gene)<=9 and len(gene)>0:
+#         FullyConnectedDNA.append(gene)
+#     elif DNA.index(gene)>9 and len(gene)>0:
+#         OutputDNA.append(gene)
+#
+# act_fun_list=['N/A','linear','exponential','elu','relu', 'selu','sigmoid','softmax','softplus','softsign','tanh']
+# ValidModel=True
+# Accuracy=0.0
+# Accuracy0=0.0
 ##################################   Loading Directory locations   ##################################################
 AFS_DIR=args.AFS
 EOS_DIR=args.EOS
@@ -104,7 +104,27 @@ from torch_geometric.nn import global_mean_pool
 from torch_geometric.nn import TAGConv
 from torch_geometric.nn import GMMConv
 
-num_node_features = 4
+print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
+train_file=open(flocation,'rb')
+TrainImages=pickle.load(train_file)
+train_file.close()
+train_dataset = []
+for image in TrainImages:
+    image.GraphSeed.y = image.GraphSeed.y
+    train_dataset.append(image.GraphSeed)
+
+
+print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+vlocation+bcolors.ENDC)
+test_file=open(vlocation,'rb')
+TestImages=pickle.load(test_file)
+test_file.close()
+test_dataset = []
+for image in TestImages :
+    image.GraphSeed.y = image.GraphSeed.y
+    test_dataset.append(image.GraphSeed)
+num_node_features = TrainImages[0].x.num_nodes_features()
+
+
 num_classes = 2
 
 class model(torch.nn.Module):
@@ -160,29 +180,7 @@ model = model(hidden_channels=32)
 #Calculate number of batches used for this job
 TrainBatchSize=(OutputDNA[0][1]*4)
 
-print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+flocation+bcolors.ENDC)
-train_file=open(flocation,'rb')
-TrainImages=pickle.load(train_file)
-train_file.close()
 
-train_dataset = []
-for image in TrainImages :
-    image.GraphSeed.y = image.GraphSeed.y
-    train_dataset.append(image.GraphSeed)
-
-
-
-
-
-
-print(UF.TimeStamp(),'Loading data from ',bcolors.OKBLUE+vlocation+bcolors.ENDC)
-test_file=open(vlocation,'rb')
-TestImages=pickle.load(test_file)
-test_file.close()
-test_dataset = []
-for image in TestImages :
-    image.GraphSeed.y = image.GraphSeed.y
-    test_dataset.append(image.GraphSeed)
 
 
 from torch_geometric.loader import DataLoader
@@ -197,9 +195,7 @@ criterion = torch.nn.CrossEntropyLoss()
 
 def train():
     model.train()
-
     for data in train_loader:  # Iterate in batches over the training dataset.
-
          out = model(data.x, data.edge_index, data.batch)  # Perform a single forward pass.
          loss = criterion(out, data.y)  # Compute the loss.
          loss.backward()  # Derive gradients.
@@ -208,7 +204,6 @@ def train():
 
 def test(loader):
      model.eval()
-
      correct = 0
      loss_accumulative = 0
      for data in loader:  # Iterate in batches over the training/test dataset.
@@ -220,19 +215,12 @@ def test(loader):
          loss_accumulative += float(loss)
      return (correct / len(loader.dataset), loss_accumulative/len(loader.dataset))  # Derive ratio of correct predictions.
      
-#for epoch in range(1, 171):
-#    train()
-#    train_acc = test(train_loader)
-#    test_acc = test(test_loader)
-#    print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
 
-#exit()
-
-with open('/eos/user/l/lewolf/EDER-VIANN/Models/'+ args.ModelNewName + '.csv', 'w', newline='') as file:
+with open(EOSsubModelDIR+'/'+ args.ModelNewName + '.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss'])
 
-    for epoch in range(1, 1000):
+    for epoch in range(1, int(args.Epochs)+1):
         train()
         train_acc = test(train_loader)[0]
         train_loss = test(train_loader)[1]
@@ -240,8 +228,6 @@ with open('/eos/user/l/lewolf/EDER-VIANN/Models/'+ args.ModelNewName + '.csv', '
         test_loss = test(test_loader)[1]
         writer.writerow([epoch, train_acc, test_acc, train_loss, test_loss])
         print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f} Train Loss: {train_loss:.4f} Test Loss: {test_loss:.4f}')
-
-    exit()
 
 
 #print(UF.TimeStamp(),'This iteration will be split in',bcolors.BOLD+str(NTrainBatches)+bcolors.ENDC,str(TrainBatchSize),'-size batches')
