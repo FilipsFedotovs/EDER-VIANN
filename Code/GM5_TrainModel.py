@@ -188,7 +188,7 @@ if mode=='C':
         print(bcolors.OKGREEN+"Please check it in a few hours"+bcolors.ENDC)
         exit()
    else:
-      print(UF.TimeStamp(),bcolors.OKGREEN+'The training of the model',PreviousJob[0][4], ' by using the epochs ',str(PreviousJob[0][1]),'-',RequiredEpoch,'has been completed'+bcolors.ENDC)
+      print(UF.TimeStamp(),bcolors.OKGREEN+'The training of the model',bcolors.OKBLUE+PreviousJob[0][4]+bcolors.ENDC, bcolors.OKGREEN+' by using the epochs ',str(PreviousJob[0][1]),'-',RequiredEpoch,'has been completed'+bcolors.ENDC)
 
       print(UF.TimeStamp(),'Training stats are below:')
       print(pd.DataFrame (Result[2:], columns = ['Set','Epoch', 'Training accuracy', 'testing accuracy', 'Train loss', 'Test loss']))
