@@ -60,7 +60,7 @@ print(bcolors.HEADER+"##########################################################
 print(UF.TimeStamp(), bcolors.OKGREEN+"Modules Have been imported successfully..."+bcolors.ENDC)
 #This code fragment covers the Algorithm logic on the first run
 if mode=='R' and args.ModelName=='N':
- log_name=EOSsubModelDIR+'/'+ args.NewModelName + '.csv'
+ log_name=EOSsubModelDIR+'/'+ args.ModelNewName + '.csv'
  UF.TrainCleanUp(AFS_DIR, EOS_DIR, 'GM5', ['GM5_GM5','GM5_PERFORMANCE_',log_name], "SoftUsed == \"EDER-VIANN-GM5\"")
  job=[]
  job.append(1)
