@@ -132,10 +132,6 @@ if mode=='C':
    PreviousJob = list(csv.reader(csv_reader))
    if args.LR!='Default':
        PreviousJob[0][3]=args.LR
-   #if os.path.isfile(EOSsubModelDIR+'/'+PreviousJob[0][9])==False:
-   #    print(UF.TimeStamp(),bcolors.FAIL+'Model',EOSsubModelDIR+ModelName,'has not been found '+bcolors.ENDC)
-   #    print(bcolors.BOLD+"Please restart this script with the option R"+bcolors.ENDC)
-   #    exit()
    csv_reader.close()
    CurrentEpoch=int(PreviousJob[0][1])
    log_name=EOSsubModelDIR+'/'+ PreviousJob[0][5] + '.csv'
@@ -158,7 +154,7 @@ if mode=='C':
         UF.SubmitJobs2Condor(
             [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-GM5', False,
              False])
-        print(UF.TimeStamp(), bcolors.OKGREEN+"The Training Job for the CurrentSet",CurrentSet,"have been resubmitted"+bcolors.ENDC)
+        print(UF.TimeStamp(), bcolors.OKGREEN+"The Training Job has been resubmitted"+bcolors.ENDC)
         print(bcolors.OKGREEN+"Please check it in a few hours"+bcolors.ENDC)
         exit()
 
@@ -196,28 +192,24 @@ if mode=='C':
       UserAnswer=input(bcolors.BOLD+"Please, enter Y/N\n"+bcolors.ENDC)
       if UserAnswer=='Y':
             CurrentSet+=1
-#           PreviousJob[0][0]=str(CurrentSet)
             PreviousJob[0][1]=str(int(PreviousJob[0][1])+int(PreviousJob[0][6]))
             print(PreviousJob)
-            exit()
-#           UF.LogOperations(EOSsubModelDIR+'/GM5_GM5_JobTask.csv','StartLog',PreviousJob)
-#           OptionLine = ['Train', PreviousJob[0][0], EOS_DIR, AFS_DIR, '"'+str(PreviousJob[0][2])+'"', PreviousJob[0][3], PreviousJob[0][1], PreviousJob[0][4], PreviousJob[0][5]]
-#           OptionHeader = [' --Mode ', ' --ImageSet ', ' --EOS ', " --AFS ", " --DNA ",
-#                           " --LR ", " --Epoch ", " --ModelName ", " --ModelNewName "]
-#           SHName = AFS_DIR + '/HTCondor/SH/SH_GM5.sh'
-#           SUBName = AFS_DIR + '/HTCondor/SUB/SUB_GM5.sub'
-#           MSGName = AFS_DIR + '/HTCondor/MSG/MSG_GM5'
-#           ScriptName = AFS_DIR + '/Code/Utilities/GM5_TrainModel_Sub.py '
-#           UF.SubmitJobs2Condor(
-#               [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-GM5', True,
-#                True])
-#           print(UF.TimeStamp(),bcolors.OKGREEN+'The next Image Set',CurrentSet,'has been submitted to HTCondor'+bcolors.ENDC)
-#           print(bcolors.BOLD,'Please run the script in few hours with --MODE C setting'+bcolors.ENDC)
-#           print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
-#
-#       if UserAnswer=='N':
-#           print(UF.TimeStamp(),bcolors.OKGREEN+'Training is finished then, thank you and good bye'+bcolors.ENDC)
-#           print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
-# exit()
+            UF.LogOperations(EOSsubModelDIR+'/GM5_GM5_JobTask.csv','StartLog',PreviousJob)
+            OptionLine = ['Train', PreviousJob[0][0], EOS_DIR, AFS_DIR, '"'+str(PreviousJob[0][2])+'"', PreviousJob[0][3], PreviousJob[0][1], PreviousJob[0][4], PreviousJob[0][5],PreviousJob[0][6]]
+            SHName = AFS_DIR + '/HTCondor/SH/SH_GM5.sh'
+            SUBName = AFS_DIR + '/HTCondor/SUB/SUB_GM5.sub'
+            MSGName = AFS_DIR + '/HTCondor/MSG/MSG_GM5'
+            ScriptName = AFS_DIR + '/Code/Utilities/GM5_TrainModel_Sub.py '
+            UF.SubmitJobs2Condor(
+               [OptionHeader, OptionLine, SHName, SUBName, MSGName, ScriptName, 1, 'EDER-VIANN-GM5', False,
+                False])
+            print(UF.TimeStamp(),bcolors.OKGREEN+'The next epoch range ',str(int(PreviousJob[0][1])),'-',str(int(PreviousJob[0][1])+int(PreviousJob[0][6])-1),'has been submitted to HTCondor'+bcolors.ENDC)
+            print(bcolors.BOLD,'Please run the script in few hours with --MODE C setting'+bcolors.ENDC)
+            print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+
+        if UserAnswer=='N':
+            print(UF.TimeStamp(),bcolors.OKGREEN+'Training is finished then, thank you and good bye'+bcolors.ENDC)
+            print(bcolors.HEADER+"############################################# End of the program ################################################"+bcolors.ENDC)
+exit()
 
 
