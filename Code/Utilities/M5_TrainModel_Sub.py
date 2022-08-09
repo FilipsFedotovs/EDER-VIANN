@@ -128,7 +128,7 @@ else:
 if Mode=='Train':
            model_name=EOSsubModelDIR+'/'+args.ModelName
            model=tf.keras.models.load_model(model_name)
-           K.set_value(model.optimizer.learning_rate, LR)
+           #K.set_value(model.optimizer.learning_rate, LR)
            model.summary()
            print(model.optimizer.get_config())
 if Mode!='Train' and Mode!='Test':
