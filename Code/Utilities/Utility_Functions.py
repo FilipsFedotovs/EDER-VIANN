@@ -614,117 +614,117 @@ class Seed:
                       __Hits[2]=__Hits[2]/MaxZ
 
           import pandas as pd
-          
-          for el in range(len(__TempTrack[0])):
-             __TempTrack[0][el].append('0')
-             __TempTrack[0][el].append(el)
-            
-          for el in range(len(__TempTrack[1])):
-             __TempTrack[1][el].append('1')
-             __TempTrack[1][el].append(el)
-            
-          __graphData_x =__TempTrack[0]+__TempTrack[1]
-          
-          __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'TrackID', 'NodeIndex'])
-          __graphData_x['dummy'] = 'dummy'
-          __graphData_x_r = __graphData_x
-          
-          __graphData_join = pd.merge(
-            __graphData_x,
-            __graphData_x_r,
-            how="inner",
-            on="dummy",
-            suffixes=('_l','_r'),
-            )
-          __graphData_join = __graphData_join.drop(__graphData_join.index[__graphData_join['TrackID_l']==__graphData_join['TrackID_r']] & __graphData_join.index[__graphData_join['NodeIndex_l']==__graphData_join['NodeIndex_r']])
-          
-          __graphData_join['d_z'] = np.sqrt((__graphData_join['z_l'] - __graphData_join['z_r'])**2)
-          __graphData_join['d_xy'] = np.sqrt((__graphData_join['x_l'] - __graphData_join['x_r'])**2 + (__graphData_join['y_l'] - __graphData_join['y_r'])**2)
-          __graphData_join['d_xyz'] = np.sqrt((__graphData_join['x_l'] - __graphData_join['x_r'])**2 + (__graphData_join['y_l'] - __graphData_join['y_r'])**2 + (__graphData_join['z_l'] - __graphData_join['z_r'])**2)
-          __graphData_join['ConnectionType'] = __graphData_join['TrackID_l'] == __graphData_join['TrackID_r']
-          __graphData_join.drop(['x_l', 'y_l', 'z_l', 'x_r', 'y_r', 'z_r', 'dummy'], axis = 1, inplace = True)
-          
-          __graphData_join[['ConnectionType']] = __graphData_join[['ConnectionType']].astype(float)
-          __graphData_join[['NodeIndex_l']] = __graphData_join[['NodeIndex_l']].astype(str)
-          __graphData_join[['NodeIndex_r']] = __graphData_join[['NodeIndex_r']].astype(str)
-          
-          __graphData_join['LeftKey'] = __graphData_join['TrackID_l'] +'-'+ __graphData_join['NodeIndex_l']
-          __graphData_join['RightKey'] = __graphData_join['TrackID_r'] +'-'+ __graphData_join['NodeIndex_r']
-          
-          __graphData_join.drop(['NodeIndex_l', 'TrackID_l', 'NodeIndex_r', 'TrackID_r'], axis = 1, inplace = True)
-          
-          __graphData_list = __graphData_join.values.tolist()
-          
-
-            
-          __graphData_nodes =__TempTrack[0]+__TempTrack[1]
-          
-          for g in __graphData_nodes:
-            g.append(g[3]+'-'+str(g[4]))
-            g[3]=float(g[3])
-
-          
-          Data_x = []
-          for g in __graphData_nodes:
-            Data_x.append(g[:4])
-          
-          node_ind_list=[]
-          for g in __graphData_nodes:
-            node_ind_list.append(g[5])
-          
-          
-          top_edge = []
-          bottom_edge = []
-          edge_attr = []
-          
-          
-          
-          for h in __graphData_list:
-            top_edge.append(node_ind_list.index(h[5]))
-            
-          for h in __graphData_list:
-            bottom_edge.append(node_ind_list.index(h[4]))
-            
-          for h in __graphData_list:
-            edge_attr.append(h[:4])
-
-          
-#Graph representation v1
-#          for t in __TempTrack[0]:
-#            t.append(0)
+# Graph representation v2 (fully connected)
+#          for el in range(len(__TempTrack[0])):
+#             __TempTrack[0][el].append('0')
+#             __TempTrack[0][el].append(el)
 #
-#          for t in __TempTrack[1]:
-#            t.append(1)
-#
+#          for el in range(len(__TempTrack[1])):
+#             __TempTrack[1][el].append('1')
+#             __TempTrack[1][el].append(el)
 #
 #          __graphData_x =__TempTrack[0]+__TempTrack[1]
 #
-#          # position of nodes
-#          __graphData_pos = []
-#          for node in __graphData_x:
-#            __graphData_pos.append(node[0:4])
+#          __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'TrackID', 'NodeIndex'])
+#          __graphData_x['dummy'] = 'dummy'
+#          __graphData_x_r = __graphData_x
 #
-#          # edge index and attributes
-#          __graphData_edge_index = []
-#          #__graphData_edge_attr = []
+#          __graphData_join = pd.merge(
+#            __graphData_x,
+#            __graphData_x_r,
+#            how="inner",
+#            on="dummy",
+#            suffixes=('_l','_r'),
+#            )
+#          __graphData_join = __graphData_join.drop(__graphData_join.index[__graphData_join['TrackID_l']==__graphData_join['TrackID_r']] & __graphData_join.index[__graphData_join['NodeIndex_l']==__graphData_join['NodeIndex_r']])
 #
-#          ei1 = []
-#          ei2 = []
-#          for i in range(len(__TempTrack[0])-1):
-#            ei1.append(i)
-#            ei2.append(i+1)
+#          __graphData_join['d_z'] = np.sqrt((__graphData_join['z_l'] - __graphData_join['z_r'])**2)
+#          __graphData_join['d_xy'] = np.sqrt((__graphData_join['x_l'] - __graphData_join['x_r'])**2 + (__graphData_join['y_l'] - __graphData_join['y_r'])**2)
+#          __graphData_join['d_xyz'] = np.sqrt((__graphData_join['x_l'] - __graphData_join['x_r'])**2 + (__graphData_join['y_l'] - __graphData_join['y_r'])**2 + (__graphData_join['z_l'] - __graphData_join['z_r'])**2)
+#          __graphData_join['ConnectionType'] = __graphData_join['TrackID_l'] == __graphData_join['TrackID_r']
+#          __graphData_join.drop(['x_l', 'y_l', 'z_l', 'x_r', 'y_r', 'z_r', 'dummy'], axis = 1, inplace = True)
 #
-#          for i in range(len(__TempTrack[0]),len(__TempTrack[0]) + len(__TempTrack[1])-1):
-#            ei1.append(i)
-#            ei2.append(i+1)
+#          __graphData_join[['ConnectionType']] = __graphData_join[['ConnectionType']].astype(float)
+#          __graphData_join[['NodeIndex_l']] = __graphData_join[['NodeIndex_l']].astype(str)
+#          __graphData_join[['NodeIndex_r']] = __graphData_join[['NodeIndex_r']].astype(str)
 #
-#          __graphData_edge_index = [ei1,ei2]
+#          __graphData_join['LeftKey'] = __graphData_join['TrackID_l'] +'-'+ __graphData_join['NodeIndex_l']
+#          __graphData_join['RightKey'] = __graphData_join['TrackID_r'] +'-'+ __graphData_join['NodeIndex_r']
 #
+#          __graphData_join.drop(['NodeIndex_l', 'TrackID_l', 'NodeIndex_r', 'TrackID_r'], axis = 1, inplace = True)
+#
+#          __graphData_list = __graphData_join.values.tolist()
+#
+#
+#
+#          __graphData_nodes =__TempTrack[0]+__TempTrack[1]
+#
+#          for g in __graphData_nodes:
+#            g.append(g[3]+'-'+str(g[4]))
+#            g[3]=float(g[3])
+#
+#
+#          Data_x = []
+#          for g in __graphData_nodes:
+#            Data_x.append(g[:4])
+#
+#          node_ind_list=[]
+#          for g in __graphData_nodes:
+#            node_ind_list.append(g[5])
+#
+#
+#          top_edge = []
+#          bottom_edge = []
 #          edge_attr = []
-#          for ei in range(len(ei1)):
-#            edge_attr.append([1])
 #
 #
+#
+#          for h in __graphData_list:
+#            top_edge.append(node_ind_list.index(h[5]))
+#
+#          for h in __graphData_list:
+#            bottom_edge.append(node_ind_list.index(h[4]))
+#
+#          for h in __graphData_list:
+#            edge_attr.append(h[:4])
+
+          
+#Graph representation v1
+          for t in __TempTrack[0]:
+            t.append(0)
+
+          for t in __TempTrack[1]:
+            t.append(1)
+
+
+          __graphData_x =__TempTrack[0]+__TempTrack[1]
+
+          # position of nodes
+          __graphData_pos = []
+          for node in __graphData_x:
+            __graphData_pos.append(node[0:4])
+
+          # edge index and attributes
+          __graphData_edge_index = []
+          #__graphData_edge_attr = []
+
+          ei1 = []
+          ei2 = []
+          for i in range(len(__TempTrack[0])-1):
+            ei1.append(i)
+            ei2.append(i+1)
+
+          for i in range(len(__TempTrack[0]),len(__TempTrack[0]) + len(__TempTrack[1])-1):
+            ei1.append(i)
+            ei2.append(i+1)
+
+          __graphData_edge_index = [ei1,ei2]
+
+          edge_attr = []
+          for ei in range(len(ei1)):
+            edge_attr.append([1])
+
+
 ##          for i in range(len(__TempTrack[0])):
 ##            for j in range(len(__TempTrack[1])):
 ##                __graphData_edge_index.append([i,j+len(__TempTrack[0])])
@@ -740,11 +740,11 @@ class Seed:
           import torch_geometric
           from torch_geometric.data import Data
 # Version 1
-#          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
+          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
 #          print(self.GraphSeed)
 #          print(self.GraphSeed.edge_index)
 
-          self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
+#          self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
 
       def Plot(self,PlotType):
         if PlotType=='XZ' or PlotType=='ZX':
