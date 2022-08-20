@@ -217,7 +217,7 @@ def test(loader):
 
 if Mode=='Create':
  model_name=EOSsubModelDIR+'/'+args.ModelNewName
- model = model(hidden_channels=32)
+ model = model(hidden_channels=64)
  optimizer = torch.optim.Adam(model.parameters(), lr=LR)
  criterion = torch.nn.CrossEntropyLoss()
  State_Save_Path=EOSsubModelDIR+'/'+args.ModelNewName+'_State_Save'
@@ -237,7 +237,7 @@ if Mode=='Create':
  UF.LogOperations(log_name,'StartLog',log)
 if Mode=='Train':
  model_name=EOSsubModelDIR+'/'+args.ModelName
- model = model(hidden_channels=32)
+ model = model(hidden_channels=64)
  model.load_state_dict(torch.load(model_name))
  optimizer = torch.optim.Adam(model.parameters(), lr=LR)
  criterion = torch.nn.CrossEntropyLoss()
