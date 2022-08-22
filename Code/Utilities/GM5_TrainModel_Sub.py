@@ -148,7 +148,7 @@ class model(torch.nn.Module):
         self.gmmconv3 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
         
         self.lin = Linear(hidden_channels, num_classes)
-        self.softmax = Softmax()
+        self.softmax = Softmax(dim=-1)
 
     def forward(self, x, edge_index, edge_attr, batch):
         # 1. Obtain node embeddings 
@@ -186,8 +186,8 @@ class model(torch.nn.Module):
 
 from torch_geometric.loader import DataLoader
     
-train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
 
 
