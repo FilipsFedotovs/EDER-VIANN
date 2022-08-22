@@ -154,17 +154,17 @@ class model(torch.nn.Module):
         # 1. Obtain node embeddings 
         #x = self.conv1(x, edge_index)
         #x = self.tagconv1(x, edge_index)
-        x = self.mmconv1(x, edge_index, edge_attr)
+        x = self.gmmconv1(x, edge_index, edge_attr)
         x = x.relu()
         
         #x = self.conv2(x, edge_index)
         #x = self.tagconv2(x, edge_index)
-        x = self.mmconv2(x, edge_index, edge_attr)
+        x = self.gmmconv2(x, edge_index, edge_attr)
         x = x.relu()
         
         #x = self.conv3(x, edge_index)
         #x = self.tagconv3(x, edge_index)
-        x = self.mmconv3(x, edge_index, edge_attr)
+        x = self.gmmconv3(x, edge_index, edge_attr)
 
         # 2. Readout layer
         x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
