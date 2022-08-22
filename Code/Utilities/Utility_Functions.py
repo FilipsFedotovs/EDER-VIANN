@@ -703,7 +703,7 @@ class Seed:
           # position of nodes
           __graphData_pos = []
           for node in __graphData_x:
-            __graphData_pos.append(node[0:3])
+            __graphData_pos.append(node[0:4])
 
           # edge index and attributes
           __graphData_edge_index = []
