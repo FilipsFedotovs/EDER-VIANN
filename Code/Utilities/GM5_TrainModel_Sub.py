@@ -125,7 +125,7 @@ for image in TestImages :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
 
-num_node_features = 4
+num_node_features = 6
 num_classes = 2
 
 class model(torch.nn.Module):
