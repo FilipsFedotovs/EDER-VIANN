@@ -143,7 +143,7 @@ class model(torch.nn.Module):
         self.tagconv3 = TAGConv(hidden_channels, hidden_channels)
         
         #GMMConv layers
-        self.gmmconv1 = GMMConv(num_node_features, hidden_channels, dim=3, kernel_size=3)
+        self.gmmconv1 = GMMConv(num_node_features, hidden_channels, dim=3, kernel_size=2)
         self.gmmconv2 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
         self.gmmconv3 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
         
@@ -155,7 +155,7 @@ class model(torch.nn.Module):
         #x = self.conv1(x, edge_index)
         #x = self.tagconv1(x, edge_index)
         x = self.gmmconv1(x, edge_index, edge_attr)
-        #x = x.relu()
+        x = x.relu()
         
         #x = self.conv2(x, edge_index)
         #x = self.tagconv2(x, edge_index)
