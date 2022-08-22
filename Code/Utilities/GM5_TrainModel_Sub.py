@@ -143,7 +143,7 @@ class model(torch.nn.Module):
         self.tagconv3 = TAGConv(hidden_channels, hidden_channels)
         
         #GMMConv layers
-        self.gmmconv1 = GMMConv(num_node_features, hidden_channels, dim=3, kernel_size=4)
+        self.gmmconv1 = GMMConv(num_node_features, hidden_channels, dim=3, kernel_size=3)
         self.gmmconv2 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
         self.gmmconv3 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
         
@@ -186,7 +186,7 @@ class model(torch.nn.Module):
 
 from torch_geometric.loader import DataLoader
     
-train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 
 
