@@ -186,7 +186,7 @@ class model(torch.nn.Module):
 
 from torch_geometric.loader import DataLoader
     
-train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 
 
@@ -217,7 +217,7 @@ def test(loader):
 
 if Mode=='Create':
  model_name=EOSsubModelDIR+'/'+args.ModelNewName
- model = model(hidden_channels=8)
+ model = model(hidden_channels=16)
  optimizer = torch.optim.Adam(model.parameters(), lr=LR)
  criterion = torch.nn.CrossEntropyLoss()
  State_Save_Path=EOSsubModelDIR+'/'+args.ModelNewName+'_State_Save'
