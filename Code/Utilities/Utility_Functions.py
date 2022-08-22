@@ -706,23 +706,32 @@ class Seed:
 
           # edge index and attributes
           __graphData_edge_index = []
-          #__graphData_edge_attr = []
+          __graphData_edge_attr = []
+          
+             # bipartite
+          for i in range(len(__TempTrack[0])):
+            for j in range(len(__TempTrack[0]), len(__TempTrack[0])+len(__TempTrack[1])):
+                __graphData_edge_index.append([i,j])
+                __graphData_edge_attr.append(np.array(__graphData_pos[j]) - np.array(__graphData_pos[i]))
+                __graphData_edge_index.append([j,i])
+                __graphData_edge_attr.append(np.array(__graphData_pos[i]) - np.array(__graphData_pos[j]))
 
-          ei1 = []
-          ei2 = []
-          for i in range(len(__TempTrack[0])-1):
-            ei1.append(i)
-            ei2.append(i+1)
 
-          for i in range(len(__TempTrack[0]),len(__TempTrack[0]) + len(__TempTrack[1])-1):
-            ei1.append(i)
-            ei2.append(i+1)
+#          ei1 = []
+#          ei2 = []
+#          for i in range(len(__TempTrack[0])-1):
+#            ei1.append(i)
+#            ei2.append(i+1)
+#
+#          for i in range(len(__TempTrack[0]),len(__TempTrack[0]) + len(__TempTrack[1])-1):
+#            ei1.append(i)
+#            ei2.append(i+1)
+#
+#          __graphData_edge_index = [ei1,ei2]
 
-          __graphData_edge_index = [ei1,ei2]
-
-          edge_attr = []
-          for ei in range(len(ei1)):
-            edge_attr.append([1])
+#          edge_attr = []
+#          for ei in range(len(ei1)):
+#            edge_attr.append([1])
 
 
 ##          for i in range(len(__TempTrack[0])):
@@ -739,11 +748,30 @@ class Seed:
           import torch
           import torch_geometric
           from torch_geometric.data import Data
-# Version 1
-          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
+          
+          if(hasattr(self, 'MC_truth_label')):
+            # target outcome
+            __graphData_y = np.array([self.MC_truth_label])
+            self.GraphSeed=Data(x=torch.Tensor(__graphData_x),
+                              edge_index = torch.Tensor(__graphData_edge_index).t().contiguous().long(),
+                              edge_attr = torch.Tensor(__graphData_edge_attr),
+                              y=torch.Tensor(__graphData_y).long(),
+                              pos = torch.Tensor(__graphData_pos)
+                              )
+          else:
+            self.GraphSeed=Data(x=torch.Tensor(__graphData_x),
+                              edge_index = torch.Tensor(__graphData_edge_index).t().contiguous().long(),
+                              edge_attr = torch.Tensor(__graphData_edge_attr),
+                              pos = torch.Tensor(__graphData_pos)
+                              )
+          
+# Version 1 (No MMConv or fully connected graph)
+#          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
+
+
 #          print(self.GraphSeed)
 #          print(self.GraphSeed.edge_index)
-
+# Fully connected, no MMConv
 #          self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
 
       def Plot(self,PlotType):
