@@ -125,7 +125,7 @@ for image in TestImages :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
 
-num_node_features = 5
+num_node_features = 4
 num_classes = 2
 
 class model(torch.nn.Module):
@@ -186,8 +186,8 @@ class model(torch.nn.Module):
 
 from torch_geometric.loader import DataLoader
     
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 
 
 
