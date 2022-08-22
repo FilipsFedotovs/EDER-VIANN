@@ -143,9 +143,9 @@ class model(torch.nn.Module):
         self.tagconv3 = TAGConv(hidden_channels, hidden_channels)
         
         #GMMConv layers
-        #self.gmmconv1 = GMMConv(num_node_features, hidden_channels, 3, 1)
-        #self.gmmconv2 = GMMConv(hidden_channels, hidden_channels, 3, 1)
-        #self.gmmconv3 = GMMConv(hidden_channels, hidden_channels, 3, 1)
+        self.gmmconv1 = GMMConv(num_node_features, hidden_channels, dim=3, kernel_size=4)
+        self.gmmconv2 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
+        self.gmmconv3 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
         
         self.lin = Linear(hidden_channels, num_classes)
         self.softmax = Softmax()
@@ -153,18 +153,18 @@ class model(torch.nn.Module):
     def forward(self, x, edge_index, batch):
         # 1. Obtain node embeddings 
         #x = self.conv1(x, edge_index)
-        x = self.tagconv1(x, edge_index)
-        #x = self.mmconv1(x, edge_index)
+        #x = self.tagconv1(x, edge_index)
+        x = self.mmconv1(x, edge_index, edge_attr)
         x = x.relu()
         
         #x = self.conv2(x, edge_index)
-        x = self.tagconv2(x, edge_index)
-        #x = self.mmconv2(x, edge_index)
+        #x = self.tagconv2(x, edge_index)
+        x = self.mmconv2(x, edge_index, edge_attr)
         x = x.relu()
         
         #x = self.conv3(x, edge_index)
-        x = self.tagconv3(x, edge_index)
-        #x = self.mmconv3(x, edge_index)
+        #x = self.tagconv3(x, edge_index)
+        x = self.mmconv3(x, edge_index, edge_attr)
 
         # 2. Readout layer
         x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
