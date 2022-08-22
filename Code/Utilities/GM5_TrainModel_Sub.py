@@ -144,7 +144,7 @@ class model(torch.nn.Module):
         
         #GMMConv layers
         self.gmmconv1 = GMMConv(num_node_features, hidden_channels, dim=3, kernel_size=3)
-        self.gmmconv2 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
+        self.gmmconv2 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=3)
         self.gmmconv3 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
         
         self.lin = Linear(hidden_channels, num_classes)
