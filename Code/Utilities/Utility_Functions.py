@@ -614,6 +614,7 @@ class Seed:
                       __Hits[2]=__Hits[2]/MaxZ
 
           import pandas as pd
+          
 # Graph representation v2 (fully connected)
 #          for el in range(len(__TempTrack[0])):
 #             __TempTrack[0][el].append('0')
@@ -702,7 +703,7 @@ class Seed:
           # position of nodes
           __graphData_pos = []
           for node in __graphData_x:
-            __graphData_pos.append(node[0:4])
+            __graphData_pos.append(node[0:3])
 
           # edge index and attributes
           __graphData_edge_index = []
