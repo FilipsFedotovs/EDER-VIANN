@@ -150,7 +150,7 @@ class model(torch.nn.Module):
         self.lin = Linear(hidden_channels, num_classes)
         self.softmax = Softmax()
 
-    def forward(self, x, edge_index, batch):
+    def forward(self, x, edge_index, edge_attr, batch):
         # 1. Obtain node embeddings 
         #x = self.conv1(x, edge_index)
         #x = self.tagconv1(x, edge_index)
@@ -206,7 +206,7 @@ def test(loader):
      correct = 0
      loss_accumulative = 0
      for data in loader:  # Iterate in batches over the training/test dataset.
-         out = model(data.x, data.edge_index, data.edge_attr, data.batch)  
+         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
          pred = out.argmax(dim=1)  # Use the class with highest probability.
          y_index = data.y.argmax(dim=1)
          correct += int((pred == y_index).sum())  # Check against ground-truth labels.
