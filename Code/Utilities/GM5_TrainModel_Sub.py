@@ -125,7 +125,7 @@ for image in TestImages :
     image.GraphSeed.y = image.GraphSeed.y
     test_dataset.append(image.GraphSeed)
 
-num_node_features = 5
+num_node_features = 4
 num_classes = 2
 
 class model(torch.nn.Module):
@@ -217,7 +217,7 @@ def test(loader):
 
 if Mode=='Create':
  model_name=EOSsubModelDIR+'/'+args.ModelNewName
- model = model(hidden_channels=16)
+ model = model(hidden_channels=8)
  optimizer = torch.optim.Adam(model.parameters(), lr=LR)
  criterion = torch.nn.CrossEntropyLoss()
  State_Save_Path=EOSsubModelDIR+'/'+args.ModelNewName+'_State_Save'
