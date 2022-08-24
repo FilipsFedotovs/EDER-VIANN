@@ -150,7 +150,7 @@ class model(torch.nn.Module):
         self.lin = Linear(hidden_channels, num_classes)
         self.softmax = Softmax(dim=-1)
 
-    def forward(self, x, edge_index, batch):
+    def forward(self, x, edge_index, edge_attr, batch):
         # 1. Obtain node embeddings
         #x = self.conv1(x, edge_index)
         #x = self.tagconv1(x, edge_index)
