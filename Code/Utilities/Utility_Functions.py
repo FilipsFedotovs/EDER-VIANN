@@ -673,8 +673,7 @@ class Seed:
           Data_x = []
           for g in __graphData_nodes:
             Data_x.append(g[:4])
-          print(Data_x)
-          exit()
+
 
           node_ind_list=[]
           for g in __graphData_nodes:
