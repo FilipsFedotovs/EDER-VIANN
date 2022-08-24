@@ -629,6 +629,8 @@ class Seed:
           __graphData_pos = []
           for node in __graphData_x:
             __graphData_pos.append(node[0:3])
+        print(__graphData_pos)
+        exit()
 
           __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'TrackID', 'NodeIndex'])
           __graphData_x['dummy'] = 'dummy'
