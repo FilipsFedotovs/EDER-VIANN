@@ -692,9 +692,13 @@ class Seed:
           for h in __graphData_list:
             bottom_edge.append(node_ind_list.index(h[4]))
 
-          for h in __graphData_list:
-            edge_attr.append(h[:3])
+#          for h in __graphData_list:
+#            edge_attr.append(h[:3])
 
+          for i in range(len(__TempTrack[0])+len(__TempTrack[1])):
+            for j in range(0,i):
+                __graphData_edge_attr.append(np.array(__graphData_pos[j]) - np.array(__graphData_pos[i]))
+                __graphData_edge_attr.append(np.array(__graphData_pos[i]) - np.array(__graphData_pos[j]))
           
 #Graph representation v1
 #          for t in __TempTrack[0]:
