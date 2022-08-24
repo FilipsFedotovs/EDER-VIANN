@@ -143,12 +143,12 @@ class model(torch.nn.Module):
         self.tagconv3 = TAGConv(hidden_channels, hidden_channels)
         
         #GMMConv layers
-        #self.gmmconv1 = GMMConv(num_node_features, hidden_channels, 3, 1)
-        #self.gmmconv2 = GMMConv(hidden_channels, hidden_channels, 3, 1)
-        #self.gmmconv3 = GMMConv(hidden_channels, hidden_channels, 3, 1)
+        self.gmmconv1 = GMMConv(num_node_features, hidden_channels, dim=3, kernel_size=4)
+        self.gmmconv2 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
+        self.gmmconv3 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
         
         self.lin = Linear(hidden_channels, num_classes)
-        self.softmax = Softmax()
+        self.softmax = Softmax(dim=-1)
 
     def forward(self, x, edge_index, batch):
         # 1. Obtain node embeddings
@@ -195,7 +195,7 @@ test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 def train():
     model.train()
     for data in train_loader:  # Iterate in batches over the training dataset.
-         out = model(data.x, data.edge_index, data.batch)  # Perform a single forward pass.
+         out = model(data.x, data.edge_index, data.edge_attr, data.batch)  # Perform a single forward pass.
          loss = criterion(out, data.y)  # Compute the loss.
          loss.backward()  # Derive gradients.
          optimizer.step()  # Update parameters based on gradients.
@@ -206,7 +206,7 @@ def test(loader):
      correct = 0
      loss_accumulative = 0
      for data in loader:  # Iterate in batches over the training/test dataset.
-         out = model(data.x, data.edge_index, data.batch)
+         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
          pred = out.argmax(dim=1)  # Use the class with highest probability.
          y_index = data.y.argmax(dim=1)
          correct += int((pred == y_index).sum())  # Check against ground-truth labels.

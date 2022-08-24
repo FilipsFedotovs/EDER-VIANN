@@ -624,6 +624,11 @@ class Seed:
              __TempTrack[1][el].append(el)
 
           __graphData_x =__TempTrack[0]+__TempTrack[1]
+          
+          # position of nodes
+          __graphData_pos = []
+          for node in __graphData_x:
+            __graphData_pos.append(node[0:3])
 
           __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'TrackID', 'NodeIndex'])
           __graphData_x['dummy'] = 'dummy'
@@ -744,7 +749,7 @@ class Seed:
 #          print(self.GraphSeed)
 #          print(self.GraphSeed.edge_index)
 
-          self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
+          self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]), pos = torch.Tensor(__graphData_pos))
 
       def Plot(self,PlotType):
         if PlotType=='XZ' or PlotType=='ZX':
