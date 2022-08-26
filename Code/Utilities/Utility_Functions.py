@@ -624,11 +624,6 @@ class Seed:
              __TempTrack[1][el].append(el)
 
           __graphData_x =__TempTrack[0]+__TempTrack[1]
-          
-          # position of nodes
-          __graphData_pos = []
-          for node in __graphData_x:
-            __graphData_pos.append(node[0:3])
 
 
           __graphData_x = pd.DataFrame (__graphData_x, columns = ['x', 'y', 'z', 'TrackID', 'NodeIndex'])
@@ -664,6 +659,11 @@ class Seed:
 
 
           __graphData_nodes =__TempTrack[0]+__TempTrack[1]
+          
+        # position of nodes
+          __graphData_pos = []
+          for node in __graphData_nodes:
+            __graphData_pos.append(node[0:3])
 
           for g in __graphData_nodes:
             g.append(g[3]+'-'+str(g[4]))
@@ -692,13 +692,13 @@ class Seed:
           for h in __graphData_list:
             bottom_edge.append(node_ind_list.index(h[4]))
 
-#          for h in __graphData_list:
-#            edge_attr.append(h[:3])
+          for h in __graphData_list:
+            edge_attr.append(h[:3])
 
-          for i in range(len(__TempTrack[0])+len(__TempTrack[1])):
-            for j in range(0,i):
-                edge_attr.append(np.array(__graphData_pos[j]) - np.array(__graphData_pos[i]))
-                edge_attr.append(np.array(__graphData_pos[i]) - np.array(__graphData_pos[j]))
+#          for i in range(len(__TempTrack[0])+len(__TempTrack[1])):
+#            for j in range(0,i):
+#                edge_attr.append(np.array(__graphData_pos[j]) - np.array(__graphData_pos[i]))
+#                edge_attr.append(np.array(__graphData_pos[i]) - np.array(__graphData_pos[j]))
           
 #Graph representation v1
 #          for t in __TempTrack[0]:
