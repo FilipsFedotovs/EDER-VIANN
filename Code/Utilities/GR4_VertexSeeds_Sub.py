@@ -115,7 +115,7 @@ for s in range(0,limit):
     seed=seeds.pop(0)
     seed.PrepareTrackGraph(MaxX,MaxY,MaxZ,True)
     print(seed.GraphSeed.x)
-    out = model(seed.GraphSeed.x, seed.GraphSeed.edge_index, seed.GraphSeed.edge_attr, seed.GraphSeed.batch)
+    out = model(seed.GraphSeed.x, seed.GraphSeed.edge_index, seed.GraphSeed.edge_attr)#, seed.GraphSeed.batch)
     print(out)
     exit()
     #SeedImage=UF.LoadRenderImages([seed],1,1)[0]
