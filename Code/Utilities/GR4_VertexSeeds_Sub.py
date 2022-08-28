@@ -114,20 +114,12 @@ print(UF.TimeStamp(),'Beginning the vertexing part...')
 for s in range(0,limit):
     seed=seeds.pop(0)
     seed.PrepareTrackGraph(MaxX,MaxY,MaxZ,True)
-    print(seed.GraphSeed.x)
-
-
-
     rec_loader = DataLoader([seed.GraphSeed], batch_size=1, shuffle=False)
     for data in rec_loader:  # Iterate in batches over the training/test dataset.
          out = model(data.x, data.edge_index, data.edge_attr, data.batch)
-         print('Test')
-    print([out[0][0].item(),out[0][1].item()])
+    seed.CNNFitSeed(out[0][1].item())
+    print(seed.Seed_CNN_Fit)
     exit()
-    #SeedImage=UF.LoadRenderImages([seed],1,1)[0]
-    #seed.UnloadTrackPrint()
-    exit()
-    seed.CNNFitSeed(model.predict(SeedImage)[0][1])
     if seed.Seed_CNN_Fit>=acceptance:
               GoodSeeds.append(seed)
     else:
