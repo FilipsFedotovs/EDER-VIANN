@@ -107,7 +107,7 @@ print(model_name)
 model = model(hidden_channels=16)
 model.eval()
 print(model)
-#model.load_state_dict(torch.load(model_name))
+model.load_state_dict(torch.load(model_name))
 #create seeds
 GoodSeeds=[]
 print(UF.TimeStamp(),'Beginning the vertexing part...')
