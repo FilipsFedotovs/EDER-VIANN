@@ -131,7 +131,7 @@ if Config=='SND':
     GNNMaxX=100.0
     GNNMaxY=100.0
     GNNMaxZ=10000
-    CNN_Model_Name='2T_100_FEDRA_2_model'
+    CNN_Model_Name='TAGCN_3_16_v5'
 
 
     def Seed_Bond_Fit_Acceptance(row):

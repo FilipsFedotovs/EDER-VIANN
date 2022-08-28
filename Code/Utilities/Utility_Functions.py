@@ -742,21 +742,27 @@ class Seed:
 ###                __graphData_edge_index.append([j+len(__TempTrack[0]),i])
 ###
 ##
-          if self.MC_truth_label==0:
-             __graphData_y = ([1,0])
-          if self.MC_truth_label==1:
-             __graphData_y = ([0,1])
+          try:
+              if self.MC_truth_label==0:
+                 __graphData_y = ([1,0])
+              if self.MC_truth_label==1:
+                 __graphData_y = ([0,1])
 
-          import torch
-          import torch_geometric
-          from torch_geometric.data import Data
-# Version 1
-#          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
-#          print(self.GraphSeed)
-#          print(self.GraphSeed.edge_index)
+              import torch
+              import torch_geometric
+              from torch_geometric.data import Data
+    # Version 1
+    #          self.GraphSeed = Data(x=torch.Tensor(__graphData_x), edge_index = torch.Tensor(__graphData_edge_index).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]))
+    #          print(self.GraphSeed)
+    #          print(self.GraphSeed.edge_index)
 
-          self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]), pos = torch.Tensor(__graphData_pos))
+              self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr),y=torch.Tensor([__graphData_y]), pos = torch.Tensor(__graphData_pos))
+          except:
+              import torch
+              import torch_geometric
+              from torch_geometric.data import Data
 
+              self.GraphSeed = Data(x=torch.Tensor(Data_x), edge_index = torch.Tensor([top_edge, bottom_edge]).long(), edge_attr = torch.Tensor(edge_attr), pos = torch.Tensor(__graphData_pos))
       def Plot(self,PlotType):
         if PlotType=='XZ' or PlotType=='ZX':
           __InitialData=[]
