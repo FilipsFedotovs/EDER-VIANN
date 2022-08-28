@@ -71,27 +71,29 @@ class model(torch.nn.Module):
         super(model, self).__init__()
         torch.manual_seed(12345)
         #TAGCN layers
-        self.tagconv1 = TAGConv(num_node_features, hidden_channels)
-        self.tagconv2 = TAGConv(hidden_channels, hidden_channels)
-        self.tagconv3 = TAGConv(hidden_channels, hidden_channels)
-
+        # self.tagconv1 = TAGConv(num_node_features, hidden_channels)
+        # self.tagconv2 = TAGConv(hidden_channels, hidden_channels)
+        # self.tagconv3 = TAGConv(hidden_channels, hidden_channels)
+        self.conv1 = GCNConv(num_node_features , hidden_channels)
+        self.conv2 = GCNConv(hidden_channels, hidden_channels)
+        self.conv3 = GCNConv(hidden_channels, hidden_channels)
         self.lin = Linear(hidden_channels, num_classes)
         self.softmax = Softmax(dim=-1)
 
     def forward(self, x, edge_index, edge_attr, batch):
         # 1. Obtain node embeddings
-        #x = self.conv1(x, edge_index)
-        x = self.tagconv1(x, edge_index)
+        x = self.conv1(x, edge_index)
+        #x = self.tagconv1(x, edge_index)
         #x = self.gmmconv1(x, edge_index, edge_attr)
         x = x.relu()
 
-        #x = self.conv2(x, edge_index)
-        x = self.tagconv2(x, edge_index)
+        x = self.conv2(x, edge_index)
+        #x = self.tagconv2(x, edge_index)
         #x = self.gmmconv2(x, edge_index, edge_attr)
         x = x.relu()
 
-        #x = self.conv3(x, edge_index)
-        x = self.tagconv3(x, edge_index)
+        x = self.conv3(x, edge_index)
+        #x = self.tagconv3(x, edge_index)
         #x = self.gmmconv3(x, edge_index, edge_attr)
 
         # 2. Readout layer
@@ -106,7 +108,8 @@ model_name=EOS_DIR+'EDER-VIANN/Models/'+args.ModelName
 print(model_name)
 model = model(hidden_channels=16)
 model.eval()
-#model.load_state_dict(torch.load(model_name))
+model.load_state_dict(torch.load(model_name))
+print('Here')
 #create seeds
 GoodSeeds=[]
 print(UF.TimeStamp(),'Beginning the vertexing part...')
