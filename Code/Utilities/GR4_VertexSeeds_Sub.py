@@ -122,7 +122,7 @@ for s in range(0,limit):
     for data in rec_loader:  # Iterate in batches over the training/test dataset.
          out = model(data.x, data.edge_index, data.edge_attr, data.batch)
          print('Test')
-    print(out.item())
+    print(out[0].item())
     exit()
     #SeedImage=UF.LoadRenderImages([seed],1,1)[0]
     #seed.UnloadTrackPrint()
