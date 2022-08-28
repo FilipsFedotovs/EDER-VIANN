@@ -119,8 +119,9 @@ for s in range(0,limit):
 
 
     rec_loader = DataLoader([seed.GraphSeed], batch_size=1, shuffle=False)
-    print(rec_loader)
-    out = model(rec_loader[0].x, rec_loader[0].edge_index, rec_loader[0].edge_attr, rec_loader[0].batch)
+    for data in rec_loader:  # Iterate in batches over the training/test dataset.
+         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
+         print('Test')
     print(out)
     exit()
     #SeedImage=UF.LoadRenderImages([seed],1,1)[0]
