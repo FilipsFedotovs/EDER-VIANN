@@ -113,6 +113,7 @@ print(UF.TimeStamp(),'Beginning the vertexing part...')
 for s in range(0,limit):
     seed=seeds.pop(0)
     seed.PrepareTrackGraph(MaxX,MaxY,MaxZ,True)
+    print(seed.GraphSeed.x)
     out = model(seed.GraphSeed.x, GraphSeed.edge_index, GraphSeed.edge_attr, GraphSeed.batch)
     print(out)
     exit()
