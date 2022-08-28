@@ -102,7 +102,7 @@ class model(torch.nn.Module):
         x = self.lin(x)
         x = self.softmax(x)
         return x
-model_name=EOS_DIR+'/EDER-VIANN/Models/'+args.ModelName
+model_name=EOS_DIR+'EDER-VIANN/Models/'+args.ModelName
 print(model_name)
 model = model(hidden_channels=16)
 model.eval()
