@@ -13,7 +13,7 @@ from torch_geometric.nn import GCNConv
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.nn import TAGConv
 from torch_geometric.nn import GMMConv
-from torch.optim.lr_scheduler import StepLR
+from torch_geometric.loader import DataLoader
 # import tensorflow as tf
 # from tensorflow import keras
 
@@ -115,7 +115,12 @@ for s in range(0,limit):
     seed=seeds.pop(0)
     seed.PrepareTrackGraph(MaxX,MaxY,MaxZ,True)
     print(seed.GraphSeed.x)
-    out = model(seed.GraphSeed.x, seed.GraphSeed.edge_index, seed.GraphSeed.edge_attr)#, seed.GraphSeed.batch)
+
+
+
+    rec_loader = DataLoader([seed.GraphSeed], batch_size=1, shuffle=False)
+    print(rec_loader)
+    out = model(rec_loader.x, rec_loader.edge_index, rec_loader.edge_attr, rec_loader.GraphSeed.batch)
     print(out)
     exit()
     #SeedImage=UF.LoadRenderImages([seed],1,1)[0]
