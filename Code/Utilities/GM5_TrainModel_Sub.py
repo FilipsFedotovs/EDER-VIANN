@@ -143,9 +143,9 @@ class model(torch.nn.Module):
         self.tagconv3 = TAGConv(hidden_channels, hidden_channels)
         
         #GMMConv layers
-        self.gmmconv1 = GMMConv(num_node_features, hidden_channels, dim=3, kernel_size=4)
-        self.gmmconv2 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
-        self.gmmconv3 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
+        self.gmmconv1 = GMMConv(num_node_features, hidden_channels, dim=4, kernel_size=4)
+        self.gmmconv2 = GMMConv(hidden_channels, hidden_channels, dim=4, kernel_size=4)
+        self.gmmconv3 = GMMConv(hidden_channels, hidden_channels, dim=4, kernel_size=4)
         
         self.lin = Linear(hidden_channels, num_classes)
         self.softmax = Softmax(dim=-1)
