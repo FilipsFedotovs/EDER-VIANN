@@ -106,8 +106,9 @@ class model(torch.nn.Module):
         return x
 model_name=EOS_DIR+'EDER-VIANN/Models/'+args.ModelName
 print(model_name)
-model = model(hidden_channels=16)
+model = model(hidden_channels=4)
 model.eval()
+print(model)
 model.load_state_dict(torch.load(model_name))
 print('Here')
 #create seeds
