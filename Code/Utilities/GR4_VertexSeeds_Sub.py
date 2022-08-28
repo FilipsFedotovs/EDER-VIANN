@@ -120,7 +120,7 @@ for s in range(0,limit):
 
     rec_loader = DataLoader([seed.GraphSeed], batch_size=1, shuffle=False)
     print(rec_loader)
-    out = model(rec_loader.x, rec_loader.edge_index, rec_loader.edge_attr, rec_loader.GraphSeed.batch)
+    out = model(rec_loader[0].x, rec_loader[0].edge_index, rec_loader[0].edge_attr, rec_loader[0].batch)
     print(out)
     exit()
     #SeedImage=UF.LoadRenderImages([seed],1,1)[0]
