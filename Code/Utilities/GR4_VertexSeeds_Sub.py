@@ -112,8 +112,8 @@ GoodSeeds=[]
 print(UF.TimeStamp(),'Beginning the vertexing part...')
 for s in range(0,limit):
     seed=seeds.pop(0)
-    seed.PrepareRawTrackPrint(MaxX,MaxY,MaxZ,resolution,True)
-    print(seed.TrackPrint)
+    seed.PrepareTrackGraph(MaxX,MaxY,MaxZ,True)
+    print(seed.GraphSeed)
     exit()
     SeedImage=UF.LoadRenderImages([seed],1,1)[0]
     seed.UnloadTrackPrint()
