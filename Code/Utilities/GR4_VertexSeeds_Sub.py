@@ -71,7 +71,7 @@ class model(torch.nn.Module):
         super(model, self).__init__()
         torch.manual_seed(12345)
         #TAGCN layers
-        self.tagconv1 = TAGConv(num_node_features, hidden_channels,K=2)
+        self.tagconv1 = TAGConv(num_node_features, hidden_channels,K=3)
         self.tagconv2 = TAGConv(hidden_channels, hidden_channels)
         self.tagconv3 = TAGConv(hidden_channels, hidden_channels)
         # self.conv1 = GCNConv(num_node_features , hidden_channels)
