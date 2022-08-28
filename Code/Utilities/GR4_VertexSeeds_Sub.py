@@ -106,8 +106,7 @@ model_name=EOS_DIR+'EDER-VIANN/Models/'+args.ModelName
 print(model_name)
 model = model(hidden_channels=16)
 model.eval()
-print(model)
-model.load_state_dict(torch.load(model_name))
+#model.load_state_dict(torch.load(model_name))
 #create seeds
 GoodSeeds=[]
 print(UF.TimeStamp(),'Beginning the vertexing part...')
@@ -118,8 +117,6 @@ for s in range(0,limit):
     for data in rec_loader:  # Iterate in batches over the training/test dataset.
          out = model(data.x, data.edge_index, data.edge_attr, data.batch)
     seed.CNNFitSeed(out[0][1].item())
-    print(seed.Seed_CNN_Fit)
-    exit()
     if seed.Seed_CNN_Fit>=acceptance:
               GoodSeeds.append(seed)
     else:
