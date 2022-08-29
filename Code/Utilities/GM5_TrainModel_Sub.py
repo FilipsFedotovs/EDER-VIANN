@@ -150,21 +150,21 @@ class model(torch.nn.Module):
         self.lin = Linear(hidden_channels, num_classes)
         self.softmax = Softmax(dim=-1)
 
-    def forward(self, x, edge_index, edge_attr, batch):
+    def forward(self, x, edge_index, edge_attr[:3], batch):
         # 1. Obtain node embeddings
         #x = self.conv1(x, edge_index)
         #x = self.tagconv1(x, edge_index)
-        x = self.gmmconv1(x, edge_index, edge_attr)
+        x = self.gmmconv1(x, edge_index, edge_attr[:3])
         x = x.relu()
         
         #x = self.conv2(x, edge_index)
         #x = self.tagconv2(x, edge_index)
-        x = self.gmmconv2(x, edge_index, edge_attr)
+        x = self.gmmconv2(x, edge_index, edge_attr[:3])
         x = x.relu()
         
         #x = self.conv3(x, edge_index)
         #x = self.tagconv3(x, edge_index)
-        x = self.gmmconv3(x, edge_index, edge_attr)
+        x = self.gmmconv3(x, edge_index, edge_attr[:3])
 
         # 2. Readout layer
         x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
@@ -195,7 +195,7 @@ test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 def train():
     model.train()
     for data in train_loader:  # Iterate in batches over the training dataset.
-         out = model(data.x, data.edge_index, data.edge_attr, data.batch)  # Perform a single forward pass.
+         out = model(data.x, data.edge_index, data.edge_attr[:3], data.batch)  # Perform a single forward pass.
          loss = criterion(out, data.y)  # Compute the loss.
          loss.backward()  # Derive gradients.
          optimizer.step()  # Update parameters based on gradients.
@@ -206,7 +206,7 @@ def test(loader):
      correct = 0
      loss_accumulative = 0
      for data in loader:  # Iterate in batches over the training/test dataset.
-         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
+         out = model(data.x, data.edge_index, data.edge_attr[:3], data.batch)
          pred = out.argmax(dim=1)  # Use the class with highest probability.
          y_index = data.y.argmax(dim=1)
          correct += int((pred == y_index).sum())  # Check against ground-truth labels.
