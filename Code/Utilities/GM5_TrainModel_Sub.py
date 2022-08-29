@@ -150,21 +150,21 @@ class model(torch.nn.Module):
         self.lin = Linear(hidden_channels, num_classes)
         self.softmax = Softmax(dim=-1)
 
-    def forward(self, x, edge_index, edge_attr[:3], batch):
+    def forward(self, x, edge_index, edge_attr, batch):
         # 1. Obtain node embeddings
         #x = self.conv1(x, edge_index)
         #x = self.tagconv1(x, edge_index)
-        x = self.gmmconv1(x, edge_index, edge_attr[:3])
+        x = self.gmmconv1(x, edge_index, edge_attr)
         x = x.relu()
         
         #x = self.conv2(x, edge_index)
         #x = self.tagconv2(x, edge_index)
-        x = self.gmmconv2(x, edge_index, edge_attr[:3])
+        x = self.gmmconv2(x, edge_index, edge_attr)
         x = x.relu()
         
         #x = self.conv3(x, edge_index)
         #x = self.tagconv3(x, edge_index)
-        x = self.gmmconv3(x, edge_index, edge_attr[:3])
+        x = self.gmmconv3(x, edge_index, edge_attr)
 
         # 2. Readout layer
         x = global_mean_pool(x, batch)  # [batch_size, hidden_channels]
