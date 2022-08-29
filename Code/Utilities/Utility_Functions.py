@@ -693,7 +693,7 @@ class Seed:
             bottom_edge.append(node_ind_list.index(h[4]))
 
           for h in __graphData_list:
-            edge_attr.append(h[:4])
+            edge_attr.append(h[:3])
 
 #          for i in range(len(__TempTrack[0])+len(__TempTrack[1])):
 #            for j in range(0,i):
