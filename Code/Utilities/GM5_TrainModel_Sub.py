@@ -195,7 +195,7 @@ test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 def train():
     model.train()
     for data in train_loader:  # Iterate in batches over the training dataset.
-         out = model(data.x, data.edge_index, data.edge_attr[:3], data.batch)  # Perform a single forward pass.
+         out = model(data.x, data.edge_index, data.edge_attr, data.batch)  # Perform a single forward pass.
          loss = criterion(out, data.y)  # Compute the loss.
          loss.backward()  # Derive gradients.
          optimizer.step()  # Update parameters based on gradients.
@@ -206,7 +206,7 @@ def test(loader):
      correct = 0
      loss_accumulative = 0
      for data in loader:  # Iterate in batches over the training/test dataset.
-         out = model(data.x, data.edge_index, data.edge_attr[:3], data.batch)
+         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
          pred = out.argmax(dim=1)  # Use the class with highest probability.
          y_index = data.y.argmax(dim=1)
          correct += int((pred == y_index).sum())  # Check against ground-truth labels.
