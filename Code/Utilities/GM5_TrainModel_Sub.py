@@ -143,9 +143,9 @@ class model(torch.nn.Module):
         self.tagconv3 = TAGConv(hidden_channels, hidden_channels)
         
         #GMMConv layers
-        self.gmmconv1 = GMMConv(num_node_features, hidden_channels, dim=3, kernel_size=4)
-        self.gmmconv2 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
-        self.gmmconv3 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=4)
+        self.gmmconv1 = GMMConv(num_node_features, hidden_channels, dim=3, kernel_size=3)
+        self.gmmconv2 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=3)
+        self.gmmconv3 = GMMConv(hidden_channels, hidden_channels, dim=3, kernel_size=3)
         
         self.lin = Linear(hidden_channels, num_classes)
         self.softmax = Softmax(dim=-1)
@@ -217,7 +217,7 @@ def test(loader):
 
 if Mode=='Create':
  model_name=EOSsubModelDIR+'/'+args.ModelNewName
- model = model(hidden_channels=16)
+ model = model(hidden_channels=32)
  optimizer = torch.optim.Adam(model.parameters(), lr=LR)
  criterion = torch.nn.CrossEntropyLoss()
  State_Save_Path=EOSsubModelDIR+'/'+args.ModelNewName+'_State_Save'
@@ -237,7 +237,7 @@ if Mode=='Create':
  UF.LogOperations(log_name,'StartLog',log)
 if Mode=='Train':
  model_name=EOSsubModelDIR+'/'+args.ModelName
- model = model(hidden_channels=16)
+ model = model(hidden_channels=32)
  model.load_state_dict(torch.load(model_name))
  optimizer = torch.optim.Adam(model.parameters(), lr=LR)
  criterion = torch.nn.CrossEntropyLoss()
